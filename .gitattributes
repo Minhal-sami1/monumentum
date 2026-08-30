@@ -1,0 +1,6 @@
+# Byte stability matters: journal hash chains and golden-file comparisons
+# depend on exact bytes. Force LF for all text content on every platform.
+* text=auto eol=lf
+*.png binary
+*.pdf binary
+*.zip binary
