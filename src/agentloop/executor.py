@@ -74,10 +74,15 @@ def init_workspace(root: Path, policy_text: str | None = None) -> tuple[Workspac
     policy = load_policy(ws.policy_path)
     ws.changesets_dir.mkdir(exist_ok=True)
     ensure_agents_block(ws.root)  # before baseline heads, so the block is covered
+    declared = {
+        layer: policy.declared_level(layer)
+        for layer in ("context", "capability", "architecture")
+    }
     ws.journal.append(
         "genesis",
         actor=executor_actor(),
         decision={"policy_sha256": policy.sha256},
+        ext={"effective_levels": declared},
         sig=None,
     )
     state = {
@@ -140,7 +145,16 @@ def propose(ws: Workspace, cs: ChangeSet) -> Outcome:
             producer = f"producer/{origin['producer']}"
     cs_ref = cs.envelope.get("id") if isinstance(cs.envelope.get("id"), str) else None
 
-    ws.journal.append("proposed", actor=producer, cs=cs_ref, sig=None)
+    rationale = cs.envelope.get("rationale")
+    ws.journal.append(
+        "proposed",
+        actor=producer,
+        cs=cs_ref,
+        note=rationale if isinstance(rationale, str) else None,
+        ext={"layer": cs.envelope.get("layer"), "targets": cs.envelope.get("targets")}
+        if isinstance(cs.envelope.get("targets"), list)
+        else None,
+    )
 
     reason = _validate(cs, policy)
     state = ws.read_state()
@@ -660,6 +674,7 @@ def _maybe_de_escalate(ws: Workspace, layer: str, policy: LoadedPolicy) -> None:
                 f"{layer} drops {current} -> {lowered}"
             ),
         },
+        ext={"policy_effective": {"layer": layer, "from": current, "to": lowered}},
         sig=None,
     )
     state["effective_levels"][layer] = lowered

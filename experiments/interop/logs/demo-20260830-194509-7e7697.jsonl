@@ -1,0 +1,1 @@
+{"run_id": "demo-20260830-194509-7e7697", "experiment": "interop", "t0_lesson_proposed": "2026-08-30T19:45:09.909470+00:00", "t1_second_runtime_applied": "2026-08-30T19:45:12.163174+00:00", "lesson_to_second_runtime_seconds": 2.25, "changeset": "cs-20260831-demo1", "runtime_a": "agentloop-cli", "runtime_b": "toy-sdk-agent", "python": "3.11.9", "ok": true}

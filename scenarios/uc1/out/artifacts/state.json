@@ -22,7 +22,7 @@
   "heads": {
     "AGENTS.md": "sha256:148722e765ba502333698e8192f72a10302f710247d3bbcb0e1ab13630b52acf"
   },
-  "journal_head": "sha256:6d82749f49b0a63322759191593800667f141c09627816972b03eed82d0e42f4",
+  "journal_head": "sha256:bf6a2334d2244294094e13bdb72fe811ea127b47112cec4860d8574dbe975fd5",
   "managed_patterns": [
     ".claude/memory/**",
     ".claude/skills/**",

@@ -1,0 +1,27 @@
+# Audit reconstruction: E:\Loop\scenarios\uc5\out\work
+# Source: journal only (13 entries, chain verified)
+
+## Why this workspace behaves the way it does today
+
+### Changes in effect (applied, never rolled back)
+- cs-20260831-uc5a [context] targets=['AGENTS.md']
+    why:   Repo uses pnpm. npm install fails on postinstall hooks.
+    who:   proposed by producer/claude-code-scripted; applied via L2-auto by executor/agentloop@0.1.0
+- cs-20260831-uc5c [capability] targets=['tools/textutil.py']
+    why:   Treat dots as separators; matches slug policy for filenames.
+    who:   proposed by producer/optimizer-bot; applied via L2-auto by executor/agentloop@0.1.0
+
+### Changes tried and reverted
+- cs-20260831-uc5b [capability]: Simplify slugify with one regex; micro-benchmark 3x faster.
+    rolled back by human/operator
+
+### Changes refused
+- cs-20260831-uc5d: target src/secrets.py matches no targets_allow pattern (I4) (by executor/agentloop@0.1.0)
+
+### Current autonomy levels (replayed from genesis + policy_changed)
+- architecture: L1
+- capability: L2
+- context: L2
+
+## Reality check
+journal-derived state matches the working tree and executor state. AUDIT OK

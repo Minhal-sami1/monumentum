@@ -1,0 +1,6 @@
+"""Text utilities used by the fixture project. Loop-managed (capability)."""
+
+
+def slugify(title):
+    """Lowercase, spaces to hyphens, strip other punctuation."""
+    return "-".join(title.lower().split())

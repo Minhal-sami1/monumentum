@@ -1,0 +1,8 @@
+"""Text utilities used by the fixture project. Loop-managed (capability)."""
+
+import re
+
+
+def slugify(title):
+    """Lowercase, spaces to hyphens, strip other punctuation."""
+    return re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")

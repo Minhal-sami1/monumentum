@@ -64,3 +64,16 @@ Built:
 Verified locally: `make verify` (schemas + conformance 15/15 + 134 tests + demo + scenarios 3/3 + verify-self + lint) exit 0.
 
 Next: m5 — UC4 (regression + ratchet-down) and UC5 (audit reconstruction); all five scenarios green.
+
+## m5 — Battle tests complete (2026-08-31)
+
+**Exit gate:** `make scenarios` — 5/5 green, artifacts regenerated under `scenarios/*/out/artifacts/`.
+
+Built:
+- **UC4 regression + ratchet-down:** two plausible capability "optimizations" auto-apply at L2 with verified-but-narrow independent evidence, each breaks the fixture's REAL pytest suite in the observation window, each rolls back to exact prior hashes; the second rollback de-escalates capability L2→L1 (journaled `policy_changed`); a third proposal then queues. Full 12-event journal sequence asserted.
+- **UC5 audit reconstruction:** `scenarios/uc5/audit.py` (stdlib-only, no agentloop import) rebuilds — from the journal ALONE — the changes in effect with their rationales and actors, the reverted and refused changes with reasons, and the replayed autonomy levels; then cross-checks every journal-recorded target state against current file hashes and executor state. AUDIT OK asserted.
+- Journal enriched for auditability (DEC-027): rationale + layer + targets on `proposed`, starting levels on genesis, structured ratchet transitions on `policy_changed`.
+
+Verified locally: `make verify` (schemas + conformance + tests + demo + scenarios 5/5 + verify-self + lint) exit 0.
+
+Next: m6 — adversarial suite (T1, T2, T4, T5, T6 + control).

@@ -140,3 +140,20 @@ Every deviation from `design-doc.md` normative semantics is recorded here with e
 - **What:** This repo's own `.loop/policy.yaml` governs: context = AGENTS.md, CLAUDE.md (L2); capability = `skill/**` (L1, Minhal-only approval); architecture = `agents.yaml` (L1). `docs/**`, source, tests, spec are NOT loop-managed.
 - **Why:** The managed surface is what steers agents (design principle 3). STATUS/DECISIONS are project logs the goal REQUIRES updating continuously; making them loop-managed would gate documentation behind review and stall the milestones. The skill package is the repo's real capability layer.
 - **Evidence:** `.loop/policy.yaml`; `agentloop verify .` green in `make verify` and CI.
+
+## m5
+
+### DEC-027: journal entries enriched so the journal is audit-self-contained
+- **What:** `proposed` entries carry `note` = the ChangeSet rationale and `ext.layer`/`ext.targets`; the genesis entry carries `ext.effective_levels` (starting levels); `policy_changed` carries `ext.policy_effective {layer, from, to}`.
+- **Why:** The audit promise (design §5.4): reconstruct WHY a workspace behaves as it does from the Journal ALONE. Without rationale, targets, and starting levels in the journal, an auditor would need the changesets folder and the policy — breaking "journal alone". All additions live in the schema's `note`/`ext` fields; no schema change.
+- **Evidence:** `executor.propose`, `init_workspace`, `_maybe_de_escalate`; `scenarios/uc5/audit.py` reconstructs rationale, actors, ratchet history, and levels from journal files only, then passes the reality check.
+
+### DEC-028: UC4 exercises detection through a real test suite, ratchet via two auto-applied regressions
+- **What:** UC4's policy puts capability at L2 with evidence-only gates, so two plausible "optimizations" (each carrying verified, independent, but narrow evidence) auto-apply and each breaks the fixture's real pytest suite; each is rolled back; the second rollback trips de-escalation to L1; a third proposal then QUEUES.
+- **Why:** GOAL UC4 needs "an applied change breaks a real test in the observation window" plus the ratchet. Narrow-but-genuine evidence passing the gate while the full suite fails is exactly the honest failure mode the observation window exists for.
+- **Evidence:** `scenarios/uc4/` (pytest output captured in artifacts; journal asserts the full 12-event sequence including `policy_changed`).
+
+### DEC-029: UC1 fixture reproduces the npm/pnpm failure class deterministically
+- **What:** The UC1 fixture is a real npm package whose postinstall (`node install.js`) exits 1 under npm semantics and 0 under pnpm semantics, driven headless via `node install.js npm|pnpm` instead of running real package installs.
+- **Why:** Real `npm install`/`pnpm install` would need network access and a pnpm toolchain on every runner; GOAL §3 grants fixture-content freedom while §7 requires the real CLI, which is fully exercised. The commands in the evidence transcript are real commands with real exit codes.
+- **Evidence:** `scenarios/uc1/fixture/install.js`; transcript artifacts under `scenarios/uc1/out/artifacts/`.
