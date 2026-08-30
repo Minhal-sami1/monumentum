@@ -26,7 +26,13 @@ from agentloop.policy import (
     load_policy,
     target_allowed,
 )
-from agentloop.workspace import DEFAULT_POLICY, Workspace, WorkspaceError, executor_actor
+from agentloop.workspace import (
+    DEFAULT_POLICY,
+    Workspace,
+    WorkspaceError,
+    ensure_agents_block,
+    executor_actor,
+)
 
 # ChangeSet status values tracked in state.json.
 S_VALIDATED = "VALIDATED"
@@ -55,14 +61,19 @@ class Outcome:
 # --------------------------------------------------------------------------
 
 
-def init_workspace(root: Path, policy_text: str | None = None) -> Workspace:
+def init_workspace(root: Path, policy_text: str | None = None) -> tuple[Workspace, bool]:
+    """Scaffold .loop/ (story A1) and the AGENTS.md managed block (story B2).
+    Idempotent: a second init changes nothing and returns created=False."""
     ws = Workspace(root)
     if ws.exists():
-        raise ExecutorError(f".loop already exists at {ws.loop}")
+        # Idempotent re-init: the AGENTS.md block is written only when its
+        # marker is absent; a governed AGENTS.md is never touched here.
+        return ws, False
     ws.loop.mkdir(parents=True, exist_ok=True)
     ws.policy_path.write_text(policy_text or DEFAULT_POLICY, encoding="utf-8")
     policy = load_policy(ws.policy_path)
     ws.changesets_dir.mkdir(exist_ok=True)
+    ensure_agents_block(ws.root)  # before baseline heads, so the block is covered
     ws.journal.append(
         "genesis",
         actor=executor_actor(),
@@ -77,11 +88,21 @@ def init_workspace(root: Path, policy_text: str | None = None) -> Workspace:
         },
         "changesets": {},
         "heads": _baseline_heads(ws, policy),
+        "managed_patterns": _managed_patterns(policy),
         "queue": [],
     }
     state = ws.update_journal_head(state)
     ws.write_state(state)
-    return ws
+    return ws, True
+
+
+def _managed_patterns(policy: LoadedPolicy) -> list[str]:
+    """All glob patterns the PreToolUse guard must deny direct edits on."""
+    patterns: list[str] = []
+    for layer in ("context", "capability", "architecture"):
+        patterns.extend(policy.targets_allow(layer))
+    patterns.extend(policy.protected())
+    return sorted(set(patterns))
 
 
 def _baseline_heads(ws: Workspace, policy: LoadedPolicy) -> dict[str, str]:

@@ -8,5 +8,5 @@ steps:
   - run: [apply, cs-20260830-c009]
   - expect_file: { path: AGENTS.md, contains: pnpm }
   - run: [rollback, cs-20260830-c009, --actor, human/operator]
-  - expect_file: { path: AGENTS.md, equals: "# Agent notes\n\nUse npm install to set up.\n" }
+  - expect_file: { path: AGENTS.md, contains: "Use npm install to set up.", not_contains: pnpm }
 expected_events: [genesis, proposed, gated, applied, rolled_back]

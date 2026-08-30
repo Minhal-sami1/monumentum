@@ -50,7 +50,17 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("check-schemas", help="validate the conformance golden corpus")
     p.add_argument("--golden", type=Path, default=Path("conformance/golden"))
 
-    sub.add_parser("init", help="scaffold .loop/ with default policy and a genesis journal entry")
+    p = sub.add_parser(
+        "init", help="scaffold .loop/ with default policy and a genesis journal entry"
+    )
+    p.add_argument("--policy", type=Path, help="custom policy.yaml to install instead of default")
+
+    p = sub.add_parser(
+        "install-skill",
+        help="install the drop-in Claude Code skill and hooks into .claude/",
+    )
+    p.add_argument("--claude-dir", type=Path, default=None,
+                   help="target .claude directory (default: <workspace>/.claude)")
 
     p = sub.add_parser("propose", help="create or ingest a ChangeSet, journal it, validate it")
     p.add_argument("--from-dir", type=Path, help="prepared ChangeSet folder to ingest")
@@ -127,15 +137,29 @@ def _dispatch(args: argparse.Namespace) -> int:
         return check_schemas(args.golden)
 
     if args.command == "init":
-        init_workspace(args.workspace)
-        print(f"Initialized .loop/ in {ws.root}")
+        policy_text = args.policy.read_text(encoding="utf-8") if args.policy else None
+        ws, created = init_workspace(args.workspace, policy_text)
+        if not created:
+            print(f".loop already initialized in {ws.root} — nothing changed")
+            return 0
+        print(f"Initialized .loop/ in {ws.root} (AGENTS.md managed block written)")
         print("Next steps:")
         print("  1. Review .loop/policy.yaml (context L2, capability L1, architecture L1).")
         print("  2. Propose a change:  agentloop propose --layer context --target AGENTS.md \\")
         print("       --patch fix.patch --rationale 'why'")
         print("  3. Attach evidence:   agentloop evidence <cs-id> --record ev.json --artifact log")
         print("  4. Gate and apply:    agentloop gate <cs-id> && agentloop apply <cs-id>")
-        print("  5. Verify anytime:    agentloop verify .")
+        print("  5. Claude Code users: agentloop install-skill")
+        print("  6. Verify anytime:    agentloop verify .")
+        return 0
+
+    if args.command == "install-skill":
+        from agentloop.skill_install import install_skill
+
+        claude_dir = args.claude_dir or (ws.root / ".claude")
+        installed = install_skill(claude_dir)
+        for line in installed:
+            print(line)
         return 0
 
     if args.command == "propose":

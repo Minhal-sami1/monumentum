@@ -33,6 +33,45 @@ audit: { journal: hash-chain, retain_days: 365 }
 """
 
 
+AGENTS_BLOCK_BEGIN = "<!-- agentloop:managed:begin -->"
+AGENTS_BLOCK_END = "<!-- agentloop:managed:end -->"
+
+AGENTS_BLOCK = f"""{AGENTS_BLOCK_BEGIN}
+## Governed self-improvement (agentloop)
+
+This workspace is governed by the Loop standard. Rules for every agent:
+
+1. Do NOT edit loop-managed files directly (AGENTS.md, CLAUDE.md, memory,
+   skills, tools, agent config). Policy lists the exact patterns in
+   `.loop/policy.yaml`.
+2. When you learn a durable lesson, propose it instead:
+   `agentloop propose --layer context --target <file> --patch <diff> --rationale "<why>"`
+3. Attach evidence (fail -> apply -> pass transcript):
+   `agentloop evidence <cs-id> --record <ev.json> --artifact <transcript>`
+4. Gate and apply: `agentloop gate <cs-id>` then `agentloop apply <cs-id>`.
+   Low-risk context changes auto-apply with independent evidence; capability
+   and architecture changes queue for human review.
+5. Never touch `.loop/**`. Verify integrity anytime: `agentloop verify .`
+{AGENTS_BLOCK_END}"""
+
+
+def ensure_agents_block(root: Path) -> bool:
+    """Append the managed contract block to AGENTS.md once. Idempotent:
+    if the begin marker exists, the file is left byte-identical.
+    Returns True when the file changed."""
+    path = root / "AGENTS.md"
+    if path.is_file():
+        content = path.read_text(encoding="utf-8")
+        if AGENTS_BLOCK_BEGIN in content:
+            return False
+        joiner = "" if content.endswith("\n\n") else ("\n" if content.endswith("\n") else "\n\n")
+        content = content + joiner + AGENTS_BLOCK + "\n"
+    else:
+        content = AGENTS_BLOCK + "\n"
+    path.write_text(content, encoding="utf-8", newline="\n")
+    return True
+
+
 class WorkspaceError(Exception):
     pass
 

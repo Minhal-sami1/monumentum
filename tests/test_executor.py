@@ -46,7 +46,9 @@ def ws(tmp_path) -> Workspace:
     (tmp_path / "AGENTS.md").write_text(AGENTS_BEFORE, encoding="utf-8", newline="\n")
     (tmp_path / "tools").mkdir()
     (tmp_path / "tools" / "helper.py").write_text("print('v1')\n", encoding="utf-8", newline="\n")
-    return init_workspace(tmp_path)
+    workspace, created = init_workspace(tmp_path)
+    assert created
+    return workspace
 
 
 def _write_patch(ws: Workspace, text: str = PATCH) -> Path:
@@ -108,9 +110,14 @@ def test_init_scaffold(ws):
     assert verify(ws) == []
 
 
-def test_double_init_refused(ws):
-    with pytest.raises(ExecutorError, match="already exists"):
-        init_workspace(ws.root)
+def test_double_init_idempotent_one_block(ws):
+    agents_before = (ws.root / "AGENTS.md").read_text(encoding="utf-8")
+    _, created = init_workspace(ws.root)
+    assert not created
+    agents_after = (ws.root / "AGENTS.md").read_text(encoding="utf-8")
+    assert agents_after == agents_before
+    assert agents_after.count("<!-- agentloop:managed:begin -->") == 1
+    assert verify(ws) == []
 
 
 # -- A2: propose + validate ---------------------------------------------------
@@ -170,7 +177,7 @@ def test_l2_auto_apply_with_independent_evidence(ws):
     assert gate(ws, cs.id).status == "GATE_APPROVED"
     outcome = apply_changeset(ws, cs.id)
     assert outcome.ok and outcome.status == "APPLIED"
-    assert (ws.root / "AGENTS.md").read_text(encoding="utf-8") == AGENTS_AFTER
+    assert (ws.root / "AGENTS.md").read_text(encoding="utf-8").startswith(AGENTS_AFTER)
     events = [e["event"] for e in ws.journal.entries()]
     assert events == ["genesis", "proposed", "gated", "applied"]
     assert verify(ws) == []
@@ -183,7 +190,7 @@ def test_reproducible_check_failure_reverts(ws):
     assert gate(ws, cs.id).status == "GATE_APPROVED"
     outcome = apply_changeset(ws, cs.id)
     assert not outcome.ok and "reproducible_check" in outcome.reason
-    assert (ws.root / "AGENTS.md").read_text(encoding="utf-8") == AGENTS_BEFORE
+    assert (ws.root / "AGENTS.md").read_text(encoding="utf-8").startswith(AGENTS_BEFORE)
     assert ws.journal.entries()[-1]["event"] == "rejected"
     assert verify(ws) == []
 

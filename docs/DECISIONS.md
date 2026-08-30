@@ -85,3 +85,36 @@ Every deviation from `design-doc.md` normative semantics is recorded here with e
 - **What:** The `escalation` policy block validates against the schema, but the v1 executor never raises a level automatically. De-escalation IS implemented.
 - **Why:** No GOAL story or gate exercises escalation; auto-raising autonomy without a tested track-record window is exactly the kind of silent power creep the standard exists to stop. Spec §7.4 says MAY.
 - **Evidence:** spec §7.4; `executor._maybe_de_escalate` (no escalation counterpart); documented here.
+
+## m3
+
+### DEC-017: Claude Code hook and skill mechanics verified against live docs (GOAL B1 requirement)
+- **What:** Verified on 2026-08-30 against https://code.claude.com/docs/en/hooks and https://code.claude.com/docs/en/skills (docs.claude.com redirects there).
+- **Verified hook API:** hooks configured in `.claude/settings.json` under `hooks.PreToolUse` as `[{"matcher": "Edit|Write", "hooks": [{"type": "command", "command": ...}]}]`; matcher filters on `tool_name` (pipe-separated alternatives, regex allowed). The hook receives JSON on stdin with `hook_event_name`, `tool_name`, `tool_input` (for Edit/Write: contains `file_path`), `cwd`, `session_id`. Blocking: exit code 2 always blocks, stderr text is shown to Claude as the block reason; alternatively exit 0 with JSON `{"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "deny", "permissionDecisionReason": ...}}`. `Stop` hook fires when Claude finishes a turn; exit 2 blocks stopping. `SessionEnd` cannot block and has a short shared timeout — the design-doc §8.1 "Stop/session-end reminder" is therefore implemented on `Stop`.
+- **Verified skill API:** skills live at `.claude/skills/<name>/SKILL.md`; YAML frontmatter fields `name`, `description` (combined with `when_to_use`, truncated at 1,536 chars in the listing; Claude uses it to decide when to load), `allowed-tools`, `disable-model-invocation`; `${CLAUDE_SKILL_DIR}` expands in skill body and in `allowed-tools` Bash rules, which is the documented pattern for bundled `scripts/`.
+- **Evidence:** fetched pages 2026-08-30; hook stdin/exit-code contract exercised by `tests/test_hook.py`.
+
+### DEC-018: PreToolUse guard reads managed patterns from state.json
+- **What:** The hook script (`skill/hooks/pretooluse_guard.py`, stdlib-only) denies Edit/Write on paths matching the policy's `targets_allow` + `protected` patterns. It reads `.loop/state.json` (`managed_patterns`, written by the executor at init and policy load) and falls back to parsing policy.yaml only if PyYAML is importable.
+- **Why:** The hook must run under any system Python with zero dependencies; policy.yaml needs a YAML parser. state.json is executor-owned JSON and already the effective-state carrier (DEC-009).
+- **Evidence:** `skill/hooks/pretooluse_guard.py`; `tests/test_hook.py`.
+
+### DEC-019: the toy agent translates a foreign lesson instead of replaying the foreign diff
+- **What:** In the interop demo, runtime B's toy agent reads the foreign ChangeSet's rationale and proposes a NEW ChangeSet against its own prompt file (`prompts/system.md`), with its own reproducible evidence, gated by its own policy.
+- **Why:** design-doc §8.4: the second runtime "applies it to its own prompt file". The foreign diff targets AGENTS.md; replaying it would change the wrong surface. Translation is the Producer-adapter pattern (§8.3) and proves real interop: the LESSON crosses runtimes, each executor gates locally.
+- **Evidence:** `sdk/examples/toy_agent.py cmd_ingest`; `demo/run_demo.py` assertions on both journals.
+
+### DEC-020: Core-profile handoff = the ChangeSet folder travels as files
+- **What:** The demo moves the ChangeSet by copying its folder (minus the runtime-local `snapshot/`) from A to B. No registry, no signing at m3.
+- **Why:** Core profile is files-first (design principle 1). The git-remote registry with ed25519 signing is exactly the m4 deliverable; the demo proves portability at the file-plane level first.
+- **Evidence:** `demo/run_demo.py` handoff step; B journals its own proposed/gated/applied sequence.
+
+### DEC-021: session reminder implemented on Stop via systemMessage
+- **What:** The reminder hook runs on `Stop` and emits `{"systemMessage": ...}` listing queued ChangeSets; it never blocks the stop.
+- **Why:** Verified docs (DEC-017): Stop stdout is not shown to Claude; exit 2 would block every session end; SessionEnd cannot surface messages reliably (short shared timeout, no decision fields). `systemMessage` reaches the user — the actor who can approve L1 items — which is the reminder's audience.
+- **Evidence:** `skill/hooks/stop_reminder.py`; `tests/test_hook.py::test_reminder_reports_queued_changesets`.
+
+### DEC-022: B1 live trigger-rate experiment deferred to the experiments phase
+- **What:** The hook-denial test and the full happy path (both HARD gates) are covered by deterministic tests at m3 (`tests/test_hook.py`, conformance c02, `make demo`). The ≥5 headless `claude -p` trigger-reliability runs (soft floor 70%) are scheduled with `experiments/trigger/` (m5–m7), where run logging exists to report the rate.
+- **Why:** GOAL B1 marks the trigger rate as a REPORTED metric, not a gate; the experiments framework (E1) that must log those runs lands after the scenarios.
+- **Evidence:** this entry; `docs/STATUS.md` m3 notes.

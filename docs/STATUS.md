@@ -35,3 +35,17 @@ Built:
 Also verified locally: `make verify` (check-schemas + conformance + pytest + lint) exit 0.
 
 Next: m3 — two doors: drop-in skill, AGENTS.md managed block, SDK five verbs, toy agent, interop demo.
+
+## m3 — Two doors + interop demo (2026-08-31)
+
+**Exit gate:** `make demo` — exit 0. One lesson crossed two runtimes (CLI door → SDK door) with both journals asserted; wall-clock lesson-to-second-runtime logged to `experiments/interop/logs/`.
+
+Built:
+- **B1 skill package:** `skill/SKILL.md` (assertive description, deterministic propose steps), `skill/hooks/pretooluse_guard.py` (PreToolUse deny on managed targets, exit-2 contract), `skill/hooks/stop_reminder.py` (Stop-hook queue reminder via systemMessage), `agentloop install-skill` (idempotent settings.json merge). Hook + skill mechanics verified against live docs first (DEC-017). Hook-denial HARD gate: `tests/test_hook.py`. Live `claude -p` trigger experiment deferred to experiments phase (DEC-022).
+- **B2:** `agentloop init` appends the AGENTS.md managed contract block idempotently; double-init changes nothing (unit-tested).
+- **B3 SDK:** `loop` package — `Loop(".loop")`, `propose`, `attach_evidence`, `gate`, `apply`, `rollback`, plus `log`, `ingest`, `approve`, `verify`; `sync` arrives at m4. Toy custom agent (~170 lines) in `sdk/examples/`.
+- **B4:** `make demo` — scripted producer session drives the real CLI in repo A; toy SDK agent gates the lesson against its own policy and applies it to its own prompt file in workspace B; both end states + both journals asserted; interop time logged (2.3s in local runs).
+
+Verified locally: `make verify` (schemas + conformance 15/15 + 121 tests + demo + lint) exit 0.
+
+Next: m4 — Team-lite (sync over git remote, ed25519 signing, verify-on-pull) + dogfood starts.

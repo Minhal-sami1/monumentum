@@ -10,12 +10,12 @@ endif
 PY ?= python
 PYTHON := $(BIN)/python
 
-.PHONY: setup check-schemas conformance test lint verify
+.PHONY: setup check-schemas conformance demo test lint verify
 
 setup:
 	$(PY) -m venv $(VENV)
 	$(PYTHON) -m pip install --upgrade pip
-	$(PYTHON) -m pip install -e ".[dev]"
+	$(PYTHON) -m pip install -e ".[dev]" -e ./sdk
 
 check-schemas:
 	$(PYTHON) -m agentloop.cli check-schemas --golden conformance/golden
@@ -23,11 +23,14 @@ check-schemas:
 conformance:
 	$(PYTHON) conformance/runner.py --executor "$(PYTHON) -m agentloop.cli"
 
+demo:
+	$(PYTHON) demo/run_demo.py
+
 test:
 	$(PYTHON) -m pytest
 
 lint:
-	$(PYTHON) -m ruff check src tests conformance
+	$(PYTHON) -m ruff check src tests conformance sdk demo skill
 
-# verify grows with the milestones. m2: schemas + conformance + unit tests + lint.
-verify: check-schemas conformance test lint
+# verify grows with the milestones. m3: + demo.
+verify: check-schemas conformance test demo lint
