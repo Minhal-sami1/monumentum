@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentloop.invalid/schemas/v0.1/registry.schema.json",
+  "title": "Registry",
+  "description": "Registry configuration (.loop/registry.yaml, parsed). Team profile only. Normative for spec loop/v0.1.",
+  "type": "object",
+  "required": ["spec", "kind", "remote"],
+  "additionalProperties": false,
+  "properties": {
+    "spec": { "const": "loop/v0.1" },
+    "kind": {
+      "const": "git-remote",
+      "description": "v0.1 defines exactly one Distributor kind: a plain git remote. OCI is a specified upgrade path, not implemented in v1."
+    },
+    "remote": {
+      "type": "object",
+      "required": ["url"],
+      "additionalProperties": false,
+      "properties": {
+        "url": { "type": "string", "minLength": 1 },
+        "branch": { "type": "string", "minLength": 1 }
+      }
+    },
+    "verify": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "require_signatures": { "type": "boolean" },
+        "pubkeys_dir": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Directory of trusted ed25519 public keys, relative to .loop/."
+        }
+      },
+      "description": "Verification settings for pulled ChangeSets. Team-lite: ed25519 detached signatures."
+    },
+    "ext": {
+      "type": "object",
+      "description": "Extension container. Implementations MUST place non-standard fields here."
+    }
+  }
+}

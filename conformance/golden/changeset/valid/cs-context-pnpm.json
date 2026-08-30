@@ -1,0 +1,22 @@
+{
+  "spec": "loop/v0.1",
+  "id": "cs-20260830-a1b2",
+  "layer": "context",
+  "targets": ["AGENTS.md"],
+  "payload": {
+    "type": "diff",
+    "path": "payload.patch",
+    "sha256": "sha256:2e6709af8dbfe7cd5abb2f716924848e527b4486c30c4509b0e4aa8171987335"
+  },
+  "origin": {
+    "producer": "claude-code",
+    "model": "claude-fable-5",
+    "session": "sess-0042",
+    "trigger": "reflection"
+  },
+  "rationale": "Repo uses pnpm. npm install fails on postinstall hooks.",
+  "evidence": ["evidence/ev-001.json"],
+  "provenance": null,
+  "supersedes": null,
+  "created": "2026-08-30T09:14:02Z"
+}

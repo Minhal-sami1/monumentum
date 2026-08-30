@@ -1,0 +1,18 @@
+{
+  "seq": 412,
+  "prev": "sha256:5e2d5d1e58e94d7607e0745cd3e612c4a358fc93f37fc5ab1fed8d04bbf7ce77",
+  "ts": "2026-08-30T09:15:00Z",
+  "event": "applied",
+  "cs": "cs-20260830-a1b2",
+  "decision": {
+    "gate": "L2-auto",
+    "policy_sha256": "sha256:a9abbb22710fbf816a5a12587ad6a2bb37941a6a207e36a4d6390beb8531116f"
+  },
+  "target_state": {
+    "before": "sha256:116fa15d7cf65ce302f90753c6ee7285214317d1718a2a2e0ec7b979561b7d36",
+    "after": "sha256:0966428a1d83cbecd97934479318caeb7281b3b917333673c92b3b73839958c9",
+    "commit": "abc1234"
+  },
+  "actor": "executor/agentloop@0.1.0",
+  "sig": null
+}

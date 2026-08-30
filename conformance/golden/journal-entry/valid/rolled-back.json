@@ -1,0 +1,15 @@
+{
+  "seq": 413,
+  "prev": "sha256:edda7b47233f9790fcc6d116d0a0c0eac38a5d6e44b7cf0c002c6d30bfa61e74",
+  "ts": "2026-08-30T10:02:00Z",
+  "event": "rolled_back",
+  "cs": "cs-20260830-a1b2",
+  "target_state": {
+    "before": "sha256:0966428a1d83cbecd97934479318caeb7281b3b917333673c92b3b73839958c9",
+    "after": "sha256:116fa15d7cf65ce302f90753c6ee7285214317d1718a2a2e0ec7b979561b7d36",
+    "commit": "def5678"
+  },
+  "actor": "human/minhal",
+  "note": "Regression in scenario tests inside the observation window.",
+  "sig": null
+}

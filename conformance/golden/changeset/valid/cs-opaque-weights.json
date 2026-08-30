@@ -1,0 +1,21 @@
+{
+  "spec": "loop/v0.1",
+  "id": "cs-20260830-e5f6",
+  "layer": "architecture",
+  "targets": ["agents.yaml"],
+  "payload": {
+    "type": "opaque",
+    "ref": "model-registry://acme/support-agent/7.3.1"
+  },
+  "origin": {
+    "producer": "training-pipeline",
+    "model": null,
+    "session": null,
+    "trigger": "scheduled-finetune"
+  },
+  "rationale": "Weight update: support-agent 7.3.0 replaced by 7.3.1. Payload external per design D2; journal records the swap as an opaque entry.",
+  "evidence": ["evidence/ev-001.json"],
+  "provenance": null,
+  "supersedes": null,
+  "created": "2026-08-30T12:00:00Z"
+}

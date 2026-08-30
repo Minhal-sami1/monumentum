@@ -1,0 +1,8 @@
+{
+  "seq": 5,
+  "prev": null,
+  "ts": "2026-08-30T09:20:00Z",
+  "event": "applied",
+  "cs": "cs-20260830-a1b2",
+  "actor": "executor/agentloop@0.1.0"
+}

@@ -1,0 +1,9 @@
+# Team-lite registry config: a plain git remote plus signature verification.
+spec: loop/v0.1
+kind: git-remote
+remote:
+  url: git@example.internal:acme/loop-registry.git
+  branch: main
+verify:
+  require_signatures: true
+  pubkeys_dir: pubkeys/

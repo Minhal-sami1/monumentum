@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentloop.invalid/schemas/v0.1/journal-entry.schema.json",
+  "title": "JournalEntry",
+  "description": "One entry of the append-only, hash-chained journal (NDJSON line, parsed). Normative for spec loop/v0.1.",
+  "type": "object",
+  "required": ["seq", "prev", "ts", "event", "actor"],
+  "additionalProperties": false,
+  "properties": {
+    "seq": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Monotonic sequence number. 0 is the genesis entry."
+    },
+    "prev": {
+      "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/hash" }],
+      "description": "SHA-256 of the previous entry's canonical NDJSON line, or null for genesis only."
+    },
+    "ts": { "type": "string", "format": "date-time" },
+    "event": {
+      "enum": [
+        "genesis",
+        "proposed",
+        "gated",
+        "approved",
+        "rejected",
+        "applied",
+        "observed",
+        "rolled_back",
+        "promoted",
+        "shared",
+        "policy_changed",
+        "weight_update"
+      ]
+    },
+    "cs": {
+      "oneOf": [
+        { "type": "null" },
+        { "type": "string", "pattern": "^cs-[0-9]{8}-[a-z0-9]{4,12}$" }
+      ],
+      "description": "The ChangeSet this entry concerns, when applicable."
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "gate": { "type": "string", "minLength": 1 },
+        "policy_sha256": { "$ref": "#/$defs/hash" },
+        "reason": { "type": "string" }
+      },
+      "description": "Gate decision context: which gate fired, under which policy content hash."
+    },
+    "target_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "before": { "$ref": "#/$defs/hash" },
+        "after": { "$ref": "#/$defs/hash" },
+        "commit": { "type": ["string", "null"] }
+      },
+      "description": "Content hashes of the target set before and after, plus the git commit when present."
+    },
+    "actor": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Who acted: executor/<name>@<version>, reviewer/<id>, producer/<id>, or human/<id>."
+    },
+    "sig": {
+      "type": ["string", "null"],
+      "description": "Detached signature over the entry. Core: null. Team+: required on shared entries."
+    },
+    "note": { "type": "string" },
+    "ext": {
+      "type": "object",
+      "description": "Extension container. Implementations MUST place non-standard fields here. Opaque weight_update detail goes here (design D2)."
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "seq": { "const": 0 } } },
+      "then": {
+        "properties": {
+          "event": { "const": "genesis" },
+          "prev": { "type": "null" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "event": { "const": "genesis" } } },
+      "then": { "properties": { "seq": { "const": 0 } } }
+    },
+    {
+      "if": { "not": { "properties": { "seq": { "const": 0 } } } },
+      "then": { "properties": { "prev": { "$ref": "#/$defs/hash" } } }
+    }
+  ],
+  "$defs": {
+    "hash": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    }
+  }
+}

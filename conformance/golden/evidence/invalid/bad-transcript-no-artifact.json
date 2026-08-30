@@ -1,0 +1,7 @@
+{
+  "id": "ev-902",
+  "kind": "eval",
+  "grader": "independent",
+  "format": "command-transcript",
+  "summary": { "metric": "task_pass", "before": 0, "after": 1, "n": 3 }
+}

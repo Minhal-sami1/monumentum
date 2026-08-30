@@ -1,0 +1,16 @@
+{
+  "spec": "loop/v0.1",
+  "id": "cs-20260830-bad8",
+  "layer": "context",
+  "targets": ["AGENTS.md"],
+  "payload": {
+    "type": "diff",
+    "path": "payload.patch",
+    "sha256": "sha256:2e6709af8dbfe7cd5abb2f716924848e527b4486c30c4509b0e4aa8171987335"
+  },
+  "origin": { "producer": "claude-code" },
+  "rationale": "REQUIRED-FAILURE: non-standard top-level field outside ext.",
+  "evidence": [],
+  "created": "2026-08-30T09:14:02Z",
+  "priority": "high"
+}

@@ -1,0 +1,12 @@
+# REQUIRED-FAILURE: envelope must declare all three change classes.
+spec: loop/v0.1
+envelope:
+  context:
+    level: L2
+    gates: [evidence_required]
+    targets_allow: ["AGENTS.md"]
+  capability:
+    level: L1
+    gates: [evidence_required, human_review]
+    targets_allow: ["tools/**"]
+protected: [".loop/**"]

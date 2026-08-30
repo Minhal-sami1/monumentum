@@ -1,0 +1,12 @@
+{
+  "id": "ev-002",
+  "kind": "human",
+  "grader": "independent",
+  "format": "human-feedback",
+  "summary": {
+    "metric": "reviewer_approval",
+    "before": null,
+    "after": "approved",
+    "reviewer": "reviewer/minhal"
+  }
+}

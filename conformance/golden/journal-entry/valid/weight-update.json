@@ -1,0 +1,16 @@
+{
+  "seq": 415,
+  "prev": "sha256:5e2d5d1e58e94d7607e0745cd3e612c4a358fc93f37fc5ab1fed8d04bbf7ce77",
+  "ts": "2026-08-30T11:00:00Z",
+  "event": "weight_update",
+  "cs": "cs-20260830-e5f6",
+  "actor": "executor/agentloop@0.1.0",
+  "ext": {
+    "weight_update": {
+      "from": "support-agent/7.3.0",
+      "to": "support-agent/7.3.1",
+      "payload_ref": "model-registry://acme/support-agent/7.3.1"
+    }
+  },
+  "sig": null
+}

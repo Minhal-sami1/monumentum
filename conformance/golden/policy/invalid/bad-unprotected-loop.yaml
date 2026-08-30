@@ -1,0 +1,16 @@
+# REQUIRED-FAILURE: protected list does not contain ".loop/**" (invariant I1).
+spec: loop/v0.1
+envelope:
+  context:
+    level: L2
+    gates: [evidence_required]
+    targets_allow: ["AGENTS.md"]
+  capability:
+    level: L1
+    gates: [evidence_required, human_review]
+    targets_allow: ["tools/**"]
+  architecture:
+    level: L1
+    gates: [evidence_required, human_review]
+    targets_allow: ["agents.yaml"]
+protected: ["secrets/**"]

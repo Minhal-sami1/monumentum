@@ -1,0 +1,10 @@
+{
+  "id": "ev-904",
+  "kind": "eval",
+  "grader": "independent",
+  "format": "command-transcript",
+  "artifact": {
+    "path": "ev-904.log",
+    "sha256": "sha256:37150c5a7365f161dc30d23e8f1b4c4545ef606a0afc15bf3bc77697b6f15fb9"
+  }
+}

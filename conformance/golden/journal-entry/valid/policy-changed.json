@@ -1,0 +1,13 @@
+{
+  "seq": 414,
+  "prev": "sha256:3fd2660f1bda00fe397c3d1f4c0de2886ab92a14a78c0a28115625d60a465baf",
+  "ts": "2026-08-30T10:30:00Z",
+  "event": "policy_changed",
+  "decision": {
+    "gate": "de_escalation",
+    "policy_sha256": "sha256:a9abbb22710fbf816a5a12587ad6a2bb37941a6a207e36a4d6390beb8531116f",
+    "reason": "2 rollbacks of context changes in 14 days: context drops L2 -> L1"
+  },
+  "actor": "executor/agentloop@0.1.0",
+  "sig": null
+}

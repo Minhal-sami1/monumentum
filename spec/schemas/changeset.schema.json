@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentloop.invalid/schemas/v0.1/changeset.schema.json",
+  "title": "ChangeSet",
+  "description": "The unit of improvement. A typed, portable record of one self-modification. Normative for spec loop/v0.1.",
+  "type": "object",
+  "required": ["spec", "id", "layer", "targets", "payload", "origin", "rationale", "evidence", "created"],
+  "additionalProperties": false,
+  "properties": {
+    "spec": {
+      "const": "loop/v0.1",
+      "description": "Spec version tag. MUST be loop/v0.1 for this schema."
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^cs-[0-9]{8}-[a-z0-9]{4,12}$",
+      "description": "ChangeSet identifier: cs-<YYYYMMDD>-<lowercase alphanumeric suffix>."
+    },
+    "layer": {
+      "enum": ["context", "capability", "architecture"],
+      "description": "The change layer (design D1)."
+    },
+    "targets": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/target_path" },
+      "description": "Workspace-relative paths this ChangeSet modifies."
+    },
+    "payload": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "enum": ["diff", "folder", "opaque"] },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Path of the payload artifact, relative to the ChangeSet folder."
+        },
+        "sha256": { "$ref": "#/$defs/hash" },
+        "ref": {
+          "type": "string",
+          "minLength": 1,
+          "description": "External reference for opaque payloads (design D2). The payload itself lives outside the file plane."
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "enum": ["diff", "folder"] } } },
+          "then": { "required": ["path", "sha256"] }
+        },
+        {
+          "if": { "properties": { "type": { "const": "opaque" } } },
+          "then": { "required": ["ref"] }
+        }
+      ]
+    },
+    "origin": {
+      "type": "object",
+      "required": ["producer"],
+      "additionalProperties": false,
+      "properties": {
+        "producer": { "type": "string", "minLength": 1 },
+        "model": { "type": ["string", "null"] },
+        "session": { "type": ["string", "null"] },
+        "trigger": { "type": ["string", "null"] }
+      }
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable reason for the change. MUST NOT be empty."
+    },
+    "evidence": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Paths of Evidence records, relative to the ChangeSet folder. MAY be empty at PROPOSED; gates enforce non-empty before APPLIED (design D4)."
+    },
+    "provenance": {
+      "type": ["object", "null"],
+      "description": "Team profile: in-toto attestation object. Core profile: null."
+    },
+    "supersedes": {
+      "oneOf": [
+        { "type": "null" },
+        { "type": "string", "pattern": "^cs-[0-9]{8}-[a-z0-9]{4,12}$" }
+      ],
+      "description": "Id of an earlier ChangeSet this one replaces, or null."
+    },
+    "created": {
+      "type": "string",
+      "format": "date-time",
+      "description": "RFC 3339 creation timestamp."
+    },
+    "ext": {
+      "type": "object",
+      "description": "Extension container. Implementations MUST place non-standard fields here."
+    }
+  },
+  "$defs": {
+    "hash": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$",
+      "description": "Self-describing content hash: sha256:<64 lowercase hex>."
+    },
+    "target_path": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Workspace-relative POSIX path. MUST NOT be absolute, contain '..', use backslashes, or point into .loop/ (invariant I1).",
+      "allOf": [
+        { "not": { "pattern": "^\\.loop(/|$)" } },
+        { "not": { "pattern": "(^|/)\\.\\.(/|$)" } },
+        { "not": { "pattern": "^/" } },
+        { "not": { "pattern": "^[A-Za-z]:" } },
+        { "not": { "pattern": "\\\\" } }
+      ]
+    }
+  }
+}

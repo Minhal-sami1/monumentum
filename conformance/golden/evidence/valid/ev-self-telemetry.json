@@ -1,0 +1,11 @@
+{
+  "id": "ev-004",
+  "kind": "telemetry",
+  "grader": "self",
+  "format": "otel-genai",
+  "summary": { "metric": "retry_rate", "before": 0.31, "after": 0.05, "n": 40 },
+  "artifact": {
+    "path": "spans.jsonl",
+    "sha256": "sha256:37150c5a7365f161dc30d23e8f1b4c4545ef606a0afc15bf3bc77697b6f15fb9"
+  }
+}

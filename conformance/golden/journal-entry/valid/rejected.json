@@ -1,0 +1,14 @@
+{
+  "seq": 7,
+  "prev": "sha256:f12f4ca1e8e6c6e3605fc3d380966849c0ea48d6fb9e0b8b136069814c73dc32",
+  "ts": "2026-08-30T09:20:00Z",
+  "event": "rejected",
+  "cs": "cs-20260830-bad1",
+  "decision": {
+    "gate": "validate",
+    "policy_sha256": "sha256:a9abbb22710fbf816a5a12587ad6a2bb37941a6a207e36a4d6390beb8531116f",
+    "reason": "target .loop/policy.yaml is protected (I1)"
+  },
+  "actor": "executor/agentloop@0.1.0",
+  "sig": null
+}

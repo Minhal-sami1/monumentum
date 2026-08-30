@@ -1,0 +1,22 @@
+{
+  "spec": "loop/v0.1",
+  "id": "cs-20260830-c3d4",
+  "layer": "capability",
+  "targets": [".claude/skills/fix-lint/SKILL.md", ".claude/skills/fix-lint/scripts/run.sh"],
+  "payload": {
+    "type": "folder",
+    "path": "payload/",
+    "sha256": "sha256:c97811e4375fda6eb4b46693d20752e6d584a4ec8a7910a25c52f09988c2d4cb"
+  },
+  "origin": {
+    "producer": "claude-code",
+    "model": "claude-fable-5",
+    "session": "sess-0043",
+    "trigger": "user-correction"
+  },
+  "rationale": "The fix-lint skill script calls a flag that the tool removed in v2. Replace with the supported flag.",
+  "evidence": ["evidence/ev-001.json", "evidence/ev-002.json"],
+  "provenance": null,
+  "supersedes": null,
+  "created": "2026-08-30T11:30:00Z"
+}

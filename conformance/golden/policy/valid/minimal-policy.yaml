@@ -1,0 +1,16 @@
+# Smallest conformant policy: three classes, protected .loop/**, no optional blocks.
+spec: loop/v0.1
+envelope:
+  context:
+    level: L0
+    gates: []
+    targets_allow: ["AGENTS.md"]
+  capability:
+    level: L0
+    gates: []
+    targets_allow: ["tools/**"]
+  architecture:
+    level: L0
+    gates: []
+    targets_allow: ["agents.yaml"]
+protected: [".loop/**"]

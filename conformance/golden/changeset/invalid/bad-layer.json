@@ -1,0 +1,15 @@
+{
+  "spec": "loop/v0.1",
+  "id": "cs-20260830-bad4",
+  "layer": "weights",
+  "targets": ["model.bin"],
+  "payload": {
+    "type": "diff",
+    "path": "payload.patch",
+    "sha256": "sha256:2e6709af8dbfe7cd5abb2f716924848e527b4486c30c4509b0e4aa8171987335"
+  },
+  "origin": { "producer": "training-pipeline" },
+  "rationale": "REQUIRED-FAILURE: weights is not a change layer (design D2: journal-only opaque entries).",
+  "evidence": [],
+  "created": "2026-08-30T09:14:02Z"
+}

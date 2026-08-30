@@ -1,0 +1,23 @@
+{
+  "spec": "loop/v0.1",
+  "id": "cs-20260831-g7h8",
+  "layer": "context",
+  "targets": ["AGENTS.md"],
+  "payload": {
+    "type": "diff",
+    "path": "payload.patch",
+    "sha256": "sha256:2e6709af8dbfe7cd5abb2f716924848e527b4486c30c4509b0e4aa8171987335"
+  },
+  "origin": {
+    "producer": "sdk/toy-agent",
+    "model": "claude-sonnet-5",
+    "session": "run-2026-08-31-01",
+    "trigger": "observed-regression"
+  },
+  "rationale": "Refine the pnpm note: pin the pnpm major version, the lockfile format changed.",
+  "evidence": ["evidence/ev-001.json"],
+  "provenance": null,
+  "supersedes": "cs-20260830-a1b2",
+  "created": "2026-08-31T08:05:00Z",
+  "ext": { "vendor": { "priority": "low" } }
+}

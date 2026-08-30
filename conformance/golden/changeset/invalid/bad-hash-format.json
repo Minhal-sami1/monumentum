@@ -1,0 +1,15 @@
+{
+  "spec": "loop/v0.1",
+  "id": "cs-20260830-bad7",
+  "layer": "context",
+  "targets": ["AGENTS.md"],
+  "payload": {
+    "type": "diff",
+    "path": "payload.patch",
+    "sha256": "md5:0123456789abcdef0123456789abcdef"
+  },
+  "origin": { "producer": "claude-code" },
+  "rationale": "REQUIRED-FAILURE: hash is not sha256:<64 lowercase hex>.",
+  "evidence": [],
+  "created": "2026-08-30T09:14:02Z"
+}

@@ -1,0 +1,12 @@
+{
+  "id": "ev-003",
+  "kind": "eval",
+  "grader": "independent",
+  "format": "inspect-log",
+  "summary": { "metric": "accuracy", "before": 0.62, "after": 0.79, "n": 200 },
+  "artifact": {
+    "path": "inspect-2026-08-30.json",
+    "sha256": "sha256:c4808413ded415087c56dfba1f26032ccf0d8ec10467950a779a6f35b916f57a"
+  },
+  "ext": { "inspect": { "task": "support-triage-v2" } }
+}

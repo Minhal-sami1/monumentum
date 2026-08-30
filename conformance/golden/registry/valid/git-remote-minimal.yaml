@@ -1,0 +1,4 @@
+spec: loop/v0.1
+kind: git-remote
+remote:
+  url: https://example.internal/acme/loop-registry.git

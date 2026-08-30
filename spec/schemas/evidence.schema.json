@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentloop.invalid/schemas/v0.1/evidence.schema.json",
+  "title": "Evidence",
+  "description": "One evidence record attached to a ChangeSet. Normative for spec loop/v0.1.",
+  "type": "object",
+  "required": ["id", "kind", "grader", "format", "summary"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^ev-[a-z0-9][a-z0-9-]{0,31}$",
+      "description": "Evidence identifier, unique within its ChangeSet."
+    },
+    "kind": {
+      "enum": ["eval", "telemetry", "human", "reproduction"]
+    },
+    "grader": {
+      "enum": ["self", "independent"],
+      "description": "Who graded the result. L2/L3 application requires at least one independent record (invariant I3). The schema accepts both; gates enforce I3."
+    },
+    "format": {
+      "enum": ["inspect-log", "lm-eval", "otel-genai", "human-feedback", "command-transcript"],
+      "description": "Reused external formats plus command-transcript, the cheap Core-profile format."
+    },
+    "summary": {
+      "type": "object",
+      "required": ["metric"],
+      "additionalProperties": true,
+      "properties": {
+        "metric": { "type": "string", "minLength": 1 },
+        "before": {},
+        "after": {},
+        "n": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "required": ["path", "sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "sha256": { "$ref": "#/$defs/hash" }
+      },
+      "description": "The raw evidence artifact (log, transcript, report), relative to the evidence/ folder."
+    },
+    "ext": {
+      "type": "object",
+      "description": "Extension container. Implementations MUST place non-standard fields here."
+    }
+  },
+  "if": {
+    "properties": {
+      "format": { "enum": ["inspect-log", "lm-eval", "otel-genai", "command-transcript"] }
+    }
+  },
+  "then": { "required": ["artifact"] },
+  "$defs": {
+    "hash": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    }
+  }
+}

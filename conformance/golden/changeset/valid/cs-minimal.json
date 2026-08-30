@@ -1,0 +1,15 @@
+{
+  "spec": "loop/v0.1",
+  "id": "cs-20260830-min1",
+  "layer": "context",
+  "targets": ["CLAUDE.md"],
+  "payload": {
+    "type": "diff",
+    "path": "payload.patch",
+    "sha256": "sha256:bddd3a6e5dab59fa05fa8fb0d789a3c2ad3c9982dcc4a368f3d5719f421ffda8"
+  },
+  "origin": { "producer": "cli/human" },
+  "rationale": "Add the build command that the last three sessions rediscovered.",
+  "evidence": [],
+  "created": "2026-08-30T10:00:00Z"
+}

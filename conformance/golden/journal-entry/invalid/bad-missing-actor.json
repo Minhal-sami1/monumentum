@@ -1,0 +1,7 @@
+{
+  "seq": 10,
+  "prev": "sha256:f12f4ca1e8e6c6e3605fc3d380966849c0ea48d6fb9e0b8b136069814c73dc32",
+  "ts": "2026-08-30T09:30:00Z",
+  "event": "applied",
+  "cs": "cs-20260830-a1b2"
+}
