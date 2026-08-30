@@ -186,10 +186,16 @@ class Loop:
     def verify(self) -> list[str]:
         return _executor.verify(self.workspace)
 
-    def sync(self):
-        raise NotImplementedError(
-            "sync is Team profile (git-remote registry); it arrives at milestone m4"
-        )
+    def sync(self, actor: str = "sdk/sync"):
+        """Team-lite: push PROMOTED ChangeSets, pull peers' through the
+        configured git-remote registry. Pulled ChangeSets are validated
+        against local policy; gate and apply them separately."""
+        from agentloop.registry import sync as _sync
+
+        return _sync(self.workspace, actor)
+
+    def promote(self, cs: ChangeSetHandle | str, actor: str = "sdk/operator"):
+        return _executor.promote(self.workspace, self._id_of(cs), actor)
 
     @staticmethod
     def _id_of(cs: ChangeSetHandle | str) -> str:

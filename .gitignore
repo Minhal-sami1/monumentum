@@ -7,5 +7,6 @@ dist/
 .pytest_cache/
 .ruff_cache/
 *.log
-scenarios/*/out/tmp/
+scenarios/*/out/work/
+.loop/cache/
 paper/build/

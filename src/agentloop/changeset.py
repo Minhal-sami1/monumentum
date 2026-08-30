@@ -50,7 +50,7 @@ class ChangeSet:
 
     def save_envelope(self) -> None:
         self.folder.joinpath("changeset.json").write_text(
-            json.dumps(self.envelope, indent=2) + "\n", encoding="utf-8"
+            json.dumps(self.envelope, indent=2) + "\n", encoding="utf-8", newline="\n"
         )
 
     # -- validation pieces (schema + payload integrity) --------------------
@@ -211,7 +211,9 @@ def attach_evidence(
     if errors:
         raise ChangeSetError(f"evidence record invalid: {errors[0]}")
     rel = f"evidence/{record['id']}.json"
-    (cs.folder / rel).write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
+    (cs.folder / rel).write_text(
+        json.dumps(record, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
     if rel not in cs.envelope["evidence"]:
         cs.envelope["evidence"].append(rel)
         cs.save_envelope()

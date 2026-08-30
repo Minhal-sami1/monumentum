@@ -70,7 +70,7 @@ def init_workspace(root: Path, policy_text: str | None = None) -> tuple[Workspac
         # marker is absent; a governed AGENTS.md is never touched here.
         return ws, False
     ws.loop.mkdir(parents=True, exist_ok=True)
-    ws.policy_path.write_text(policy_text or DEFAULT_POLICY, encoding="utf-8")
+    ws.policy_path.write_text(policy_text or DEFAULT_POLICY, encoding="utf-8", newline="\n")
     policy = load_policy(ws.policy_path)
     ws.changesets_dir.mkdir(exist_ok=True)
     ensure_agents_block(ws.root)  # before baseline heads, so the block is covered
@@ -442,7 +442,7 @@ def _snapshot(ws: Workspace, targets: list[str], snapshot_dir: Path) -> None:
         else:
             manifest[target] = None
     (snapshot_dir / "MANIFEST.json").write_text(
-        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n"
     )
 
 
@@ -563,6 +563,25 @@ def _git_commit(ws: Workspace, targets: list[str], message: str) -> str | None:
 
 
 # --------------------------------------------------------------------------
+# promote (Team profile: eligible for the registry)
+# --------------------------------------------------------------------------
+
+S_PROMOTED = "PROMOTED"
+
+
+def promote(ws: Workspace, cs_id: str, actor: str) -> Outcome:
+    ws.require()
+    state = ws.read_state()
+    cs = _load_ws_changeset(ws, cs_id)
+    if _status_of(state, cs_id) != S_APPLIED:
+        raise ExecutorError(f"{cs_id} is {_status_of(state, cs_id)}, promote needs APPLIED")
+    ws.journal.append("promoted", actor=actor, cs=cs_id)
+    _set_status(state, cs, S_PROMOTED)
+    ws.write_state(ws.update_journal_head(state))
+    return Outcome(ok=True, status=S_PROMOTED)
+
+
+# --------------------------------------------------------------------------
 # rollback + de-escalation (story A5)
 # --------------------------------------------------------------------------
 
@@ -572,8 +591,10 @@ def rollback(ws: Workspace, cs_id: str, actor: str) -> Outcome:
     policy = load_policy(ws.policy_path)
     state = ws.read_state()
     cs = _load_ws_changeset(ws, cs_id)
-    if _status_of(state, cs_id) != S_APPLIED:
-        raise ExecutorError(f"{cs_id} is {_status_of(state, cs_id)}, rollback needs APPLIED")
+    if _status_of(state, cs_id) not in (S_APPLIED, S_PROMOTED):
+        raise ExecutorError(
+            f"{cs_id} is {_status_of(state, cs_id)}, rollback needs APPLIED or PROMOTED"
+        )
     if cs.payload["type"] == "opaque":
         raise ExecutorError("opaque entries are journal-only; nothing to roll back")
 

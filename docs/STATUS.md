@@ -49,3 +49,18 @@ Built:
 Verified locally: `make verify` (schemas + conformance 15/15 + 121 tests + demo + lint) exit 0.
 
 Next: m4 — Team-lite (sync over git remote, ed25519 signing, verify-on-pull) + dogfood starts.
+
+## m4 — Team-lite + dogfood (2026-08-31)
+
+**Exit gate:** `make scenarios` (UC1–UC3) + `agentloop verify .` — both exit 0 (locally and wired into `make verify` for CI).
+
+Built:
+- **C1 registry:** `agentloop sync` over a plain git remote — pushes PROMOTED ChangeSets, pulls peers'; a pulled ChangeSet enters PROPOSED and is validated/gated against LOCAL policy (never bypasses gates). `promote` verb added. Registry cache pins `core.autocrlf=false` (byte-stable digests, DEC-024).
+- **C2 signing:** minisign-style detached ed25519 signatures (`agentloop keygen`, sign-at-push, verify-on-pull against trusted pubkeys). Unsigned, tampered, and untrusted-key ChangeSets are refused and journaled (I6). Full Sigstore is Team-full, not implemented (F4).
+- **Scenarios:** `scenarios/run_all.sh` + UC1 (context lesson, real failing/passing commands, L2 auto-apply, next-session benefit), UC2 (capability repair, L1 queue honored, approve AND reject paths), UC3 (fleet propagation A→registry→B with local gating, propagation time logged ~10s, policy-violating pulled change refused in B). Artifacts under `scenarios/<id>/out/artifacts/`; JSONL run logs under `experiments/scenarios/logs/`.
+- **Dogfood (from this tag):** this repo runs under its own `.loop/` — context = AGENTS.md/CLAUDE.md (L2), capability = `skill/**` (L1, Minhal approves), architecture = agents.yaml (L1). `agentloop verify .` runs in `make verify` and CI. Rules honored: no hand edits to `.loop/**`; all L1 items queue for Minhal.
+- SDK gains `sync` + `promote`. Registry schema gains optional `signing` block (golden cases updated).
+
+Verified locally: `make verify` (schemas + conformance 15/15 + 134 tests + demo + scenarios 3/3 + verify-self + lint) exit 0.
+
+Next: m5 — UC4 (regression + ratchet-down) and UC5 (audit reconstruction); all five scenarios green.

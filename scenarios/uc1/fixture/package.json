@@ -1,0 +1,9 @@
+{
+  "name": "uc1-fixture",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Small real project whose postinstall breaks under npm and works under pnpm",
+  "scripts": {
+    "postinstall": "node install.js"
+  }
+}

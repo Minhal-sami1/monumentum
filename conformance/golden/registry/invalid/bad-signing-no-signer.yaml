@@ -1,0 +1,7 @@
+# REQUIRED-FAILURE: signing block requires both key_file and signer.
+spec: loop/v0.1
+kind: git-remote
+remote:
+  url: https://example.internal/acme/loop-registry.git
+signing:
+  key_file: keys/producer-a.key

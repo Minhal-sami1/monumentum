@@ -34,6 +34,20 @@
       },
       "description": "Verification settings for pulled ChangeSets. Team-lite: ed25519 detached signatures."
     },
+    "signing": {
+      "type": "object",
+      "required": ["key_file", "signer"],
+      "additionalProperties": false,
+      "properties": {
+        "key_file": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Path to this workspace's ed25519 private key, relative to .loop/. MUST NOT be pushed to the registry."
+        },
+        "signer": { "type": "string", "minLength": 1 }
+      },
+      "description": "How this workspace signs ChangeSets it pushes (Team-lite)."
+    },
     "ext": {
       "type": "object",
       "description": "Extension container. Implementations MUST place non-standard fields here."

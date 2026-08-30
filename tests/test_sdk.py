@@ -100,6 +100,8 @@ def test_queue_path(lp, tmp_path):
     assert "print(2)" in (tmp_path / "tools" / "t.py").read_text(encoding="utf-8")
 
 
-def test_sync_not_implemented(lp):
-    with pytest.raises(NotImplementedError):
+def test_sync_without_registry_raises(lp):
+    from agentloop.registry import RegistryError
+
+    with pytest.raises(RegistryError, match="no registry configured"):
         lp.sync()

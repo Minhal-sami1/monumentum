@@ -1,0 +1,19 @@
+# agentloop's own loop (dogfood). Managed surfaces of THIS repository.
+# Only humans edit this file (I1). Minhal is the only L1 approver.
+spec: loop/v0.1
+envelope:
+  context:
+    level: L2
+    gates: [evidence_required, reproducible_check]
+    targets_allow: ["AGENTS.md", "CLAUDE.md"]
+  capability:
+    level: L1
+    gates: [evidence_required, human_review]
+    targets_allow: ["skill/**"]
+  architecture:
+    level: L1
+    gates: [evidence_required, human_review]
+    targets_allow: ["agents.yaml"]
+protected: [".loop/**"]
+de_escalation: { on_rollbacks: 2, window_days: 14, drop: 1 }
+audit: { journal: hash-chain, retain_days: 365 }

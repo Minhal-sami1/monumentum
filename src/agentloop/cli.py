@@ -27,6 +27,7 @@ from agentloop.executor import (
     approve,
     gate,
     init_workspace,
+    promote,
     propose,
     reject_changeset,
     rollback,
@@ -100,6 +101,18 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("cs_id")
     p.add_argument("--actor", default="human/operator")
 
+    p = sub.add_parser("promote", help="mark an applied ChangeSet eligible for the registry")
+    p.add_argument("cs_id")
+    p.add_argument("--actor", default="human/operator")
+
+    p = sub.add_parser("keygen", help="generate an ed25519 keypair for Team-lite signing")
+    p.add_argument("--name", required=True)
+    p.add_argument("--out-dir", type=Path, default=None,
+                   help="default: <workspace>/.loop/keys")
+
+    p = sub.add_parser("sync", help="push promoted ChangeSets, pull peers' (git-remote registry)")
+    p.add_argument("--actor", default="executor/agentloop-sync")
+
     p = sub.add_parser("log", help="print journal entries")
     p.add_argument("--cs", help="filter by changeset id")
     p.add_argument("--json", action="store_true", help="one JSON entry per line")
@@ -128,6 +141,14 @@ def main(argv: list[str] | None = None) -> int:
     except (ExecutorError, ChangeSetError, WorkspaceError, PolicyError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
+    except Exception as exc:
+        from agentloop.registry import RegistryError
+        from agentloop.signing import SigningError
+
+        if isinstance(exc, RegistryError | SigningError):
+            print(f"error: {exc}", file=sys.stderr)
+            return 1
+        raise
 
 
 def _dispatch(args: argparse.Namespace) -> int:
@@ -210,6 +231,34 @@ def _dispatch(args: argparse.Namespace) -> int:
 
     if args.command == "rollback":
         return _print_outcome(rollback(ws, args.cs_id, args.actor))
+
+    if args.command == "promote":
+        return _print_outcome(promote(ws, args.cs_id, args.actor))
+
+    if args.command == "keygen":
+        from agentloop.signing import generate_keypair
+
+        out_dir = args.out_dir or (ws.loop / "keys")
+        key_path, pub_path = generate_keypair(out_dir, args.name)
+        print(f"private key: {key_path} (keep out of the registry)")
+        print(f"public key:  {pub_path} (distribute to peers' pubkeys dir)")
+        return 0
+
+    if args.command == "sync":
+        from agentloop.registry import sync as registry_sync
+
+        report = registry_sync(ws, args.actor)
+        for cs_id in report.pushed:
+            print(f"pushed  {cs_id}")
+        for cs_id in report.pulled:
+            print(f"pulled  {cs_id} (validated; gate before apply)")
+        for cs_id, reason in report.rejected:
+            print(f"rejected {cs_id}: {reason}")
+        for cs_id, reason in report.refused:
+            print(f"REFUSED {cs_id}: {reason}", file=sys.stderr)
+        if not (report.pushed or report.pulled or report.rejected or report.refused):
+            print("sync: nothing to do")
+        return 0 if report.ok else 1
 
     if args.command == "log":
         ws.require()

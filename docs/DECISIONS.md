@@ -118,3 +118,25 @@ Every deviation from `design-doc.md` normative semantics is recorded here with e
 - **What:** The hook-denial test and the full happy path (both HARD gates) are covered by deterministic tests at m3 (`tests/test_hook.py`, conformance c02, `make demo`). The ≥5 headless `claude -p` trigger-reliability runs (soft floor 70%) are scheduled with `experiments/trigger/` (m5–m7), where run logging exists to report the rate.
 - **Why:** GOAL B1 marks the trigger rate as a REPORTED metric, not a gate; the experiments framework (E1) that must log those runs lands after the scenarios.
 - **Evidence:** this entry; `docs/STATUS.md` m3 notes.
+
+## m4
+
+### DEC-023: registry sync semantics — pull enters PROPOSED; refusal vs rejection
+- **What:** `sync` pushes locally PROMOTED ChangeSets (signing them at push) and pulls unknown ones. A pulled ChangeSet is signature-verified FIRST (I6), then runs the normal PROPOSED→VALIDATED path against LOCAL policy; gate/apply are separate explicit steps. Exit code: 1 only for security refusals (unsigned/tampered/untrusted); policy-validation rejections of pulled changes are normal outcomes (journaled `rejected`, exit 0).
+- **Why:** "Distribution never bypasses gates" (design §5.5); a peer's policy legitimately differs, so an I4 rejection in B is the system working, not a sync failure. Security refusals are attacks and must be loud.
+- **Evidence:** `registry.sync`; `tests/test_registry.py`; scenario UC3 (policy-violating pulled change refused in B, journaled).
+
+### DEC-024: registry cache pins core.autocrlf=false
+- **What:** The registry clone under `.loop/cache/registry` is created with `core.autocrlf=false, core.eol=lf`.
+- **Why:** Detached signatures cover exact bytes. A host git config that rewrites line endings on checkout would break every digest cross-platform (observed on Windows during development).
+- **Evidence:** `registry._ensure_cache`; `tests/test_registry.py::test_push_and_pull_with_local_gating` passes on Windows.
+
+### DEC-025: signing config lives in registry.yaml; keys never travel
+- **What:** `registry.yaml` gained an optional `signing: {key_file, signer}` block (schema updated + golden cases). Private keys live under `.loop/keys/` and are never copied by sync; only `*.pub` files are distributed to peers' `pubkeys_dir`.
+- **Why:** Team-lite (F4) needs a place to say "sign pushes with this key". The registry schema is the natural carrier; minisign-style raw-hex ed25519 keys keep it dependency-light (`cryptography` runtime only).
+- **Evidence:** `spec/schemas/registry.schema.json`; `signing.py`; golden `registry/valid/git-remote.yaml`, `invalid/bad-signing-no-signer.yaml`.
+
+### DEC-026: dogfood policy scope for this repository
+- **What:** This repo's own `.loop/policy.yaml` governs: context = AGENTS.md, CLAUDE.md (L2); capability = `skill/**` (L1, Minhal-only approval); architecture = `agents.yaml` (L1). `docs/**`, source, tests, spec are NOT loop-managed.
+- **Why:** The managed surface is what steers agents (design principle 3). STATUS/DECISIONS are project logs the goal REQUIRES updating continuously; making them loop-managed would gate documentation behind review and stall the milestones. The skill package is the repo's real capability layer.
+- **Evidence:** `.loop/policy.yaml`; `agentloop verify .` green in `make verify` and CI.

@@ -1,0 +1,9 @@
+Initialized .loop/ in E:\Loop\scenarios\uc2\out\work (AGENTS.md managed block written)
+Next steps:
+  1. Review .loop/policy.yaml (context L2, capability L1, architecture L1).
+  2. Propose a change:  agentloop propose --layer context --target AGENTS.md \
+       --patch fix.patch --rationale 'why'
+  3. Attach evidence:   agentloop evidence <cs-id> --record ev.json --artifact log
+  4. Gate and apply:    agentloop gate <cs-id> && agentloop apply <cs-id>
+  5. Claude Code users: agentloop install-skill
+  6. Verify anytime:    agentloop verify .

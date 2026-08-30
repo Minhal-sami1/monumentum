@@ -1,0 +1,2 @@
+pulled  cs-20260831-uc3a (validated; gate before apply)
+rejected cs-20260831-uc3b: target docs/setup.md matches no targets_allow pattern (I4)

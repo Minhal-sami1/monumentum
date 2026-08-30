@@ -7,3 +7,6 @@ remote:
 verify:
   require_signatures: true
   pubkeys_dir: pubkeys/
+signing:
+  key_file: keys/producer-a.key
+  signer: producer-a

@@ -116,7 +116,7 @@ class Workspace:
 
     def write_state(self, state: dict) -> None:
         self.state_path.write_text(
-            json.dumps(state, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+            json.dumps(state, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n"
         )
 
     def update_journal_head(self, state: dict | None = None) -> dict:
