@@ -8,5 +8,6 @@ dist/
 .ruff_cache/
 *.log
 scenarios/*/out/work/
+adversarial/out/
 .loop/cache/
 paper/build/

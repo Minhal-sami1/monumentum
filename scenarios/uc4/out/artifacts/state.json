@@ -43,7 +43,7 @@
     "AGENTS.md": "sha256:f4572db66fc289d109150c310d5446f31065cd00c7af6c462bed20eabb54dc16",
     "tools/textutil.py": "sha256:a4576199c03948eb6adc40ab0440220701124cfd1f54e81f411eca091d6ec245"
   },
-  "journal_head": "sha256:5da9763cfab0316fe1972e5f71357485195637985535e083f0a6c9d8fa21a082",
+  "journal_head": "sha256:d312cbbc254738568f8963d7cb76e43a8ad8cea59399733ee6b0bd24ebdceb71",
   "managed_patterns": [
     ".loop/**",
     "AGENTS.md",

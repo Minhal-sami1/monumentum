@@ -10,7 +10,7 @@ endif
 PY ?= python
 PYTHON := $(BIN)/python
 
-.PHONY: setup check-schemas conformance demo scenarios verify-self test lint verify
+.PHONY: setup check-schemas conformance demo scenarios adversarial verify-self test lint verify
 
 setup:
 	$(PY) -m venv $(VENV)
@@ -29,6 +29,9 @@ demo:
 scenarios:
 	bash scenarios/run_all.sh "$(PYTHON)"
 
+adversarial:
+	bash adversarial/run_all.sh "$(PYTHON)"
+
 verify-self:
 	$(PYTHON) -m agentloop.cli verify .
 
@@ -38,5 +41,5 @@ test:
 lint:
 	$(PYTHON) -m ruff check src tests conformance sdk demo skill
 
-# verify grows with the milestones. m4: + scenarios + the repo's own journal.
-verify: check-schemas conformance test demo scenarios verify-self lint
+# verify grows with the milestones. m6: + adversarial.
+verify: check-schemas conformance test demo scenarios adversarial verify-self lint

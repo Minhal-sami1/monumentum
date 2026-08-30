@@ -77,3 +77,22 @@ Built:
 Verified locally: `make verify` (schemas + conformance + tests + demo + scenarios 5/5 + verify-self + lint) exit 0.
 
 Next: m6 — adversarial suite (T1, T2, T4, T5, T6 + control).
+
+## m6 — Adversarial suite (2026-08-31)
+
+**Exit gate:** `make adversarial` — 7/7 pass, each attack passing BY being stopped/detected.
+
+Built (each drives the real binary; nothing mocked):
+- **T1** self-graded evidence at L2 → refused by I3, journaled.
+- **T2** injected instruction → proposal to a non-allowlisted memory path → refused by I4, attempt journaled.
+- **T3-lite** supply-chain tamper of a registry ChangeSet → refused on pull by ed25519 verification (Team-lite; full Sigstore is Governed, unimplemented).
+- **T4** loop self-capture → (a) `.loop/policy.yaml` target refused (I1, schema layer, DEC-030); (b) hand-edited journal → `verify` fails (CI backstop).
+- **T5** hostile-content capability backdoor → lands in L1 queue, never auto-applies, apply-without-approval refused, diff+rationale reviewable on disk.
+- **T6** journal tampering → `verify` fails at the break point (I2).
+- **control** legitimate well-evidenced change → passes the same gates and APPLIES (gates are not theater).
+
+Run logs: `experiments/adversarial/logs/`. `adversarial/README.md` documents the threat→mitigation map.
+
+Verified locally: `make verify` (schemas + conformance + tests + demo + scenarios 5/5 + adversarial 7/7 + verify-self + lint) exit 0.
+
+Next: m7 — experiments framework, metrics, paper draft, publication hygiene.

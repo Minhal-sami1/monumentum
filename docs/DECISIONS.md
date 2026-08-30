@@ -157,3 +157,15 @@ Every deviation from `design-doc.md` normative semantics is recorded here with e
 - **What:** The UC1 fixture is a real npm package whose postinstall (`node install.js`) exits 1 under npm semantics and 0 under pnpm semantics, driven headless via `node install.js npm|pnpm` instead of running real package installs.
 - **Why:** Real `npm install`/`pnpm install` would need network access and a pnpm toolchain on every runner; GOAL §3 grants fixture-content freedom while §7 requires the real CLI, which is fully exercised. The commands in the evidence transcript are real commands with real exit codes.
 - **Evidence:** `scenarios/uc1/fixture/install.js`; transcript artifacts under `scenarios/uc1/out/artifacts/`.
+
+## m6
+
+### DEC-030: T4 policy self-edit is caught at the schema layer (still I1)
+- **What:** T4a proposes a ChangeSet targeting `.loop/policy.yaml`. It is refused with a schema-level message (the `target_path` pattern rejects `.loop/`, DEC-003), before the executor's protected-list I1 message runs.
+- **Why:** Defense in depth: I1 is enforced at BOTH the schema and the executor. The schema fires first, so the visible reason cites the `.loop` pattern rather than the literal string "I1". The security property — the loop cannot edit its own policy — holds. The test accepts either attribution.
+- **Evidence:** `adversarial/t4.sh`; `docs/DECISIONS.md` DEC-003.
+
+### DEC-031: adversarial tests assert on real file-plane + journal outcomes, never on mocks
+- **What:** Every adversarial test drives the real CLI as a subprocess, then asserts on the working tree (poisoned/backdoor file absent), the journal event sequence, and CLI exit codes. The control applies a real change.
+- **Why:** GOAL §3 forbidden move 3 (no mocking/import-around in adversarial tests) and §10 (no assertions on mocked core behavior).
+- **Evidence:** `adversarial/*.sh`; `adversarial/lib.sh` helpers; `experiments/adversarial/logs/`.
