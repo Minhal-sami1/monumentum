@@ -1,0 +1,16 @@
+{
+  "id": "ev-001",
+  "kind": "eval",
+  "grader": "independent",
+  "format": "command-transcript",
+  "summary": {
+    "metric": "task_pass",
+    "before": 0,
+    "after": 1,
+    "n": 1
+  },
+  "artifact": {
+    "path": "transcript.json",
+    "sha256": "sha256:d3b60cfe8310e5a518ec0f67de3df075b4381cd88d835da157b5a35bf5038934"
+  }
+}

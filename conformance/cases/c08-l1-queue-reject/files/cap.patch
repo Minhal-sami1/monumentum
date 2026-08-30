@@ -1,0 +1,5 @@
+--- a/tools/helper.py
++++ b/tools/helper.py
+@@ -1 +1 @@
+-print('v1')
++print('v2')

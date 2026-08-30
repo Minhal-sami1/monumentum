@@ -1,0 +1,14 @@
+description: editing a past journal line breaks verification at the exact entry (I2, A6, T6)
+final_verify: false
+steps:
+  - run: [init]
+  - run: [propose, --layer, context, --target, AGENTS.md, --patch, fix.patch,
+          --rationale, "Repo uses pnpm.", --producer, claude-code, --id, cs-20260830-c011]
+  - run: [evidence, cs-20260830-c011, --record, ev-transcript.json, --artifact, transcript.json]
+  - run: [gate, cs-20260830-c011]
+  - run: [apply, cs-20260830-c011]
+  - run: [verify]
+  - edit_file: { path: ".loop/journal/*.ndjson", find: "producer/claude-code",
+                 replace: "producer/claude-evil" }
+  - run: [verify]
+    expect_exit: 1

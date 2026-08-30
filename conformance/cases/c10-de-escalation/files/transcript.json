@@ -1,0 +1,7 @@
+{
+  "check_cmd": "python -c \"import sys; sys.exit(0 if 'pnpm' in open('AGENTS.md', encoding='utf-8').read() else 1)\"",
+  "runs": [
+    { "phase": "before", "exit_code": 1 },
+    { "phase": "after", "exit_code": 0 }
+  ]
+}

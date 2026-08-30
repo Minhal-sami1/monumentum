@@ -1,0 +1,8 @@
+description: target outside targets_allow fails validation (invariant I4)
+steps:
+  - run: [init]
+  - run: [propose, --layer, context, --target, src/main.py, --patch, bad.patch,
+          --rationale, "sneak a code change through the context class",
+          --producer, claude-code, --id, cs-20260830-c005]
+    expect_exit: 1
+expected_events: [genesis, proposed, rejected]

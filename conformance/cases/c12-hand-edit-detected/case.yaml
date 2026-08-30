@@ -1,0 +1,9 @@
+description: a managed file edited outside the loop fails verify (T4, universal backstop)
+final_verify: false
+steps:
+  - run: [init]
+  - run: [verify]
+  - edit_file: { path: AGENTS.md, find: "Use npm install", replace: "Use hacked install" }
+  - run: [verify]
+    expect_exit: 1
+expected_events: [genesis]

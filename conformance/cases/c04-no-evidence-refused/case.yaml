@@ -1,0 +1,9 @@
+description: no evidence at all fails the evidence_required gate (design D4)
+steps:
+  - run: [init]
+  - run: [propose, --layer, context, --target, AGENTS.md, --patch, fix.patch,
+          --rationale, "Repo uses pnpm.", --producer, claude-code, --id, cs-20260830-c004]
+  - run: [gate, cs-20260830-c004]
+    expect_exit: 1
+  - expect_file: { path: AGENTS.md, not_contains: pnpm }
+expected_events: [genesis, proposed, rejected]

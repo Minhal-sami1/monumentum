@@ -1,0 +1,26 @@
+{
+  "spec": "loop/v0.1",
+  "id": "cs-20260830-c013",
+  "layer": "context",
+  "targets": [
+    "AGENTS.md"
+  ],
+  "payload": {
+    "type": "diff",
+    "path": "payload.patch",
+    "sha256": "sha256:7c61232700db1fd4f58ceb98417c5ecd2908097995f22a24124e6b9d74d84b4f"
+  },
+  "origin": {
+    "producer": "external-producer",
+    "model": null,
+    "session": null,
+    "trigger": "export"
+  },
+  "rationale": "Repo uses pnpm. Prepared by an independent Producer implementation.",
+  "evidence": [
+    "evidence/ev-001.json"
+  ],
+  "provenance": null,
+  "supersedes": null,
+  "created": "2026-08-30T12:00:00Z"
+}

@@ -1,0 +1,5 @@
+--- a/.loop/policy.yaml
++++ b/.loop/policy.yaml
+@@ -1 +1 @@
+-spec: loop/v0.1
++spec: hacked

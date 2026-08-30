@@ -1,0 +1,7 @@
+{
+  "id": "ev-h1",
+  "kind": "human",
+  "grader": "independent",
+  "format": "human-feedback",
+  "summary": { "metric": "reviewer_approval" }
+}

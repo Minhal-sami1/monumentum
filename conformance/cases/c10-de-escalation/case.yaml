@@ -1,0 +1,18 @@
+description: two rollbacks in the policy window drop the class one level (A5)
+steps:
+  - run: [init]
+  - run: [propose, --layer, context, --target, AGENTS.md, --patch, fix.patch,
+          --rationale, "Repo uses pnpm.", --producer, claude-code, --id, cs-20260830-c10a]
+  - run: [evidence, cs-20260830-c10a, --record, ev-transcript.json, --artifact, transcript.json]
+  - run: [gate, cs-20260830-c10a]
+  - run: [apply, cs-20260830-c10a]
+  - run: [rollback, cs-20260830-c10a, --actor, human/operator]
+  - run: [propose, --layer, context, --target, AGENTS.md, --patch, fix.patch,
+          --rationale, "Repo uses pnpm.", --producer, claude-code, --id, cs-20260830-c10b]
+  - run: [evidence, cs-20260830-c10b, --record, ev-transcript.json, --artifact, transcript.json]
+  - run: [gate, cs-20260830-c10b]
+  - run: [apply, cs-20260830-c10b]
+  - run: [rollback, cs-20260830-c10b, --actor, human/operator]
+  - expect_file: { path: .loop/state.json, contains: '"context": "L1"' }
+expected_events: [genesis, proposed, gated, applied, rolled_back,
+                  proposed, gated, applied, rolled_back, policy_changed]

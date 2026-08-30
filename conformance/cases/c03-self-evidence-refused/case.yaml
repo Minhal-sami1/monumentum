@@ -1,0 +1,10 @@
+description: only self-graded evidence at L2 is refused (invariant I3, threat T1)
+steps:
+  - run: [init]
+  - run: [propose, --layer, context, --target, AGENTS.md, --patch, fix.patch,
+          --rationale, "Repo uses pnpm.", --producer, claude-code, --id, cs-20260830-c003]
+  - run: [evidence, cs-20260830-c003, --record, ev-self.json, --artifact, transcript.json]
+  - run: [gate, cs-20260830-c003]
+    expect_exit: 1
+  - expect_file: { path: AGENTS.md, not_contains: pnpm }
+expected_events: [genesis, proposed, rejected]

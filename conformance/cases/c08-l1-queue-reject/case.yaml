@@ -1,0 +1,12 @@
+description: reviewer rejects a queued capability change; it never applies (A4)
+steps:
+  - run: [init]
+  - run: [propose, --layer, capability, --target, tools/helper.py, --patch, cap.patch,
+          --rationale, "helper uses a removed flag", --producer, claude-code,
+          --id, cs-20260830-c008]
+  - run: [evidence, cs-20260830-c008, --record, ev-human.json]
+  - run: [gate, cs-20260830-c008]
+    expect_exit: 2
+  - run: [reject, cs-20260830-c008, --actor, reviewer/rev1, --reason, "not convinced"]
+  - expect_file: { path: tools/helper.py, equals: "print('v1')\n" }
+expected_events: [genesis, proposed, gated, rejected]

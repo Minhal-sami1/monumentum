@@ -1,0 +1,13 @@
+description: capability change queues at L1; a distinct reviewer approves; then it applies (A4)
+steps:
+  - run: [init]
+  - run: [propose, --layer, capability, --target, tools/helper.py, --patch, cap.patch,
+          --rationale, "helper uses a removed flag", --producer, claude-code,
+          --id, cs-20260830-c007]
+  - run: [evidence, cs-20260830-c007, --record, ev-human.json]
+  - run: [gate, cs-20260830-c007]
+    expect_exit: 2
+  - expect_file: { path: tools/helper.py, equals: "print('v1')\n" }
+  - run: [approve, cs-20260830-c007, --actor, reviewer/rev1]
+  - expect_file: { path: tools/helper.py, equals: "print('v2')\n" }
+expected_events: [genesis, proposed, gated, approved, applied]

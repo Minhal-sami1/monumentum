@@ -1,0 +1,11 @@
+description: context change with independent transcript evidence auto-applies at L2 (A3)
+steps:
+  - run: [init]
+  - run: [propose, --layer, context, --target, AGENTS.md, --patch, fix.patch,
+          --rationale, "Repo uses pnpm. npm install fails on postinstall hooks.",
+          --producer, claude-code, --id, cs-20260830-c002]
+  - run: [evidence, cs-20260830-c002, --record, ev-transcript.json, --artifact, transcript.json]
+  - run: [gate, cs-20260830-c002]
+  - run: [apply, cs-20260830-c002]
+  - expect_file: { path: AGENTS.md, contains: pnpm }
+expected_events: [genesis, proposed, gated, applied]
