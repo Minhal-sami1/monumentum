@@ -72,7 +72,10 @@ the matching file under `experiments/*/logs/`.
 
 The deterministic experiments (scenarios, adversarial, overhead, evidence,
 interop) need only Python 3.11+, git, and Node (for the UC1 fixture's
-postinstall script). Timing values naturally vary between machines; the
+postinstall script). `make paper` additionally needs a LaTeX engine
+(Tectonic, `latexmk`, or `pdflatex`); without one it stops with
+`no LaTeX engine found` rather than producing a stale PDF. `make verify`
+never builds the paper, so the gate runs on a machine with no TeX. Timing values naturally vary between machines; the
 qualitative claims (evidence rate, detection outcomes, queue behaviour) do
 not. The paper reports timings as measured means with their run identifiers,
 never as machine-independent constants.

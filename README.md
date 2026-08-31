@@ -54,6 +54,11 @@ make verify    # schemas, conformance, tests, demo, scenarios,
 Requires Python 3.11+, git, and Node (for one scenario fixture). On Windows,
 pass an explicit interpreter if `python` is older: `make setup PY="py -3.11"`.
 
+`make paper` additionally needs a LaTeX engine — [Tectonic](https://tectonic-typesetting.github.io/)
+(preferred, single self-contained binary), or `latexmk`/`pdflatex`. It is
+deliberately **not** part of `make verify`, so the gate stays runnable
+without a TeX toolchain.
+
 ## Licenses
 
 Code: **Apache-2.0** ([LICENSE](LICENSE)). Specification text:

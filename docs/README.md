@@ -63,6 +63,11 @@ make paper            # build the PDF from generated tables
 On Windows pass an explicit interpreter if `python` is older than 3.11:
 `make setup PY="py -3.11"`.
 
+Requirements: Python 3.11+, git, and Node (one scenario fixture runs a real
+`node` script). `make paper` additionally needs a LaTeX engine — Tectonic
+(preferred), `latexmk`, or `pdflatex`; it is not part of `make verify`, so
+the gate runs without a TeX toolchain.
+
 `make reproduce REPRODUCE_ARGS="--with-trigger"` additionally runs the
 live-model skill-trigger experiment (needs the `claude` CLI and API access;
 excluded from `make verify`, which must run offline in CI).
