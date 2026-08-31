@@ -15,8 +15,3 @@ This workspace is governed by the Loop standard. Rules for every agent:
    and architecture changes queue for human review.
 5. Never touch `.loop/**`. Verify integrity anytime: `agentloop verify .`
 <!-- agentloop:managed:end -->
-
-## Repository conventions
-
-All files in this repository use LF line endings. Convert any file you
-create to LF before committing it.

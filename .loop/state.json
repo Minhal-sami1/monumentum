@@ -1,5 +1,13 @@
 {
-  "changesets": {},
+  "changesets": {
+    "cs-20260831-dog1": {
+      "layer": "context",
+      "status": "GATE_APPROVED",
+      "targets": [
+        "AGENTS.md"
+      ]
+    }
+  },
   "effective_levels": {
     "architecture": "L1",
     "capability": "L1",
@@ -11,7 +19,7 @@
     "skill/hooks/pretooluse_guard.py": "sha256:b59b2a675d6b87847328998fabf1f520bf6eb1c25d194183bcf039276a344744",
     "skill/hooks/stop_reminder.py": "sha256:2b3b091bf9f08bba31bb77879c265d83fc96030fda44e060eb2c98df381b4217"
   },
-  "journal_head": "sha256:b84f410352ff6209539d22ab800689b37ad1eee7e4c0ab32a872ae9dd37fecfd",
+  "journal_head": "sha256:47e916176ca75f3d0d385cc329797a8987bf03508cb47b82a5dfbf2e8a92f579",
   "managed_patterns": [
     ".loop/**",
     "AGENTS.md",

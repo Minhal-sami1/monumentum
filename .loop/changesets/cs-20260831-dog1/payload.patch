@@ -1,0 +1,11 @@
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -15,3 +15,8 @@
+    and architecture changes queue for human review.
+ 5. Never touch `.loop/**`. Verify integrity anytime: `agentloop verify .`
+ <!-- agentloop:managed:end -->
++
++## Repository conventions
++
++All files in this repository use LF line endings. Convert any file you
++create to LF before committing it.

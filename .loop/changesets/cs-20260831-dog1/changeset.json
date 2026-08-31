@@ -1,0 +1,26 @@
+{
+  "spec": "loop/v0.1",
+  "id": "cs-20260831-dog1",
+  "layer": "context",
+  "targets": [
+    "AGENTS.md"
+  ],
+  "payload": {
+    "type": "diff",
+    "path": "payload.patch",
+    "sha256": "sha256:261ef8ec15b1c6158a442c48ee83fb2fb3fb8deb8232d0e06d9d09e7094d8563"
+  },
+  "origin": {
+    "producer": "claude-code",
+    "model": null,
+    "session": null,
+    "trigger": "reflection"
+  },
+  "rationale": "Signed ChangeSet digests cover exact bytes; CRLF checkouts broke registry signature verification on Windows during m4. Document the LF convention so future sessions do not reintroduce it.",
+  "evidence": [
+    "evidence/ev-001.json"
+  ],
+  "provenance": null,
+  "supersedes": null,
+  "created": "2026-08-31T00:04:17Z"
+}
