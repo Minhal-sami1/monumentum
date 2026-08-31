@@ -1,0 +1,74 @@
+{
+  "generated": "2026-08-30T23:36:39.370740+00:00",
+  "sources": {},
+  "interop": {
+    "n": 1,
+    "mean_seconds": 2.453,
+    "min_seconds": 2.453,
+    "max_seconds": 2.453,
+    "latest_run_id": "demo-20260830-233514-b269c1"
+  },
+  "scenarios": {
+    "scenario-uc1": {
+      "n": 1,
+      "latest_run_id": "uc1-20260830-233517-1878"
+    },
+    "scenario-uc2": {
+      "n": 1,
+      "latest_run_id": "uc2-20260830-233521-1910"
+    },
+    "scenario-uc3": {
+      "n": 1,
+      "latest_run_id": "uc3-20260830-233527-1946"
+    },
+    "scenario-uc4": {
+      "n": 1,
+      "latest_run_id": "uc4-20260830-233540-2021"
+    },
+    "scenario-uc5": {
+      "n": 1,
+      "latest_run_id": "uc5-20260830-233550-2066"
+    }
+  },
+  "fleet_propagation": {
+    "n": 1,
+    "mean_seconds": 10.56,
+    "latest_run_id": "uc3-20260830-233527-1946"
+  },
+  "adversarial": {
+    "tests": {
+      "control": "legitimate-change-applied",
+      "t1": "refused-by-I3",
+      "t2": "refused-by-I4-journaled",
+      "t3-lite": "signature-refused",
+      "t4": "self-capture-blocked",
+      "t5": "queued-for-review-not-applied",
+      "t6": "tamper-detected"
+    },
+    "threat_detections": "5/5",
+    "control_passed": true,
+    "n_tests": 7
+  },
+  "overhead": {
+    "n_tasks": 5,
+    "mean_added_seconds": 1.369,
+    "max_added_seconds": 1.422,
+    "latest_run_id": "overhead-20260830-233623",
+    "added_context_tokens_approx": 1080,
+    "added_context_chars": 4319
+  },
+  "evidence": {
+    "loop_rate": 1.0,
+    "baseline_rate": 0.0,
+    "loop_changes": 5,
+    "baseline_changes": 5,
+    "latest_run_id": "evidence-20260830-233632"
+  },
+  "trigger": {
+    "n": 0,
+    "n_valid": 0,
+    "rate": null,
+    "soft_floor": 0.7,
+    "reason": "not run"
+  }
+}

@@ -13,7 +13,18 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Configure git identity (scenarios create commits)
+        run: |
+          git config --global user.name "ci"
+          git config --global user.email "ci@example.invalid"
+          git config --global init.defaultBranch main
       - name: Setup
         run: make setup
+      # The full gate: schema checks, unit tests, conformance, the demo, all
+      # five scenarios, the adversarial suite, the quickstart doc-test, the
+      # repo's own journal (dogfood), and lint.
       - name: Verify
         run: make verify
