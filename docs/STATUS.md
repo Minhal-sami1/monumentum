@@ -175,6 +175,11 @@ The honest reading of the earlier report: "fresh-clone gate green" was true on t
 
 There is no git remote, so `.github/workflows/ci.yml` has never run. Its presence means the gate is *wired*, not that it has passed. Had it run on the Linux runner it configures, it would have caught the defect above — that it did not is a direct consequence of never having been executed. DoD item 1's "CI green" therefore remains **unverified**, and becomes verifiable only on the first push (a human step, below).
 
+Two things to watch on that first run, neither testable from here:
+
+- **Action versions.** `actions/setup-python@v5` runs on the Node 20 action runtime, which is being deprecated; the current major is v7. It is left pinned at v5 rather than bumped blind, because an untested version change is exactly the kind of unverified edit that produced DEC-041. Bump it if the first run warns.
+- **Platform coverage.** Linux is now covered by CI *and* by a documented container run; Windows by developer runs. A `windows-latest` matrix job is deliberately deferred: the tools are all present on that image, but its `make` is MinGW `mingw32-make` (not POSIX make, and it may run recipes through `cmd.exe`) and the venv layout differs (`.venv/Scripts` vs `.venv/bin`). Both need validating on a real runner before the job is committed; shipping a red check is worse than an honest gap. The reasoning is recorded in the workflow file itself.
+
 ## Metrics (all generated; run IDs in `experiments/results/metrics.json`)
 
 | Metric | Value | Run |

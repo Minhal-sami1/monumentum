@@ -5,6 +5,19 @@ on:
     branches: [main]
   pull_request:
 
+# Platform coverage note (see DEC-041): a Linux-only blind spot shipped a
+# defect that broke `make verify` on Linux while passing on Windows. Linux
+# is now covered here; Windows is covered by developer runs and by a
+# python:3.11-slim container check documented in docs/STATUS.md.
+#
+# A `windows-latest` matrix job is deliberately NOT added yet. It is not a
+# question of missing tools -- `make`, `bash`, and Node are all present on
+# that image -- but of two things that need validating on a real runner
+# first: the runner's `make` is MinGW `mingw32-make`, which is not POSIX
+# make and may run recipes through cmd.exe, and the venv layout differs
+# (`.venv/Scripts` vs `.venv/bin`). Adding an unvalidated job would put a
+# red check on the default branch, which is worse than an honest gap.
+
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -16,15 +29,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Configure git identity (scenarios create commits)
+      - name: Configure git identity (scenarios create real commits)
         run: |
           git config --global user.name "ci"
           git config --global user.email "ci@example.invalid"
           git config --global init.defaultBranch main
       - name: Setup
         run: make setup
-      # The full gate: schema checks, unit tests, conformance, the demo, all
-      # five scenarios, the adversarial suite, the quickstart doc-test, the
-      # repo's own journal (dogfood), and lint.
+      # The full offline gate: schema checks, unit tests, conformance, the
+      # interop demo, all five scenarios, the adversarial suite, the
+      # quickstart doc-test, the repo's own journal (dogfood), and lint.
+      # The paper build and the live-model trigger experiment are excluded
+      # on purpose: one needs a TeX toolchain, the other needs API access.
       - name: Verify
         run: make verify
