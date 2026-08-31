@@ -109,4 +109,71 @@ Built:
 - **Docs:** QUICKSTART (doc-tested by `make quickstart-test`, now part of `make verify`), REPRODUCE, rewritten README.
 - **Dogfood, real rollback (DoD 5):** a genuine lesson was proposed, applied, found factually wrong when checked against the repo, rolled back by `human/minhal`, and replaced by a corrected version — all through this repo's own loop. See `agentloop log`.
 
-Fixed while finishing: `supersedes` was unreachable from the CLI/SDK (DEC-038); the SDK test used a conditional skip (DEC-039).
+Fixed while finishing: `supersedes` was unreachable from the CLI/SDK (DEC-038); the SDK test used a conditional skip (DEC-039); the metrics table double-escaped `%`, which silently swallowed the percentage in the built PDF.
+
+---
+
+# Final report
+
+## What was built
+
+An open standard for governed agent self-improvement, with a working implementation and an executed evaluation. The spec (v0.1, 14 sections, RFC 2119) defines five objects, a six-state lifecycle, four trust levels, and six invariants over a plain-file representation, with five normative JSON Schemas. The reference executor implements every verb; a conformance suite lets any executor prove conformance through a subprocess contract, with required-failure cases and a broken stub that must fail. Two adoption doors — a Claude Code skill with hook enforcement, and a Python SDK — produce identical files. Team-lite adds a git-remote registry with detached ed25519 signing. Five battle-test scenarios and seven adversarial tests run against the real binary. The paper regenerates every number from logs.
+
+## Gate-by-gate self-report
+
+Run on 2026-08-31 from a clean tree, and independently from a fresh `git clone` + `make setup`.
+
+| Gate | Command | Exit |
+|---|---|---|
+| m1 | `make check-schemas` | 0 |
+| m2 | `make conformance` | 0 |
+| m3 | `make demo` | 0 |
+| m4 | `make scenarios` + `agentloop verify .` | 0 |
+| m5 | `make scenarios` (all five) | 0 |
+| m6 | `make adversarial` | 0 |
+| m7 | `make reproduce` | 0 |
+| m7 | `make paper` | 0 |
+| unit tests | `make test` | 0 |
+| quickstart doc-test | `make quickstart-test` | 0 |
+| dogfood | `make verify-self` | 0 |
+| lint | `make lint` | 0 |
+| **final** | **fresh clone → `make setup` → `make verify`** | **0** |
+
+Supporting counts: 132 tests pass, 0 skipped, 0 xfail. Golden corpus: 19 valid files validate, 24 required-failure files fail correctly. Conformance: 15/15 cases pass against the reference CLI; the broken executor stub fails the suite, as it must.
+
+## Metrics (all generated; run IDs in `experiments/results/metrics.json`)
+
+| Metric | Value | Run |
+|---|---|---|
+| Lesson to second runtime (mean, n=4) | 2.34 s | `demo-20260831-002251-7cdfec` |
+| Fleet propagation (mean, n=4) | 10.18 s | `uc3-20260831-002304-876` |
+| Managed changes carrying evidence, with loop | 100% (5/5) | `evidence-20260830-233632` |
+| Managed changes carrying evidence, no-loop baseline | 0% (0/5) | `evidence-20260830-233632` |
+| Loop overhead per change (mean added wall time, 5 tasks) | 1.37 s | `overhead-20260830-233623` |
+| Added context (skill + AGENTS block) | ~1080 tokens | `overhead-20260830-233623` |
+| Adversarial threat detections | 5/5 (+ t3-lite, + control) | `experiments/adversarial/logs/` |
+| Skill trigger (propose) rate | 100% (n=5), floor 70% | `trigger-summary-20260831-000248` |
+
+Loop operations are deterministic code and add zero model tokens; the recurring model cost is the skill body plus the AGENTS.md block.
+
+## DECISIONS summary
+
+39 recorded decisions (DEC-001…039). The ones that change normative behaviour: a `genesis` journal anchor (DEC-001); one hash format everywhere (DEC-002); I1 enforced at the schema layer as well as the executor (DEC-003); closed object roots with an `ext` container (DEC-004); `reproducible_check` runs post-apply with automatic revert (DEC-010); effective trust levels live in executor state so the loop never rewrites its own policy (DEC-009); the journal carries rationale, targets, and ratchet transitions so audit works from the journal alone (DEC-027). The rest record scope calls (Team-lite, Governed unimplemented, escalation accepted but not executed) and engineering findings, each with evidence.
+
+## `[VERIFY]` citation list
+
+**Empty.** All 20 references were verified against live authoritative sources on 2026-08-31; the record is `paper/CITATIONS.md`. Nothing blocks submission on citation grounds.
+
+## Open blockers
+
+None. `BLOCKERS.md` is empty.
+
+## Remaining human steps (Minhal only)
+
+1. **Choose the final protocol name** and run the collision check (design-doc §13 candidates: Ratchet, Lamarck, Cairn). Then rename: the working name `agentloop`, the CLI binary, the `.loop/` directory, and the `loop/v0.1` spec tag.
+2. **Confirm the licences**: Apache-2.0 for code, Community Specification License 1.0 for the spec text. Both files are in place, unmodified from their canonical sources.
+3. **Create the public GitHub repository and push.** Nothing has been pushed; there is no remote configured. CI (`.github/workflows/ci.yml`) runs the full offline gate and is ready to go green on the default branch.
+4. **Verify the pre-announcement open items** from design-doc §14 that touch claims outside this repo (EU Digital Omnibus outcome and enforcement dates; MCP/A2A governance status at announcement time).
+5. **Submit the paper.** `paper/build/loop-paper.pdf` builds from generated tables; decide the venue and add author/affiliation details.
+
+Tags `m1`–`m7` mark the review points. Nothing public has been executed.

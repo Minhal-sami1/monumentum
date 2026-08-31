@@ -47,6 +47,20 @@ reasons (missing CLI, API quota) are recorded with an `error` field and
 excluded from the rate denominator; `metrics.py` then reports the reason
 instead of inventing a number.
 
+### Why the trigger number survives a plain `make reproduce`
+
+Raw logs are regenerated, not committed, so a fresh clone has no trigger
+logs. To keep the committed paper auditable, the summary of the live run
+behind its number is archived at
+`experiments/results/trigger-archive.jsonl`. When a clone has no fresh
+trigger logs, `metrics.py` falls back to that archive and marks the value
+`"from_archive": true`; the metrics table then labels the source
+"archived live-model run". A fresh run always wins over the archive, and
+the archive is never presented as something this clone measured.
+
+To replace it, run the experiment yourself (`--with-trigger`) and copy the
+new summary over the archive.
+
 ## Run identifiers
 
 Every log line carries a `run_id`. Every metric in `metrics.json` names the

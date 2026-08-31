@@ -1,39 +1,39 @@
 {
-  "generated": "2026-08-31T00:18:46.230076+00:00",
+  "generated": "2026-08-31T00:45:29.609269+00:00",
   "sources": {},
   "interop": {
-    "n": 2,
-    "mean_seconds": 2.429,
-    "min_seconds": 2.406,
+    "n": 4,
+    "mean_seconds": 2.336,
+    "min_seconds": 2.219,
     "max_seconds": 2.453,
-    "latest_run_id": "demo-20260830-234322-7c6061"
+    "latest_run_id": "demo-20260831-002251-7cdfec"
   },
   "scenarios": {
     "scenario-uc1": {
-      "n": 2,
-      "latest_run_id": "uc1-20260830-234325-1865"
+      "n": 4,
+      "latest_run_id": "uc1-20260831-002255-808"
     },
     "scenario-uc2": {
-      "n": 2,
-      "latest_run_id": "uc2-20260830-234329-1897"
+      "n": 4,
+      "latest_run_id": "uc2-20260831-002259-840"
     },
     "scenario-uc3": {
-      "n": 2,
-      "latest_run_id": "uc3-20260830-234334-1933"
+      "n": 4,
+      "latest_run_id": "uc3-20260831-002304-876"
     },
     "scenario-uc4": {
-      "n": 2,
-      "latest_run_id": "uc4-20260830-234347-2008"
+      "n": 4,
+      "latest_run_id": "uc4-20260831-002317-951"
     },
     "scenario-uc5": {
-      "n": 2,
-      "latest_run_id": "uc5-20260830-234357-2053"
+      "n": 4,
+      "latest_run_id": "uc5-20260831-002326-996"
     }
   },
   "fleet_propagation": {
-    "n": 2,
-    "mean_seconds": 10.247,
-    "latest_run_id": "uc3-20260830-234334-1933"
+    "n": 4,
+    "mean_seconds": 10.177,
+    "latest_run_id": "uc3-20260831-002304-876"
   },
   "adversarial": {
     "tests": {
@@ -70,6 +70,7 @@
     "triggered": 5,
     "rate": 1.0,
     "soft_floor": 0.7,
-    "latest_run_id": "trigger-summary-20260831-000248"
+    "latest_run_id": "trigger-summary-20260831-000248",
+    "from_archive": true
   }
 }
