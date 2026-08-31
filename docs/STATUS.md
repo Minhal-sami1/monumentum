@@ -111,6 +111,28 @@ Built:
 
 Fixed while finishing: `supersedes` was unreachable from the CLI/SDK (DEC-038); the SDK test used a conditional skip (DEC-039); the metrics table double-escaped `%`, which silently swallowed the percentage in the built PDF.
 
+## Post-review remediation (tag `m7.1`, 2026-08-31)
+
+An independent reviewer re-ran every offline gate from a clean unpack and
+ran their own tampering attacks. The substance held — attacks caught with
+exact diagnoses, numbers demonstrably regenerating from logs, zero
+skipped tests — but they found a blocker: **the documented gate failed on
+stock Linux** (conformance 0/15) because the conformance runner pinned the
+interpreter with `Path.resolve()`, which follows a venv symlink out of the
+virtualenv. Every gate run during development had been on Windows, where
+venvs copy the binary instead.
+
+Reproduced in a clean container, fixed, re-verified on a fresh clone on
+Linux with no overrides, and guarded by a regression test that fails if
+`resolve()` returns. Also fixed: timing means could be a mean of one
+sample (now n≥3 with `n` shown), no root README, an inaccurate
+`agents.yaml` claim, and an undocumented LaTeX requirement for
+`make paper`. Full point-by-point response: `docs/REVIEW-2026-08-31.md`.
+
+The `m7` tag is deliberately **left pointing at the pre-fix commit** rather
+than moved, so the history shows that the tagged state was broken on Linux
+and that an outside reviewer caught it. `m7.1` marks the remediated state.
+
 ---
 
 # Final report
