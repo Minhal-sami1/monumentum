@@ -207,6 +207,12 @@ Every deviation from `design-doc.md` normative semantics is recorded here with e
 - **Why:** The ChangeSet schema has carried `supersedes` since m1, but nothing could set it — found while dogfooding, when a rolled-back lesson was replaced by a corrected one and the replacement could not record what it replaced. A spec field with no way to populate it is a dead field.
 - **Evidence:** `src/agentloop/cli.py`, `src/agentloop/changeset.py`, `sdk/loop/__init__.py`; `tests/test_executor.py::test_propose_records_supersedes`.
 
+### DEC-042: timing experiments repeat by default; every mean carries its n
+- **What:** `make reproduce` runs the interop demo and UC3 `TIMING_REPEATS` times (default 3, `--timing-repeats N`). The metrics table renders timing rows as "mean, n=N", and the paper prints n inline.
+- **Why:** A single `make reproduce` previously produced one sample per timing metric, which the table then labelled "mean" — a mean of one, presented with the authority of an aggregate. An external reviewer hit exactly this (`interopN=1` on their machine). Repetition is cheap here (seconds per run) and the alternative — dropping the word "mean" — would have hidden the small sample rather than fixing it.
+- **Note on interpretation:** these timings are machine-dependent and are re-measured, never transcribed. The same pipeline yields ~2.0 s (Windows) and ~1.0 s (Linux container) for the interop crossing. The claim they support is "seconds, not minutes"; no specific figure is portable, and the paper now says so.
+- **Evidence:** `experiments/reproduce.sh`; `experiments/metrics.py` (`n` in every timing row); paper §Interoperability and §Battle-test scenarios.
+
 ### DEC-041: FINDING — `Path.resolve()` broke the conformance gate on Linux
 - **What:** `conformance/runner.py` pinned a relative interpreter with `Path.resolve()`. `resolve()` follows symlinks; a Linux venv's `bin/python` is a symlink to the system interpreter, so the pinned path became `/usr/local/bin/python3.11` and every conformance case ran outside the virtualenv, failing with `No module named 'agentloop'`. `make verify` exited 2 with conformance 0/15 on stock Linux while passing on Windows, where `venv` copies `python.exe` instead of symlinking.
 - **Why it escaped:** every gate run during development was on Windows. A cross-platform claim was made from single-platform evidence — the same class of error as grading your own homework, which is what this project exists to prevent. It was found by an independent reviewer, not by us.
