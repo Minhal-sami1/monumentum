@@ -293,7 +293,8 @@ script is fixed; the L1 queue is honoured and both the approve and reject
 paths are exercised. \textbf{UC3} (fleet propagation): a lesson in
 workspace A reaches workspace B through a git-remote registry, is gated
 locally, and applies; a policy-violating pulled change is refused in B.
-Mean fleet propagation was \fleetMean~s\runid{\fleetRunID}. \textbf{UC4}
+Mean fleet propagation over \fleetN{} runs was
+\fleetMean~s\runid{\fleetRunID}. \textbf{UC4}
 (regression + ratchet): two plausible ``optimizations'' auto-apply, each
 breaks a real test suite in the observation window, each rolls back to the
 exact prior bytes, and the second rollback de-escalates the class from L2
@@ -306,8 +307,10 @@ tree.
 The launch demo crosses two independent runtimes: the CLI door learns a
 lesson in repo A; the SDK toy agent ingests the ChangeSet, gates it against
 its own policy, and applies it to its own prompt file. Both journals and
-both end states are asserted. Lesson-to-second-runtime time was
-\interopMean~s\runid{\interopRunID}.
+both end states are asserted. Mean lesson-to-second-runtime time over
+\interopN{} runs was \interopMean~s\runid{\interopRunID}. Timings are
+machine-dependent and regenerate on each run; the claim they support is
+that the crossing is seconds, not minutes.
 
 \begin{figure}[t]
 \centering

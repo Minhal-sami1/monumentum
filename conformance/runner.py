@@ -33,6 +33,7 @@ from __future__ import annotations
 import argparse
 import glob as globmod
 import json
+import os
 import shlex
 import shutil
 import subprocess
@@ -47,6 +48,25 @@ HERE = Path(__file__).resolve().parent
 
 class CaseFailure(Exception):
     pass
+
+
+def pin_executable(argv0: str) -> str:
+    """Make a relative interpreter path absolute, without resolving symlinks.
+
+    Cases run from a temp workspace, so a relative interpreter must be
+    pinned. It MUST be pinned lexically: a Linux venv's `bin/python` is a
+    symlink to the system interpreter, so `Path.resolve()` would follow it
+    out of the virtualenv and the executor would lose its installed
+    package. Windows venvs copy the binary, which is why resolving looked
+    harmless there. See DEC-041.
+    """
+    exe = Path(argv0)
+    if exe.is_absolute():
+        return argv0
+    for candidate in (Path.cwd() / exe, Path.cwd() / (str(exe) + ".exe")):
+        if candidate.exists():
+            return os.path.normpath(candidate)
+    return argv0
 
 
 def run_step_cmd(
@@ -163,14 +183,7 @@ def main() -> int:
     args = parser.parse_args()
 
     executor = shlex.split(args.executor)
-    # A relative interpreter path (e.g. .venv/Scripts/python) breaks once the
-    # subprocess runs from a temp workspace; pin it to an absolute path.
-    exe = Path(executor[0])
-    if not exe.is_absolute():
-        for candidate in (Path.cwd() / exe, Path.cwd() / (str(exe) + ".exe")):
-            if candidate.exists():
-                executor[0] = str(candidate.resolve())
-                break
+    executor[0] = pin_executable(executor[0])
     case_dirs = sorted(d for d in args.cases.iterdir() if (d / "case.yaml").is_file())
     if args.only:
         case_dirs = [d for d in case_dirs if d.name == args.only]

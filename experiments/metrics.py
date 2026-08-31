@@ -164,6 +164,7 @@ def write_macros(m: dict) -> None:
         macro("interopRunID", tex_escape(m["interop"]["latest_run_id"]))
     if "fleet_propagation" in m:
         macro("fleetMean", f"{m['fleet_propagation']['mean_seconds']:.2f}")
+        macro("fleetN", m["fleet_propagation"]["n"])
         macro("fleetRunID", tex_escape(m["fleet_propagation"]["latest_run_id"]))
     if "adversarial" in m:
         macro("advDetections", m["adversarial"]["threat_detections"])
@@ -197,11 +198,13 @@ def write_metrics_table(m: dict) -> None:
         rows.append(rf"{tex_escape(metric)} & {tex_escape(str(value))} & "
                     rf"{{\footnotesize {tex_escape(source)}}} \\")
 
+    # Timing rows always carry n: a "mean" of one sample must never look
+    # like a settled number.
     if "interop" in m:
-        row("Lesson to second runtime (mean)",
+        row(f"Lesson to second runtime (mean, n={m['interop']['n']})",
             f"{m['interop']['mean_seconds']:.2f} s", m["interop"]["latest_run_id"])
     if "fleet_propagation" in m:
-        row("Fleet propagation (mean)",
+        row(f"Fleet propagation (mean, n={m['fleet_propagation']['n']})",
             f"{m['fleet_propagation']['mean_seconds']:.2f} s",
             m["fleet_propagation"]["latest_run_id"])
     if "evidence" in m:

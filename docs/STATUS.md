@@ -58,7 +58,7 @@ Built:
 - **C1 registry:** `agentloop sync` over a plain git remote — pushes PROMOTED ChangeSets, pulls peers'; a pulled ChangeSet enters PROPOSED and is validated/gated against LOCAL policy (never bypasses gates). `promote` verb added. Registry cache pins `core.autocrlf=false` (byte-stable digests, DEC-024).
 - **C2 signing:** minisign-style detached ed25519 signatures (`agentloop keygen`, sign-at-push, verify-on-pull against trusted pubkeys). Unsigned, tampered, and untrusted-key ChangeSets are refused and journaled (I6). Full Sigstore is Team-full, not implemented (F4).
 - **Scenarios:** `scenarios/run_all.sh` + UC1 (context lesson, real failing/passing commands, L2 auto-apply, next-session benefit), UC2 (capability repair, L1 queue honored, approve AND reject paths), UC3 (fleet propagation A→registry→B with local gating, propagation time logged ~10s, policy-violating pulled change refused in B). Artifacts under `scenarios/<id>/out/artifacts/`; JSONL run logs under `experiments/scenarios/logs/`.
-- **Dogfood (from this tag):** this repo runs under its own `.loop/` — context = AGENTS.md/CLAUDE.md (L2), capability = `skill/**` (L1, Minhal approves), architecture = agents.yaml (L1). `agentloop verify .` runs in `make verify` and CI. Rules honored: no hand edits to `.loop/**`; all L1 items queue for Minhal.
+- **Dogfood (from this tag):** this repo runs under its own `.loop/` — context = AGENTS.md/CLAUDE.md (L2), capability = `skill/**` (L1, Minhal approves). The architecture class declares `agents.yaml` at L1; this repository has no architecture-layer file today, so that entry reserves the path rather than governing an existing one. `agentloop verify .` runs in `make verify` and CI. Rules honored: no hand edits to `.loop/**`; all L1 items queue for Minhal.
 - SDK gains `sync` + `promote`. Registry schema gains optional `signing` block (golden cases updated).
 
 Verified locally: `make verify` (schemas + conformance 15/15 + 134 tests + demo + scenarios 3/3 + verify-self + lint) exit 0.
@@ -121,40 +121,57 @@ An open standard for governed agent self-improvement, with a working implementat
 
 ## Gate-by-gate self-report
 
-Run on 2026-08-31 from a clean tree, and independently from a fresh `git clone` + `make setup`.
+Run on 2026-08-31 from a clean tree, from a fresh `git clone` + `make setup`, and — after the portability fix below — inside a clean `python:3.11-slim` Linux container with no overrides.
 
-| Gate | Command | Exit |
-|---|---|---|
-| m1 | `make check-schemas` | 0 |
-| m2 | `make conformance` | 0 |
-| m3 | `make demo` | 0 |
-| m4 | `make scenarios` + `agentloop verify .` | 0 |
-| m5 | `make scenarios` (all five) | 0 |
-| m6 | `make adversarial` | 0 |
-| m7 | `make reproduce` | 0 |
-| m7 | `make paper` | 0 |
-| unit tests | `make test` | 0 |
-| quickstart doc-test | `make quickstart-test` | 0 |
-| dogfood | `make verify-self` | 0 |
-| lint | `make lint` | 0 |
-| **final** | **fresh clone → `make setup` → `make verify`** | **0** |
+| Gate | Command | Exit (Windows) | Exit (Linux container) |
+|---|---|---|---|
+| m1 | `make check-schemas` | 0 | 0 |
+| m2 | `make conformance` | 0 | 0 |
+| m3 | `make demo` | 0 | 0 |
+| m4 | `make scenarios` + `agentloop verify .` | 0 | 0 |
+| m5 | `make scenarios` (all five) | 0 | 0 |
+| m6 | `make adversarial` | 0 | 0 |
+| m7 | `make reproduce` | 0 | 0 |
+| m7 | `make paper` | 0 | 0 |
+| unit tests | `make test` | 0 | 0 |
+| quickstart doc-test | `make quickstart-test` | 0 | 0 |
+| dogfood | `make verify-self` | 0 | 0 |
+| lint | `make lint` | 0 | 0 |
+| **final** | **fresh clone → `make setup` → `make verify`** | **0** | **0** |
 
 Supporting counts: 132 tests pass, 0 skipped, 0 xfail. Golden corpus: 19 valid files validate, 24 required-failure files fail correctly. Conformance: 15/15 cases pass against the reference CLI; the broken executor stub fails the suite, as it must.
+
+### Correction: this gate was previously reported green on Windows only
+
+An independent reviewer ran the documented gate on stock Linux and it **failed**: `make verify` exited 2 with conformance 0/15. Cause: `conformance/runner.py` pinned the interpreter with `Path.resolve()`, which follows symlinks. On Linux a venv's `bin/python` is a symlink to the system interpreter, so resolving it dropped the virtualenv and every conformance case died with `No module named 'agentloop'`. On Windows the venv *copies* `python.exe`, so the bug was invisible — which is exactly how it escaped.
+
+Reproduced in a clean container, fixed (`resolve()` → lexical `normpath`, preserving the symlink name), and re-verified: the full documented gate now exits 0 on Linux with no overrides. Recorded as DEC-041.
+
+The honest reading of the earlier report: "fresh-clone gate green" was true on the platform it was tested on and false on the most common target. Cross-platform claims now require a cross-platform run.
+
+### CI has never executed
+
+There is no git remote, so `.github/workflows/ci.yml` has never run. Its presence means the gate is *wired*, not that it has passed. Had it run on the Linux runner it configures, it would have caught the defect above — that it did not is a direct consequence of never having been executed. DoD item 1's "CI green" therefore remains **unverified**, and becomes verifiable only on the first push (a human step, below).
 
 ## Metrics (all generated; run IDs in `experiments/results/metrics.json`)
 
 | Metric | Value | Run |
 |---|---|---|
-| Lesson to second runtime (mean, n=4) | 2.34 s | `demo-20260831-002251-7cdfec` |
-| Fleet propagation (mean, n=4) | 10.18 s | `uc3-20260831-002304-876` |
+| Lesson to second runtime (mean, n=3) | 2.04 s | see `metrics.json` |
+| Fleet propagation (mean, n=3) | 9.20 s | see `metrics.json` |
 | Managed changes carrying evidence, with loop | 100% (5/5) | `evidence-20260830-233632` |
 | Managed changes carrying evidence, no-loop baseline | 0% (0/5) | `evidence-20260830-233632` |
 | Loop overhead per change (mean added wall time, 5 tasks) | 1.37 s | `overhead-20260830-233623` |
 | Added context (skill + AGENTS block) | ~1080 tokens | `overhead-20260830-233623` |
 | Adversarial threat detections | 5/5 (+ t3-lite, + control) | `experiments/adversarial/logs/` |
-| Skill trigger (propose) rate | 100% (n=5), floor 70% | `trigger-summary-20260831-000248` |
+| Skill trigger (propose) rate | 100% (n=5), floor 70% | `trigger-summary-20260831-000248` (archived) |
 
 Loop operations are deterministic code and add zero model tokens; the recurring model cost is the skill body plus the AGENTS.md block.
+
+Two caveats a reader should carry:
+
+- **Timings are machine-dependent and regenerate every run.** The same pipeline produced 2.04 s here and 1.01 s in a Linux container. They are re-measured, not transcribed — the supported claim is "seconds, not minutes", not any specific figure. `make reproduce` now repeats timing experiments (default 3, `--timing-repeats N`) so a mean is never a mean of one, and every timing row carries its `n`.
+- **The trigger rate is the one number not re-measured on demand.** It needs a live model and API access, so `make reproduce` falls back to the archived summary of the run that produced it, labelled `from_archive` and shown in the table as an archived live-model run. n=5 with explicit prompts: it shows an instructed agent reliably routes through the loop, not how often a lesson is spontaneously noticed.
 
 ## DECISIONS summary
 
@@ -187,9 +204,11 @@ None. `BLOCKERS.md` is empty.
 
 ## Remaining human steps (Minhal only)
 
+0. **Re-run the trigger experiment once** on the current model and replace `experiments/results/trigger-archive.jsonl` (`make reproduce REPRODUCE_ARGS="--with-trigger"`). The committed number is from 2026-08-31; keep `n` visible wherever it appears.
 1. **Choose the final protocol name** and run the collision check (design-doc §13 candidates: Ratchet, Lamarck, Cairn). Then rename: the working name `agentloop`, the CLI binary, the `.loop/` directory, and the `loop/v0.1` spec tag.
 2. **Confirm the licences**: Apache-2.0 for code, Community Specification License 1.0 for the spec text. Both files are in place, unmodified from their canonical sources.
-3. **Create the public GitHub repository and push.** Nothing has been pushed; there is no remote configured. CI (`.github/workflows/ci.yml`) runs the full offline gate and is ready to go green on the default branch.
+3. **Create the public GitHub repository and push.** Nothing has been pushed; there is no remote configured. CI (`.github/workflows/ci.yml`) runs the full offline gate on an Ubuntu runner. It has never executed — the first push is what turns "wired" into "green", and it is the standing check against another single-platform blind spot like DEC-041.
+   - To hand this repository to a reviewer with its history intact, use `git bundle create agentloop.bundle --all` (a plain file copy or zip drops `.git/` and `.github/`, which hides the tags and the CI config).
 4. **Verify the pre-announcement open items** from design-doc §14 that touch claims outside this repo (EU Digital Omnibus outcome and enforcement dates; MCP/A2A governance status at announcement time).
 5. **Submit the paper.** `paper/build/loop-paper.pdf` builds from generated tables; decide the venue and add author/affiliation details.
 

@@ -1,39 +1,39 @@
 {
-  "generated": "2026-08-31T00:45:29.609269+00:00",
+  "generated": "2026-08-31T02:03:36.052002+00:00",
   "sources": {},
   "interop": {
-    "n": 4,
-    "mean_seconds": 2.336,
-    "min_seconds": 2.219,
-    "max_seconds": 2.453,
-    "latest_run_id": "demo-20260831-002251-7cdfec"
+    "n": 3,
+    "mean_seconds": 2.037,
+    "min_seconds": 1.953,
+    "max_seconds": 2.125,
+    "latest_run_id": "demo-20260831-020156-a11c33"
   },
   "scenarios": {
     "scenario-uc1": {
-      "n": 4,
-      "latest_run_id": "uc1-20260831-002255-808"
+      "n": 1,
+      "latest_run_id": "uc1-20260831-020159-195"
     },
     "scenario-uc2": {
-      "n": 4,
-      "latest_run_id": "uc2-20260831-002259-840"
+      "n": 1,
+      "latest_run_id": "uc2-20260831-020202-227"
     },
     "scenario-uc3": {
-      "n": 4,
-      "latest_run_id": "uc3-20260831-002304-876"
+      "n": 3,
+      "latest_run_id": "uc3-20260831-020246-502"
     },
     "scenario-uc4": {
-      "n": 4,
-      "latest_run_id": "uc4-20260831-002317-951"
+      "n": 1,
+      "latest_run_id": "uc4-20260831-020219-338"
     },
     "scenario-uc5": {
-      "n": 4,
-      "latest_run_id": "uc5-20260831-002326-996"
+      "n": 1,
+      "latest_run_id": "uc5-20260831-020228-383"
     }
   },
   "fleet_propagation": {
-    "n": 4,
-    "mean_seconds": 10.177,
-    "latest_run_id": "uc3-20260831-002304-876"
+    "n": 3,
+    "mean_seconds": 9.2,
+    "latest_run_id": "uc3-20260831-020246-502"
   },
   "adversarial": {
     "tests": {
@@ -51,9 +51,9 @@
   },
   "overhead": {
     "n_tasks": 5,
-    "mean_added_seconds": 1.369,
-    "max_added_seconds": 1.422,
-    "latest_run_id": "overhead-20260830-233623",
+    "mean_added_seconds": 1.294,
+    "max_added_seconds": 1.39,
+    "latest_run_id": "overhead-20260831-020321",
     "added_context_tokens_approx": 1080,
     "added_context_chars": 4319
   },
@@ -62,7 +62,7 @@
     "baseline_rate": 0.0,
     "loop_changes": 5,
     "baseline_changes": 5,
-    "latest_run_id": "evidence-20260830-233632"
+    "latest_run_id": "evidence-20260831-020329"
   },
   "trigger": {
     "n": 5,

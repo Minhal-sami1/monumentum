@@ -15,10 +15,14 @@ export REPO_ROOT="$(pwd)"
 
 WITH_TRIGGER=0
 TRIGGER_N=5
+# Timing metrics are reported as means, so they must never be a mean of one
+# sample. Repeat the experiments that produce timings.
+TIMING_REPEATS="${TIMING_REPEATS:-3}"
 while [ $# -gt 0 ]; do
   case "$1" in
     --with-trigger) WITH_TRIGGER=1 ;;
     --n) shift; TRIGGER_N="$1" ;;
+    --timing-repeats) shift; TIMING_REPEATS="$1" ;;
   esac
   shift
 done
@@ -28,11 +32,23 @@ rm -rf experiments/*/logs
 mkdir -p experiments/interop/logs experiments/scenarios/logs experiments/adversarial/logs \
          experiments/overhead/logs experiments/evidence/logs experiments/trigger/logs
 
-echo "## interop demo"
-"$PY" demo/run_demo.py
+echo "## interop demo (x$TIMING_REPEATS for the lesson-to-second-runtime mean)"
+i=1
+while [ "$i" -le "$TIMING_REPEATS" ]; do
+  "$PY" demo/run_demo.py
+  i=$((i + 1))
+done
 
 echo "## scenarios (UC1-UC5)"
 bash scenarios/run_all.sh "$PY"
+
+# UC3 carries the fleet-propagation timing; repeat it for the same reason.
+echo "## UC3 repeats (x$((TIMING_REPEATS - 1)) more, for the propagation mean)"
+i=2
+while [ "$i" -le "$TIMING_REPEATS" ]; do
+  bash scenarios/uc3/run.sh
+  i=$((i + 1))
+done
 
 echo "## adversarial suite"
 bash adversarial/run_all.sh "$PY"

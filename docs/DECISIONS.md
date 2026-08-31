@@ -137,7 +137,7 @@ Every deviation from `design-doc.md` normative semantics is recorded here with e
 - **Evidence:** `spec/schemas/registry.schema.json`; `signing.py`; golden `registry/valid/git-remote.yaml`, `invalid/bad-signing-no-signer.yaml`.
 
 ### DEC-026: dogfood policy scope for this repository
-- **What:** This repo's own `.loop/policy.yaml` governs: context = AGENTS.md, CLAUDE.md (L2); capability = `skill/**` (L1, Minhal-only approval); architecture = `agents.yaml` (L1). `docs/**`, source, tests, spec are NOT loop-managed.
+- **What:** This repo's own `.loop/policy.yaml` governs: context = AGENTS.md, CLAUDE.md (L2); capability = `skill/**` (L1, Minhal-only approval); architecture = `agents.yaml` (L1, a reserved path — this repository has no architecture-layer file today). `docs/**`, source, tests, spec are NOT loop-managed.
 - **Why:** The managed surface is what steers agents (design principle 3). STATUS/DECISIONS are project logs the goal REQUIRES updating continuously; making them loop-managed would gate documentation behind review and stall the milestones. The skill package is the repo's real capability layer.
 - **Evidence:** `.loop/policy.yaml`; `agentloop verify .` green in `make verify` and CI.
 
@@ -206,6 +206,13 @@ Every deviation from `design-doc.md` normative semantics is recorded here with e
 - **What:** `agentloop propose --supersedes <cs-id>` (and the SDK's `supersedes=` argument) now set the envelope field.
 - **Why:** The ChangeSet schema has carried `supersedes` since m1, but nothing could set it — found while dogfooding, when a rolled-back lesson was replaced by a corrected one and the replacement could not record what it replaced. A spec field with no way to populate it is a dead field.
 - **Evidence:** `src/agentloop/cli.py`, `src/agentloop/changeset.py`, `sdk/loop/__init__.py`; `tests/test_executor.py::test_propose_records_supersedes`.
+
+### DEC-041: FINDING — `Path.resolve()` broke the conformance gate on Linux
+- **What:** `conformance/runner.py` pinned a relative interpreter with `Path.resolve()`. `resolve()` follows symlinks; a Linux venv's `bin/python` is a symlink to the system interpreter, so the pinned path became `/usr/local/bin/python3.11` and every conformance case ran outside the virtualenv, failing with `No module named 'agentloop'`. `make verify` exited 2 with conformance 0/15 on stock Linux while passing on Windows, where `venv` copies `python.exe` instead of symlinking.
+- **Why it escaped:** every gate run during development was on Windows. A cross-platform claim was made from single-platform evidence — the same class of error as grading your own homework, which is what this project exists to prevent. It was found by an independent reviewer, not by us.
+- **Fix:** `os.path.normpath(candidate)` — normalize lexically, never resolve symlinks. Verified by reproducing the failure in a clean `python:3.11-slim` container, applying the fix, and re-running the full documented gate there (exit 0, conformance 15/15).
+- **Audit:** the remaining `resolve()` calls were reviewed. Those in `workspace.py` resolve workspace roots and target paths for a containment check, where following symlinks is the *correct* behaviour (a symlinked target pointing outside the workspace must be caught). The shell runners build interpreter paths by string concatenation and were never affected.
+- **Evidence:** `conformance/runner.py`; `docs/STATUS.md` gate table now records Windows and Linux separately.
 
 ### DEC-040: FINDING — a misattributed actor in this repo's own journal, left in place
 - **What:** Journal entry 4 of this repository's own loop records `rolled_back` with `actor=human/minhal`. That rollback was performed by the agent (Claude), not by Minhal. The `--actor` flag defaults to a human-shaped identity and was passed uncritically.
