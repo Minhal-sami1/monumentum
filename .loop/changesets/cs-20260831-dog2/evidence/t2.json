@@ -1,0 +1,7 @@
+{
+  "check_cmd": "grep -q 'newline' AGENTS.md",
+  "runs": [
+    { "phase": "before", "cmd": "grep -q 'newline' AGENTS.md", "exit_code": 1 },
+    { "phase": "after", "cmd": "grep -q 'newline' AGENTS.md", "exit_code": 0 }
+  ]
+}

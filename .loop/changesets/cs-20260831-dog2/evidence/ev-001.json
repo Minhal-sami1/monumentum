@@ -1,0 +1,16 @@
+{
+  "id": "ev-001",
+  "kind": "eval",
+  "grader": "independent",
+  "format": "command-transcript",
+  "summary": {
+    "metric": "convention_documented",
+    "before": 0,
+    "after": 1,
+    "n": 1
+  },
+  "artifact": {
+    "path": "t2.json",
+    "sha256": "sha256:ef98f71704e813a321462fb31d1f8da3a3d566373e3df241988614a03ba2209e"
+  }
+}

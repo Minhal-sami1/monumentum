@@ -1,0 +1,26 @@
+{
+  "spec": "loop/v0.1",
+  "id": "cs-20260831-dog2",
+  "layer": "context",
+  "targets": [
+    "AGENTS.md"
+  ],
+  "payload": {
+    "type": "diff",
+    "path": "payload.patch",
+    "sha256": "sha256:06f00ff91807933c61a4cb4f51f46b4bd5c47c36c14286851633fb35c57b69b1"
+  },
+  "origin": {
+    "producer": "claude-code",
+    "model": null,
+    "session": null,
+    "trigger": "observed-regression"
+  },
+  "rationale": "Supersedes cs-20260831-dog1, which was rolled back: its claim that all files are LF is false (LICENSE-SPEC.md is verbatim upstream text with CRLF), and telling agents to convert by hand contradicts .gitattributes. State the rule that actually holds: pass newline to text writes, keep autocrlf off for the registry cache.",
+  "evidence": [
+    "evidence/ev-001.json"
+  ],
+  "provenance": null,
+  "supersedes": null,
+  "created": "2026-08-31T00:05:16Z"
+}

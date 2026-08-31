@@ -15,11 +15,3 @@ This workspace is governed by the Loop standard. Rules for every agent:
    and architecture changes queue for human review.
 5. Never touch `.loop/**`. Verify integrity anytime: `agentloop verify .`
 <!-- agentloop:managed:end -->
-
-## Repository conventions
-
-Signed ChangeSet digests and journal hash chains cover exact bytes, so
-line endings are load-bearing. `.gitattributes` normalises tracked text to
-LF on commit; you do not convert files by hand. What you MUST do is pass
-`newline="\n"` whenever code writes a text file, and never let a tool
-re-checkout the registry cache with `core.autocrlf=true`.
