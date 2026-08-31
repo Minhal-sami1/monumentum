@@ -130,6 +130,17 @@ def test_propose_valid(ws):
     assert events == ["genesis", "proposed"]
 
 
+def test_propose_records_supersedes(ws):
+    cs = create_changeset(
+        ws.changesets_dir, layer="context", targets=["AGENTS.md"],
+        rationale="replaces an earlier lesson", producer="claude-code",
+        patch_file=_write_patch(ws), cs_id="cs-20260830-t003",
+        supersedes="cs-20260830-t001",
+    )
+    assert propose(ws, cs).ok
+    assert load_changeset(cs.folder).envelope["supersedes"] == "cs-20260830-t001"
+
+
 def test_propose_out_of_allowlist_rejected(ws):
     cs = create_changeset(
         ws.changesets_dir, layer="context", targets=["src/main.py"],

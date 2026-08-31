@@ -111,6 +111,7 @@ class Loop:
         model: str | None = None,
         trigger: str | None = None,
         cs_id: str | None = None,
+        supersedes: str | None = None,
     ) -> ChangeSetHandle:
         """Create a ChangeSet from parts and run PROPOSED -> VALIDATED.
         Raises LoopError when validation rejects it (the rejection is journaled)."""
@@ -134,6 +135,7 @@ class Loop:
             session=origin,
             trigger=trigger,
             cs_id=cs_id,
+            supersedes=supersedes,
         )
         outcome = _executor.propose(self.workspace, cs)
         if not outcome.ok:

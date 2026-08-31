@@ -14,8 +14,14 @@
       ]
     },
     "cs-20260831-dog2": {
+      "after": {
+        "AGENTS.md": "sha256:b2cb1922e6671472d697b06ec8ad74eac9ed52c87b483ca215a85ec0dc2bffd4"
+      },
+      "before": {
+        "AGENTS.md": "sha256:f4572db66fc289d109150c310d5446f31065cd00c7af6c462bed20eabb54dc16"
+      },
       "layer": "context",
-      "status": "GATE_APPROVED",
+      "status": "APPLIED",
       "targets": [
         "AGENTS.md"
       ]
@@ -27,12 +33,12 @@
     "context": "L2"
   },
   "heads": {
-    "AGENTS.md": "sha256:f4572db66fc289d109150c310d5446f31065cd00c7af6c462bed20eabb54dc16",
+    "AGENTS.md": "sha256:b2cb1922e6671472d697b06ec8ad74eac9ed52c87b483ca215a85ec0dc2bffd4",
     "skill/SKILL.md": "sha256:59682d472bc77f3090959c663ed6fb858deb646ba6ad674ead0454311166e169",
     "skill/hooks/pretooluse_guard.py": "sha256:b59b2a675d6b87847328998fabf1f520bf6eb1c25d194183bcf039276a344744",
     "skill/hooks/stop_reminder.py": "sha256:2b3b091bf9f08bba31bb77879c265d83fc96030fda44e060eb2c98df381b4217"
   },
-  "journal_head": "sha256:4ca9e2c52ba913042ced2a1bcf0b8c70d4ce8aabb7938f2ca7812ad6842ac2c5",
+  "journal_head": "sha256:ae72f5b60b7d9864e0199fb528b18e707c7f6fc893797b04e2390f8f5ba4f89e",
   "managed_patterns": [
     ".loop/**",
     "AGENTS.md",

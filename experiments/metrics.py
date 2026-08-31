@@ -165,6 +165,7 @@ def write_macros(m: dict) -> None:
         macro("evBaselineRate", f"{m['evidence']['baseline_rate'] * 100:.0f}")
     if "trigger" in m:
         t = m["trigger"]
+        macro("triggerFloor", f"{t.get('soft_floor', 0.70) * 100:.0f}")
         if t.get("rate") is not None:
             macro("triggerRate", f"{t['rate'] * 100:.0f}")
             macro("triggerN", t["n_valid"])
@@ -187,7 +188,8 @@ def write_metrics_table(m: dict) -> None:
             f"{m['interop']['mean_seconds']:.2f} s", m["interop"]["latest_run_id"])
     if "fleet_propagation" in m:
         row("Fleet propagation (mean)",
-            f"{m['fleet_propagation']['mean_seconds']:.2f} s", m["fleet_propagation"]["latest_run_id"])
+            f"{m['fleet_propagation']['mean_seconds']:.2f} s",
+            m["fleet_propagation"]["latest_run_id"])
     if "evidence" in m:
         row("Managed changes carrying evidence, with loop",
             f"{m['evidence']['loop_rate'] * 100:.0f}\\%", m["evidence"]["latest_run_id"])
@@ -224,23 +226,41 @@ def write_metrics_table(m: dict) -> None:
 
 
 def write_figures(m: dict) -> None:
-    try:
-        import matplotlib
-        matplotlib.use("Agg")
-        import matplotlib.pyplot as plt
-    except Exception:
-        return  # figures are optional; tables carry the numbers
+    """Generate the paper's figures from the same aggregated data as the
+    tables. Missing matplotlib is a hard failure: `make reproduce` must
+    regenerate every figure (GOAL E1)."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
 
     if "evidence" in m:
-        fig, ax = plt.subplots(figsize=(4, 3))
-        ax.bar(["with loop", "no-loop\nbaseline"],
-               [m["evidence"]["loop_rate"] * 100, m["evidence"]["baseline_rate"] * 100],
-               color=["#2a7", "#c55"])
-        ax.set_ylabel("% managed changes carrying evidence")
-        ax.set_ylim(0, 100)
-        ax.set_title("Evidence-carrying rate")
+        fig, ax = plt.subplots(figsize=(3.4, 2.6))
+        vals = [m["evidence"]["loop_rate"] * 100, m["evidence"]["baseline_rate"] * 100]
+        bars = ax.bar(["with loop", "no-loop\nbaseline"], vals,
+                      color=["#2a7f62", "#b4453c"], width=0.55)
+        for bar, val in zip(bars, vals, strict=True):
+            ax.text(bar.get_x() + bar.get_width() / 2, val + 3, f"{val:.0f}%",
+                    ha="center", fontsize=9)
+        ax.set_ylabel("% changes carrying evidence")
+        ax.set_ylim(0, 112)
+        ax.spines[["top", "right"]].set_visible(False)
         fig.tight_layout()
-        fig.savefig(FIGDIR / "evidence_rate.png", dpi=150)
+        fig.savefig(FIGDIR / "evidence_rate.png", dpi=200)
+        plt.close(fig)
+
+    # per-task loop overhead, straight from the overhead log
+    per_task = [r for r in read_logs("overhead") if r.get("experiment") == "overhead"]
+    if per_task:
+        fig, ax = plt.subplots(figsize=(3.4, 2.6))
+        added = [r["added_seconds"] for r in per_task]
+        ax.bar(range(1, len(added) + 1), added, color="#3b6ea5", width=0.6)
+        ax.set_xlabel("fixed task")
+        ax.set_ylabel("added wall time (s)")
+        ax.set_xticks(range(1, len(added) + 1))
+        ax.spines[["top", "right"]].set_visible(False)
+        fig.tight_layout()
+        fig.savefig(FIGDIR / "overhead.png", dpi=200)
         plt.close(fig)
 
 

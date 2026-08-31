@@ -27,7 +27,10 @@ ALLOWED_LINE = re.compile(
 
 # LaTeX layout numbers are typography, not results: package options and any
 # number carrying a TeX length unit.
-LAYOUT = re.compile(r"\\usepackage|\\documentclass|\d+(\.\d+)?\s*(in|em|ex|pt|cm|mm|\\textwidth)")
+LAYOUT = re.compile(
+    r"\\usepackage|\\documentclass|\\includegraphics|"
+    r"\d+(\.\d+)?\s*(in|em|ex|pt|cm|mm|\\textwidth|\\columnwidth|\\linewidth)"
+)
 
 
 def main() -> int:
@@ -49,7 +52,9 @@ def main() -> int:
         if ALLOWED_LINE.search(line) or LAYOUT.search(line):
             continue
         for match in SUSPECT.finditer(line):
-            problems.append(f"{path.name}:{i}: possible hard-coded metric {match.group()!r}: {stripped}")
+            problems.append(
+                f"{path.name}:{i}: possible hard-coded metric "
+                f"{match.group()!r}: {stripped}")
 
     if problems:
         print("HARD-CODED METRIC CHECK FAILED — route these through metrics.tex macros:")

@@ -1,10 +1,11 @@
-"""SDK five-verb tests (story B3)."""
+"""SDK five-verb tests (story B3).
+
+The SDK is installed by `make setup`, so an import failure here is a real
+failure, never a reason to skip: the final gate requires zero skipped tests.
+"""
 
 import pytest
-
-pytest.importorskip("loop")
-
-from loop import Loop, LoopError  # noqa: E402
+from loop import Loop, LoopError
 
 PROMPT = "# prompt\n\n## Lessons\n"
 

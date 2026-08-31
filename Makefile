@@ -53,7 +53,7 @@ test:
 	$(PYTHON) -m pytest
 
 lint:
-	$(PYTHON) -m ruff check src tests conformance sdk demo skill
+	$(PYTHON) -m ruff check src tests conformance sdk demo skill experiments paper
 
 # verify grows with the milestones. m7 final gate: everything that must be
 # green in a fresh CI clone (no live model, no paper build).

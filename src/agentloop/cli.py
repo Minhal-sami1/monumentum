@@ -75,6 +75,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--model")
     p.add_argument("--session")
     p.add_argument("--trigger")
+    p.add_argument("--supersedes", help="id of an earlier ChangeSet this one replaces")
     p.add_argument("--id", dest="cs_id", help="explicit changeset id")
 
     p = sub.add_parser("evidence", help="attach an evidence record (+ artifact) to a ChangeSet")
@@ -204,6 +205,7 @@ def _dispatch(args: argparse.Namespace) -> int:
                 session=args.session,
                 trigger=args.trigger,
                 cs_id=args.cs_id,
+                supersedes=args.supersedes,
             )
         outcome = propose(ws, cs)
         print(f"{cs.envelope.get('id')}: {outcome.status}"

@@ -67,7 +67,8 @@ def _present_check(rel: str, needle: str) -> str:
 def _apply_via_loop(ws: Path, rel: str, initial: str, old_line: str, new_line: str) -> float:
     """Full loop path for one change. Returns wall seconds."""
     (ws / rel).write_text(initial, encoding="utf-8", newline="\n")
-    subprocess.run([*CLI, "-C", str(ws), "init"], cwd=ws, capture_output=True, text=True, check=True)
+    subprocess.run([*CLI, "-C", str(ws), "init"], cwd=ws, capture_output=True,
+                   text=True, check=True)
     import difflib
 
     patch = "".join(difflib.unified_diff(
@@ -196,7 +197,8 @@ def experiment_evidence(logs_dir: Path) -> Path:
                 continue
             subprocess.run([*CLI, "-C", str(ws), "evidence", cs, "--record", "e.json",
                             "--artifact", "t.json"], cwd=ws, capture_output=True, text=True)
-            subprocess.run([*CLI, "-C", str(ws), "gate", cs], cwd=ws, capture_output=True, text=True)
+            subprocess.run([*CLI, "-C", str(ws), "gate", cs], cwd=ws,
+                           capture_output=True, text=True)
             ap = subprocess.run([*CLI, "-C", str(ws), "apply", cs], cwd=ws,
                                 capture_output=True, text=True)
             if ap.returncode == 0:

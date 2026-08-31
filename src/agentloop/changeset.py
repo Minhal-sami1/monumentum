@@ -138,6 +138,7 @@ def create_changeset(
     session: str | None = None,
     trigger: str | None = None,
     cs_id: str | None = None,
+    supersedes: str | None = None,
 ) -> ChangeSet:
     """Create a ChangeSet folder from parts. Exactly one payload source."""
     sources = [s for s in (patch_file, folder_payload, opaque_ref) if s is not None]
@@ -171,7 +172,7 @@ def create_changeset(
         "rationale": rationale,
         "evidence": [],
         "provenance": None,
-        "supersedes": None,
+        "supersedes": supersedes,
         "created": _dt.datetime.now(_dt.UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
     cs = ChangeSet(folder=folder, envelope=envelope)

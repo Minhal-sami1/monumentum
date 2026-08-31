@@ -201,3 +201,13 @@ Every deviation from `design-doc.md` normative semantics is recorded here with e
 - **What:** All 20 references were checked against arXiv, DOIs, the RFC Editor, EUR-Lex, and official project sites on 2026-08-31. The record is `paper/CITATIONS.md`; the `[VERIFY]` list is empty.
 - **Why:** GOAL forbidden move 5. The DGM eval-gaming claim in §1 carries the most argumentative weight, so it was verified specifically: the paper documents a variant scoring perfectly by removing the harness's own hallucination-detection markers.
 - **Evidence:** `paper/CITATIONS.md`; `paper/figures/references.tex`.
+
+### DEC-038: `supersedes` exposed on the CLI and SDK
+- **What:** `agentloop propose --supersedes <cs-id>` (and the SDK's `supersedes=` argument) now set the envelope field.
+- **Why:** The ChangeSet schema has carried `supersedes` since m1, but nothing could set it — found while dogfooding, when a rolled-back lesson was replaced by a corrected one and the replacement could not record what it replaced. A spec field with no way to populate it is a dead field.
+- **Evidence:** `src/agentloop/cli.py`, `src/agentloop/changeset.py`, `sdk/loop/__init__.py`; `tests/test_executor.py::test_propose_records_supersedes`.
+
+### DEC-039: no conditional skips in the test suite
+- **What:** `tests/test_sdk.py` previously used `pytest.importorskip("loop")`; it now imports directly.
+- **Why:** GOAL §3 requires zero skipped tests at final verify. `make setup` always installs the SDK, so an import failure is a real defect; a conditional skip would have hidden it silently on a broken install.
+- **Evidence:** `tests/test_sdk.py`; final pytest run reports no skips.

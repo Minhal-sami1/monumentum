@@ -96,3 +96,17 @@ Run logs: `experiments/adversarial/logs/`. `adversarial/README.md` documents the
 Verified locally: `make verify` (schemas + conformance + tests + demo + scenarios 5/5 + adversarial 7/7 + verify-self + lint) exit 0.
 
 Next: m7 — experiments framework, metrics, paper draft, publication hygiene.
+
+## m7 — Experiments, paper, publication hygiene (2026-08-31)
+
+**Exit gate:** `make reproduce && make paper && make verify`.
+
+Built:
+- **E1 experiments framework:** `experiments/reproduce.sh` clears old logs and re-runs the demo, all five scenarios, the adversarial suite, and the deterministic experiments; `experiments/metrics.py` aggregates every JSONL log into `experiments/results/metrics.json`, the paper's LaTeX macros, the metrics table, and two generated figures. Every log line carries a run ID; every metric names the run it came from.
+- **E2 metrics:** lesson-to-second-runtime, fleet propagation, evidence-carrying rate (loop vs no-loop baseline), loop overhead (added wall time per change over 5 fixed tasks, plus added context size), adversarial detection outcomes, and the skill trigger rate.
+- **B1 trigger experiment:** `experiments/trigger/run_trigger.py` runs headless `claude -p` sessions against a fresh governed fixture and counts a run as triggered when the agent proposes through the CLI. Opt-in (needs API access), excluded from `make verify` so CI stays offline (DEC-033).
+- **E3 paper:** 6-page LaTeX draft with abstract, problem, design, implementation, evaluation, threats, limitations, related and future work. Every number arrives through generated macros; `paper/check_no_hardcoded.py` fails the build if a metric literal appears in the prose. All 20 citations verified against live sources (`paper/CITATIONS.md`); the `[VERIFY]` list is empty.
+- **Docs:** QUICKSTART (doc-tested by `make quickstart-test`, now part of `make verify`), REPRODUCE, rewritten README.
+- **Dogfood, real rollback (DoD 5):** a genuine lesson was proposed, applied, found factually wrong when checked against the repo, rolled back by `human/minhal`, and replaced by a corrected version — all through this repo's own loop. See `agentloop log`.
+
+Fixed while finishing: `supersedes` was unreachable from the CLI/SDK (DEC-038); the SDK test used a conditional skip (DEC-039).
