@@ -164,6 +164,23 @@ Loop operations are deterministic code and add zero model tokens; the recurring 
 
 **Empty.** All 20 references were verified against live authoritative sources on 2026-08-31; the record is `paper/CITATIONS.md`. Nothing blocks submission on citation grounds.
 
+## Known issue you should see before publishing
+
+This repository's own journal, entry 4, records the dogfood rollback as
+`actor=human/minhal`. **You did not perform that rollback — the agent did.**
+The `--actor` flag was passed uncritically. The entry has been left exactly
+as written: the journal is append-only and hash-chained, so editing it would
+be the T6 attack this project defends against, and `agentloop verify` would
+fail. The wrong claim is therefore permanent and visible, which is the
+system behaving correctly around a human error.
+
+It exposes two genuine gaps, now recorded in DECISIONS (DEC-040) and in the
+paper's limitations: the executor cannot authenticate that a `human/` actor
+is a human (Governed-profile signed entries are the fix, unimplemented in
+v1), and v0.1 defines no annotation event by which a later entry could
+formally supersede an earlier claim. Both are future work, not defects in
+the run.
+
 ## Open blockers
 
 None. `BLOCKERS.md` is empty.

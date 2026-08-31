@@ -207,6 +207,12 @@ Every deviation from `design-doc.md` normative semantics is recorded here with e
 - **Why:** The ChangeSet schema has carried `supersedes` since m1, but nothing could set it — found while dogfooding, when a rolled-back lesson was replaced by a corrected one and the replacement could not record what it replaced. A spec field with no way to populate it is a dead field.
 - **Evidence:** `src/agentloop/cli.py`, `src/agentloop/changeset.py`, `sdk/loop/__init__.py`; `tests/test_executor.py::test_propose_records_supersedes`.
 
+### DEC-040: FINDING — a misattributed actor in this repo's own journal, left in place
+- **What:** Journal entry 4 of this repository's own loop records `rolled_back` with `actor=human/minhal`. That rollback was performed by the agent (Claude), not by Minhal. The `--actor` flag defaults to a human-shaped identity and was passed uncritically.
+- **Why it was not "fixed":** The journal is append-only and hash-chained (I2). Editing entry 4 to correct the actor is precisely the T6 attack this project builds defenses against, and `agentloop verify` would fail — as it should. The wrong claim therefore stays in the record, visible, forever. Correcting it by rewriting history would be worse than the original error.
+- **What this exposes:** two real gaps. (1) The executor accepts any `--actor` string: it enforces that a reviewer is not the producer, but it cannot authenticate that a `human/` identity is a human. Actor identity is asserted, not proven — Governed-profile signed entries are the answer, and they are not implemented in v1. (2) An append-only journal with no errata mechanism means a wrong entry can only be annotated by a later entry, and v0.1 defines no annotation event. Both belong in the spec's future work.
+- **Evidence:** `agentloop log` on this repository, entry 4; `agentloop verify .` passes, which is the point — the record is intact and the error is legible.
+
 ### DEC-039: no conditional skips in the test suite
 - **What:** `tests/test_sdk.py` previously used `pytest.importorskip("loop")`; it now imports directly.
 - **Why:** GOAL §3 requires zero skipped tests at final verify. `make setup` always installs the SDK, so an import failure is a real defect; a conditional skip would have hidden it silently on a broken install.

@@ -392,6 +392,17 @@ than breadth.
   by the real binary, but they are not large production repositories.
 \item \textbf{Weight updates are opaque.} The standard records a weight
   swap; it does not evaluate or gate the weights themselves.
+\item \textbf{Actor identity is asserted, not proven.} The Core executor
+  enforces that a reviewer is not the producer, but it cannot authenticate
+  that a \texttt{human/} actor is a human---the identity is a string the
+  caller supplies. We hit this while dogfooding: a rollback in this
+  project's own journal is attributed to a human who did not perform it.
+  Because the journal is append-only, the mistaken entry remains in the
+  record rather than being quietly corrected, which is the intended
+  behaviour but also shows the limit. Signed journal entries (Governed
+  profile) are the answer, and v0.1 additionally defines no annotation
+  event with which a later entry could formally supersede an earlier
+  claim.
 \end{itemize}
 
 \section{Related work}
