@@ -1,0 +1,5 @@
+{
+  "skill/SKILL.md": "sha256:59682d472bc77f3090959c663ed6fb858deb646ba6ad674ead0454311166e169",
+  "skill/hooks/pretooluse_guard.py": "sha256:b59b2a675d6b87847328998fabf1f520bf6eb1c25d194183bcf039276a344744",
+  "skill/hooks/stop_reminder.py": "sha256:2b3b091bf9f08bba31bb77879c265d83fc96030fda44e060eb2c98df381b4217"
+}

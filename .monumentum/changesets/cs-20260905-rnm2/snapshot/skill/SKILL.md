@@ -1,14 +1,14 @@
 ---
-name: monumentum
-description: Govern durable lessons and self-improvements through the Monumentum standard. Use whenever you learn a lasting lesson about this repo (a command that fails and its working replacement, a convention, a fix for a broken skill or tool), whenever the user corrects you about repo behavior twice, whenever the user says "remember this", and near the end of a long session with unrecorded lessons. Never edit AGENTS.md, CLAUDE.md, memory files, skills, or tools directly in this workspace - propose a ChangeSet with the monumentum CLI instead.
+name: loop
+description: Govern durable lessons and self-improvements through the Loop standard. Use whenever you learn a lasting lesson about this repo (a command that fails and its working replacement, a convention, a fix for a broken skill or tool), whenever the user corrects you about repo behavior twice, whenever the user says "remember this", and near the end of a long session with unrecorded lessons. Never edit AGENTS.md, CLAUDE.md, memory files, skills, or tools directly in this workspace - propose a ChangeSet with the agentloop CLI instead.
 ---
 
 # The Loop: propose, don't edit
 
-This workspace is governed by the Monumentum standard (`.monumentum/`). Files that steer
+This workspace is governed by the Loop standard (`.loop/`). Files that steer
 agents (AGENTS.md, CLAUDE.md, memory, skills, tools, agent config) are
-**monumentum-managed**: direct edits are denied by a PreToolUse hook and detected
-by `monumentum verify` in CI. Durable lessons travel as evidence-backed
+**loop-managed**: direct edits are denied by a PreToolUse hook and detected
+by `agentloop verify` in CI. Durable lessons travel as evidence-backed
 ChangeSets instead.
 
 ## When to propose
@@ -29,7 +29,7 @@ with evidence.
 2. Propose it:
 
    ```
-   monumentum propose --layer context --target AGENTS.md --patch lesson.patch \
+   agentloop propose --layer context --target AGENTS.md --patch lesson.patch \
      --rationale "<one sentence: what breaks, what works>" \
      --producer claude-code --trigger reflection
    ```
@@ -62,18 +62,18 @@ with evidence.
    }
    ```
 
-   Then: `monumentum evidence <cs-id> --record ev.json --artifact transcript.json`
+   Then: `agentloop evidence <cs-id> --record ev.json --artifact transcript.json`
 
 4. Gate and apply:
 
    ```
-   monumentum gate <cs-id>
-   monumentum apply <cs-id>    # only if gate printed GATE_APPROVED
+   agentloop gate <cs-id>
+   agentloop apply <cs-id>    # only if gate printed GATE_APPROVED
    ```
 
    Exit code 2 from `gate` means the change is queued for human review
    (capability and architecture changes always queue). Tell the user it is
-   queued and stop; a human runs `monumentum approve <cs-id> --actor human/<name>`.
+   queued and stop; a human runs `agentloop approve <cs-id> --actor human/<name>`.
 
 5. If anything is rejected, read the reason, fix the ChangeSet or the
    evidence, and propose again. Never work around the gate by editing the
@@ -81,7 +81,7 @@ with evidence.
 
 ## Quick reference
 
-- `monumentum status` - queue and change states
-- `monumentum log` - the journal (who changed what, when, why)
-- `monumentum rollback <cs-id>` - one-command revert of an applied change
-- `monumentum verify .` - integrity check (journal chain + managed files)
+- `agentloop status` - queue and change states
+- `agentloop log` - the journal (who changed what, when, why)
+- `agentloop rollback <cs-id>` - one-command revert of an applied change
+- `agentloop verify .` - integrity check (journal chain + managed files)

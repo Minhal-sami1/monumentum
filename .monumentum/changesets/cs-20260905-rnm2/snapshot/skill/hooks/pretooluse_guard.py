@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""PreToolUse guard: deny direct Edit/Write on monumentum-managed files.
+"""PreToolUse guard: deny direct Edit/Write on loop-managed files.
 
 Contract (verified against code.claude.com/docs/en/hooks, see DEC-017):
 reads the hook JSON from stdin; exit 2 blocks the tool call and stderr
 becomes the message Claude sees; exit 0 means no decision.
 
-Stdlib only: managed patterns come from .monumentum/state.json
+Stdlib only: managed patterns come from .loop/state.json
 (`managed_patterns`, executor-written), with a PyYAML fallback to
-.monumentum/policy.yaml when available (DEC-018).
+.loop/policy.yaml when available (DEC-018).
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ import sys
 def find_loop_root(start: str) -> str | None:
     current = os.path.abspath(start)
     while True:
-        if os.path.isdir(os.path.join(current, ".monumentum")):
+        if os.path.isdir(os.path.join(current, ".loop")):
             return current
         parent = os.path.dirname(current)
         if parent == current:
@@ -30,7 +30,7 @@ def find_loop_root(start: str) -> str | None:
 
 
 def load_patterns(root: str) -> list[str]:
-    state_path = os.path.join(root, ".monumentum", "state.json")
+    state_path = os.path.join(root, ".loop", "state.json")
     try:
         with open(state_path, encoding="utf-8") as f:
             patterns = json.load(f).get("managed_patterns", [])
@@ -41,7 +41,7 @@ def load_patterns(root: str) -> list[str]:
     try:  # fallback: parse the policy directly if PyYAML is available
         import yaml
 
-        with open(os.path.join(root, ".monumentum", "policy.yaml"), encoding="utf-8") as f:
+        with open(os.path.join(root, ".loop", "policy.yaml"), encoding="utf-8") as f:
             policy = yaml.safe_load(f)
         patterns = list(policy.get("protected", []))
         for cls in (policy.get("envelope") or {}).values():
@@ -76,19 +76,19 @@ def main() -> int:
     rel = os.path.relpath(os.path.abspath(file_path), root).replace("\\", "/")
     if rel.startswith(".."):
         return 0
-    managed = rel.startswith(".monumentum/") or rel == ".monumentum" or any(
+    managed = rel.startswith(".loop/") or rel == ".loop" or any(
         glob_match(rel, p) for p in load_patterns(root)
     )
     if not managed:
         return 0
     sys.stderr.write(
-        f"'{rel}' is monumentum-managed; direct edits are denied by policy (Monumentum standard).\n"
+        f"'{rel}' is loop-managed; direct edits are denied by policy (Loop standard).\n"
         f"Propose the change instead:\n"
-        f"  monumentum propose --layer <context|capability|architecture> "
+        f"  agentloop propose --layer <context|capability|architecture> "
         f"--target {rel} --patch <diff-file> --rationale \"<why>\"\n"
         f"then attach evidence and gate it:\n"
-        f"  monumentum evidence <cs-id> --record <ev.json> --artifact <transcript>\n"
-        f"  monumentum gate <cs-id> && monumentum apply <cs-id>\n"
+        f"  agentloop evidence <cs-id> --record <ev.json> --artifact <transcript>\n"
+        f"  agentloop gate <cs-id> && agentloop apply <cs-id>\n"
     )
     return 2
 

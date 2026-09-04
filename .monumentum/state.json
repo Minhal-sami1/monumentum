@@ -41,7 +41,7 @@
     },
     "cs-20260905-rnm2": {
       "layer": "capability",
-      "status": "QUEUED",
+      "status": "APPROVED",
       "targets": [
         "skill/SKILL.md",
         "skill/hooks/pretooluse_guard.py",
@@ -60,7 +60,7 @@
     "skill/hooks/pretooluse_guard.py": "sha256:b59b2a675d6b87847328998fabf1f520bf6eb1c25d194183bcf039276a344744",
     "skill/hooks/stop_reminder.py": "sha256:2b3b091bf9f08bba31bb77879c265d83fc96030fda44e060eb2c98df381b4217"
   },
-  "journal_head": "sha256:1f855350f6fc3ca2180b9e7114e53aee3eac96e5dc368f768c304a4d830e0d30",
+  "journal_head": "sha256:b76a0ab18e305dad58d7e8774e68372011e1d78f4c1af151caf47614483ee041",
   "managed_patterns": [
     ".monumentum/**",
     "AGENTS.md",
@@ -68,8 +68,6 @@
     "agents.yaml",
     "skill/**"
   ],
-  "queue": [
-    "cs-20260905-rnm2"
-  ],
+  "queue": [],
   "spec": "monumentum/v0.1"
 }

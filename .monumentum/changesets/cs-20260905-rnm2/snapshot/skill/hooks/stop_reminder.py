@@ -16,7 +16,7 @@ import sys
 def find_loop_root(start: str) -> str | None:
     current = os.path.abspath(start)
     while True:
-        if os.path.isdir(os.path.join(current, ".monumentum")):
+        if os.path.isdir(os.path.join(current, ".loop")):
             return current
         parent = os.path.dirname(current)
         if parent == current:
@@ -33,17 +33,17 @@ def main() -> int:
     if root is None:
         return 0
     try:
-        with open(os.path.join(root, ".monumentum", "state.json"), encoding="utf-8") as f:
+        with open(os.path.join(root, ".loop", "state.json"), encoding="utf-8") as f:
             queue = json.load(f).get("queue", [])
     except OSError:
         return 0
     if queue:
         print(json.dumps({
             "systemMessage": (
-                f"monumentum: {len(queue)} change(s) queued for review: "
+                f"agentloop: {len(queue)} change(s) queued for review: "
                 + ", ".join(queue)
-                + ". Review with: monumentum status; approve with: "
-                  "monumentum approve <cs-id> --actor human/<name>"
+                + ". Review with: agentloop status; approve with: "
+                  "agentloop approve <cs-id> --actor human/<name>"
             )
         }))
     return 0
