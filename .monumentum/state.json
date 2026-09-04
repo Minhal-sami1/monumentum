@@ -40,8 +40,18 @@
       ]
     },
     "cs-20260905-rnm2": {
+      "after": {
+        "skill/SKILL.md": "sha256:d59ca0777782b98a9a2c321081c86f923ea8e1a2d25e34012ff8a66ac5c7d0ad",
+        "skill/hooks/pretooluse_guard.py": "sha256:1eb42c11dae78d61bdedaad3518439ce5af3579c327bcc9983ed2aa926230800",
+        "skill/hooks/stop_reminder.py": "sha256:87b9fd1e5f7bfe95a1f2b906bf83b38bfabb998a34ec87734317c1302d7a503c"
+      },
+      "before": {
+        "skill/SKILL.md": "sha256:59682d472bc77f3090959c663ed6fb858deb646ba6ad674ead0454311166e169",
+        "skill/hooks/pretooluse_guard.py": "sha256:b59b2a675d6b87847328998fabf1f520bf6eb1c25d194183bcf039276a344744",
+        "skill/hooks/stop_reminder.py": "sha256:2b3b091bf9f08bba31bb77879c265d83fc96030fda44e060eb2c98df381b4217"
+      },
       "layer": "capability",
-      "status": "APPROVED",
+      "status": "APPLIED",
       "targets": [
         "skill/SKILL.md",
         "skill/hooks/pretooluse_guard.py",
@@ -56,11 +66,11 @@
   },
   "heads": {
     "AGENTS.md": "sha256:7833c775a57f9ab6da4c7ccc209aa70804545f2199e3f1832ef288da047ef548",
-    "skill/SKILL.md": "sha256:59682d472bc77f3090959c663ed6fb858deb646ba6ad674ead0454311166e169",
-    "skill/hooks/pretooluse_guard.py": "sha256:b59b2a675d6b87847328998fabf1f520bf6eb1c25d194183bcf039276a344744",
-    "skill/hooks/stop_reminder.py": "sha256:2b3b091bf9f08bba31bb77879c265d83fc96030fda44e060eb2c98df381b4217"
+    "skill/SKILL.md": "sha256:d59ca0777782b98a9a2c321081c86f923ea8e1a2d25e34012ff8a66ac5c7d0ad",
+    "skill/hooks/pretooluse_guard.py": "sha256:1eb42c11dae78d61bdedaad3518439ce5af3579c327bcc9983ed2aa926230800",
+    "skill/hooks/stop_reminder.py": "sha256:87b9fd1e5f7bfe95a1f2b906bf83b38bfabb998a34ec87734317c1302d7a503c"
   },
-  "journal_head": "sha256:b76a0ab18e305dad58d7e8774e68372011e1d78f4c1af151caf47614483ee041",
+  "journal_head": "sha256:a736582e00f8617cace623c5e30efd1487ea288ba85d88debf1040c853cafec8",
   "managed_patterns": [
     ".monumentum/**",
     "AGENTS.md",
