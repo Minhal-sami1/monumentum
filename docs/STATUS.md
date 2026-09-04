@@ -232,7 +232,7 @@ None. `BLOCKERS.md` is empty.
 ## Remaining human steps (Minhal only)
 
 0. **Re-run the trigger experiment once** on the current model and replace `experiments/results/trigger-archive.jsonl` (`make reproduce REPRODUCE_ARGS="--with-trigger"`). The committed number is from 2026-08-31; keep `n` visible wherever it appears.
-1. **Choose the final protocol name** and run the collision check (design-doc §13 candidates: Ratchet, Lamarck, Cairn). Then rename: the working name `monumentum`, the CLI binary, the `.monumentum/` directory, and the `monumentum/v0.1` spec tag.
+1. ~~Choose the final protocol name and rename~~ — **done 2026-09-05: `monumentum`** (DEC-043). The skill rename ChangeSet `cs-20260905-rnm2` awaits the owner's L1 approval.
 2. **Confirm the licences**: Apache-2.0 for code, Community Specification License 1.0 for the spec text. Both files are in place, unmodified from their canonical sources.
 3. **Create the public GitHub repository and push.** Nothing has been pushed; there is no remote configured. CI (`.github/workflows/ci.yml`) runs the full offline gate on an Ubuntu runner. It has never executed — the first push is what turns "wired" into "green", and it is the standing check against another single-platform blind spot like DEC-041.
    - To hand this repository to a reviewer with its history intact, use `git bundle create monumentum.bundle --all` (a plain file copy or zip drops `.git/` and `.github/`, which hides the tags and the CI config).
@@ -240,3 +240,27 @@ None. `BLOCKERS.md` is empty.
 5. **Submit the paper.** `paper/build/monumentum-paper.pdf` builds from generated tables; decide the venue and add author/affiliation details.
 
 Tags `m1`–`m7` mark the review points. Nothing public has been executed.
+
+## Publication log
+
+### 2026-09-05 — rename `agentloop` → `monumentum` (STEP 2 of publication)
+
+Name chosen by the owner after the live collision check (design-doc §13, §14): every listed candidate and the working name had an active in-domain collision; `monumentum` was free on PyPI and npm with only trivial repositories. Full record: DEC-043.
+
+Applied consistently across package, CLI, SDK, `.monumentum/` directory, `monumentum/v0.1` spec tag, spec, schemas, conformance corpus, scenarios, adversarial suite, experiments, demo, docs, paper. The repository's own workspace moved with `git mv` (journal bytes unchanged); the required policy edit is journaled as `policy_changed` seq 8. The loop-governed surfaces went **through the loop**: `AGENTS.md` by `cs-20260905-rnm1` (L2, auto-applied, executor commit), `skill/**` by `cs-20260905-rnm2` (L1, **queued for the owner**, measured before/after evidence `ev-001`/`ev-002`).
+
+Documented gate, Windows, `make setup PY="py -3.11"` then no overrides:
+
+| Command | Exit | Note |
+|---|---|---|
+| `make setup` | 0 | |
+| `make verify` | **2** | fails only in `tests/test_hook.py` (4 tests): `skill/**` still holds the pre-rename hooks pending L1 approval of `cs-20260905-rnm2`; 132 tests pass; the loop is enforcing its own rule |
+| `make reproduce` | 0 | demo ×3, scenarios 5/5, adversarial 7/7 + control, metrics regenerated |
+| `make paper` | 0 | `paper/build/monumentum-paper.pdf`; no hard-coded metrics; zero old-name references |
+| `make quickstart-test` | 0 | |
+| `make verify-self` | 0 | chain intact through seq 13, managed files match |
+| `make lint` | 0 | |
+
+Regenerated metrics (`experiments/results/metrics.json`): interop 2.66 s (n=3), fleet propagation 11.45 s (n=3), threats 5/5 + control, evidence 100% vs 0%, trigger 100% (n=5, archived live-model run).
+
+**To close STEP 2:** the owner approves the skill rename — `monumentum approve cs-20260905-rnm2 --actor human/minhal` — after which `make verify` is re-run and expected to exit 0, and the full gate is re-run in a clean Linux container before any push.
