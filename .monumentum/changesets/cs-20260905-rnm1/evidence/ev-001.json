@@ -1,0 +1,16 @@
+{
+  "id": "ev-001",
+  "kind": "eval",
+  "grader": "independent",
+  "format": "command-transcript",
+  "summary": {
+    "metric": "managed_block_named_monumentum",
+    "before": 0,
+    "after": 1,
+    "n": 1
+  },
+  "artifact": {
+    "path": "transcript-agents.json",
+    "sha256": "sha256:49f55b4aa82a9f68989d5df0fe49f78f6c577bc2b507b31a1502eb77bbdd48ea"
+  }
+}

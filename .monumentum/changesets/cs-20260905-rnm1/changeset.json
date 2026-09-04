@@ -1,0 +1,26 @@
+{
+  "spec": "monumentum/v0.1",
+  "id": "cs-20260905-rnm1",
+  "layer": "context",
+  "targets": [
+    "AGENTS.md"
+  ],
+  "payload": {
+    "type": "diff",
+    "path": "payload.patch",
+    "sha256": "sha256:138372b09bc590f53f3ad09c8ca89b85a3c1abea2588946338cbf7840850cd39"
+  },
+  "origin": {
+    "producer": "claude-code",
+    "model": null,
+    "session": null,
+    "trigger": "rename"
+  },
+  "rationale": "Rename: the managed contract block must name the monumentum CLI and the .monumentum/ directory (owner-directed rename, 2026-09-05).",
+  "evidence": [
+    "evidence/ev-001.json"
+  ],
+  "provenance": null,
+  "supersedes": null,
+  "created": "2026-09-04T21:37:41Z"
+}
