@@ -264,3 +264,18 @@ Documented gate, Windows, `make setup PY="py -3.11"` then no overrides:
 Regenerated metrics (`experiments/results/metrics.json`): interop 2.66 s (n=3), fleet propagation 11.45 s (n=3), threats 5/5 + control, evidence 100% vs 0%, trigger 100% (n=5, archived live-model run).
 
 **To close STEP 2:** the owner approves the skill rename — `monumentum approve cs-20260905-rnm2 --actor human/minhal` — after which `make verify` is re-run and expected to exit 0, and the full gate is re-run in a clean Linux container before any push.
+
+#### STEP 2 closed; STEP 3 pre-push hygiene (2026-09-05)
+
+The owner approved `cs-20260905-rnm2` (journal seq 14, actor `human/minhal`; applied seq 15, executor commit `43a248d`). `make verify` then exited 0 on Windows. The documented gate was re-run on a fresh `git clone` of commit `52a2e05` inside a clean `python:3.11-slim` container with no overrides:
+
+| Command | Exit (Linux container, `52a2e05`) |
+|---|---|
+| `make setup` | 0 |
+| `make verify` | 0 — schema corpus 19/24, conformance 15/15, 136 tests, scenarios 5/5, adversarial 7/7 + control, quickstart-test OK, dogfood verify OK, lint clean |
+| `make reproduce` | 0 — interop n=3, fleet n=3, threats 5/5, control passed |
+| `make paper` | 0 — `monumentum-paper.pdf` (Tectonic 0.17.0), no hard-coded metrics |
+
+Pre-push checks: working tree clean; dogfood audit exact — the five commits that touched managed files since `m4` are the five commit hashes recorded in the journal's `applied`/`rolled_back` entries (`8cab061`, `9fad68b`, `5b1803a`, `5a56987`, `43a248d`); tracked files contain no key material, tokens, local paths, or account handles — the only personal datum is the author email in `pyproject.toml`, which is the owner's own; `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md` added; the root README references both `LICENSE` and `LICENSE-SPEC.md`.
+
+Tag `v0.1.0` marks the publication candidate. It sits one docs-only commit (this STATUS entry) past the container-verified `52a2e05`; the first CI run on push is the fresh-clone gate on the tagged commit itself (STEP 5).
