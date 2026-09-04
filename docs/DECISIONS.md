@@ -137,8 +137,8 @@ Every deviation from `design-doc.md` normative semantics is recorded here with e
 - **Evidence:** `spec/schemas/registry.schema.json`; `signing.py`; golden `registry/valid/git-remote.yaml`, `invalid/bad-signing-no-signer.yaml`.
 
 ### DEC-026: dogfood policy scope for this repository
-- **What:** This repo's own `.monumentum/policy.yaml` governs: context = AGENTS.md, CLAUDE.md (L2); capability = `skill/**` (L1, Minhal-only approval); architecture = `agents.yaml` (L1, a reserved path — this repository has no architecture-layer file today). `docs/**`, source, tests, spec are NOT loop-managed.
-- **Why:** The managed surface is what steers agents (design principle 3). STATUS/DECISIONS are project logs the goal REQUIRES updating continuously; making them loop-managed would gate documentation behind review and stall the milestones. The skill package is the repo's real capability layer.
+- **What:** This repo's own `.monumentum/policy.yaml` governs: context = AGENTS.md, CLAUDE.md (L2); capability = `skill/**` (L1, Minhal-only approval); architecture = `agents.yaml` (L1, a reserved path — this repository has no architecture-layer file today). `docs/**`, source, tests, spec are NOT monumentum-managed.
+- **Why:** The managed surface is what steers agents (design principle 3). STATUS/DECISIONS are project logs the goal REQUIRES updating continuously; making them monumentum-managed would gate documentation behind review and stall the milestones. The skill package is the repo's real capability layer.
 - **Evidence:** `.monumentum/policy.yaml`; `monumentum verify .` green in `make verify` and CI.
 
 ## m5

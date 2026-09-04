@@ -41,7 +41,7 @@ AGENTS_BLOCK = f"""{AGENTS_BLOCK_BEGIN}
 
 This workspace is governed by the Monumentum standard. Rules for every agent:
 
-1. Do NOT edit loop-managed files directly (AGENTS.md, CLAUDE.md, memory,
+1. Do NOT edit monumentum-managed files directly (AGENTS.md, CLAUDE.md, memory,
    skills, tools, agent config). Policy lists the exact patterns in
    `.monumentum/policy.yaml`.
 2. When you learn a durable lesson, propose it instead:

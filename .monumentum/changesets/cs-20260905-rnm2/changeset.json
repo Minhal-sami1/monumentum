@@ -20,7 +20,8 @@
   },
   "rationale": "Rename: the skill and both hook scripts must invoke the monumentum CLI and locate the .monumentum/ directory (owner-directed rename, 2026-09-05). Capability class: queues for the L1 reviewer.",
   "evidence": [
-    "evidence/ev-001.json"
+    "evidence/ev-001.json",
+    "evidence/ev-002.json"
   ],
   "provenance": null,
   "supersedes": null,

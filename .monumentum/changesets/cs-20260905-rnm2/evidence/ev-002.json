@@ -1,0 +1,17 @@
+{
+  "id": "ev-002",
+  "kind": "eval",
+  "grader": "independent",
+  "format": "command-transcript",
+  "summary": {
+    "metric": "hook_tests_pass",
+    "before": 0,
+    "after": 1,
+    "n": 1,
+    "note": "ev-001 measured after=fail because tests/test_hook.py still asserted the pre-rename phrase 'loop-managed'; the test was aligned to 'monumentum-managed' and the payload re-measured unchanged."
+  },
+  "artifact": {
+    "path": "transcript-skill-2.json",
+    "sha256": "sha256:b94df4d3d35903d7c9d17b776115544e8efaa745e47c81049a18d532c50960db"
+  }
+}

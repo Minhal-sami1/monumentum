@@ -40,7 +40,7 @@ def _run_guard(ws_root: Path, tool_name: str, file_path: str) -> subprocess.Comp
 def test_guard_denies_edit_on_managed_file(ws_root):
     proc = _run_guard(ws_root, "Edit", "AGENTS.md")
     assert proc.returncode == 2
-    assert "loop-managed" in proc.stderr
+    assert "monumentum-managed" in proc.stderr
     assert "monumentum propose" in proc.stderr
 
 

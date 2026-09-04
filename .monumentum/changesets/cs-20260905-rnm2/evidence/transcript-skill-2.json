@@ -1,0 +1,1 @@
+{"check_cmd": "python -m pytest tests/test_hook.py -q", "runs": [{"phase": "before", "exit_code": 1}, {"phase": "after", "exit_code": 0, "note": "payload in a sandbox copy, tests aligned"}]}
