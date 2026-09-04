@@ -1,0 +1,28 @@
+{
+  "spec": "monumentum/v0.1",
+  "id": "cs-20260905-rnm2",
+  "layer": "capability",
+  "targets": [
+    "skill/SKILL.md",
+    "skill/hooks/pretooluse_guard.py",
+    "skill/hooks/stop_reminder.py"
+  ],
+  "payload": {
+    "type": "folder",
+    "path": "payload/",
+    "sha256": "sha256:f724aca7e57268d1a08601baa768ed2450cfcaf161ee554d867fa5a82c176e05"
+  },
+  "origin": {
+    "producer": "claude-code",
+    "model": null,
+    "session": null,
+    "trigger": "rename"
+  },
+  "rationale": "Rename: the skill and both hook scripts must invoke the monumentum CLI and locate the .monumentum/ directory (owner-directed rename, 2026-09-05). Capability class: queues for the L1 reviewer.",
+  "evidence": [
+    "evidence/ev-001.json"
+  ],
+  "provenance": null,
+  "supersedes": null,
+  "created": "2026-09-04T21:37:50Z"
+}

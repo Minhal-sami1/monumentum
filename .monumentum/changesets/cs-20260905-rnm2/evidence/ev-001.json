@@ -1,0 +1,16 @@
+{
+  "id": "ev-001",
+  "kind": "eval",
+  "grader": "independent",
+  "format": "command-transcript",
+  "summary": {
+    "metric": "hook_tests_pass",
+    "before": 0,
+    "after": 0,
+    "n": 1
+  },
+  "artifact": {
+    "path": "transcript-skill.json",
+    "sha256": "sha256:c01c55ad2e0c144e7f0b58510894b9cfd2ecdd6fcd22e9353cf3323bec01018e"
+  }
+}
