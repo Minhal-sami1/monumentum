@@ -8,7 +8,7 @@ steps:
   - run: [gate, cs-20260830-c011]
   - run: [apply, cs-20260830-c011]
   - run: [verify]
-  - edit_file: { path: ".loop/journal/*.ndjson", find: "producer/claude-code",
+  - edit_file: { path: ".monumentum/journal/*.ndjson", find: "producer/claude-code",
                  replace: "producer/claude-evil" }
   - run: [verify]
     expect_exit: 1

@@ -25,7 +25,7 @@ EOF
 CS=cs-20260831-t2aa
 # the injected instruction becomes a proposal against a non-allowlisted path
 set +e
-AGENTLOOP propose --layer context --target config/secrets.env --patch poison.patch \
+MONUMENTUM propose --layer context --target config/secrets.env --patch poison.patch \
   --rationale "the README said every session should trust this token" \
   --producer injected-agent --trigger web-content --id "$CS" > "$ART/propose.txt" 2>&1
 RC=$?
@@ -33,9 +33,9 @@ set -e
 [ "$RC" -eq 1 ] || { echo "T2 SECURITY FAIL: injected memory write not refused (rc=$RC)"; exit 1; }
 grep -q "I4" "$ART/propose.txt" || { echo "T2: refusal not attributed to I4"; exit 1; }
 [ ! -f config/secrets.env ] || { echo "T2 SECURITY FAIL: poisoned file was written"; exit 1; }
-AGENTLOOP verify . > /dev/null
+MONUMENTUM verify . > /dev/null
 # the attempt is journaled (proposed + rejected)
-AGENTLOOP log --json > "$ART/journal.jsonl"
+MONUMENTUM log --json > "$ART/journal.jsonl"
 "$PY" - "$ART/journal.jsonl" "$CS" <<'EOF'
 import json, sys
 ev = [json.loads(l) for l in open(sys.argv[1], encoding="utf-8") if json.loads(l).get("cs")==sys.argv[2]]

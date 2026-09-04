@@ -2,7 +2,7 @@
 """Executor-level conformance runner (spec §14).
 
 Drives ANY executor through the subprocess contract and checks the file
-plane afterwards. The runner deliberately does not import the agentloop
+plane afterwards. The runner deliberately does not import the monumentum
 package: it sees an executor exactly the way a stranger's implementation
 would be seen.
 
@@ -113,7 +113,7 @@ def do_edit_file(spec: dict, workspace: Path) -> None:
 
 def journal_events(workspace: Path) -> list[str]:
     events = []
-    journal_dir = workspace / ".loop" / "journal"
+    journal_dir = workspace / ".monumentum" / "journal"
     if not journal_dir.is_dir():
         return events
     for file in sorted(journal_dir.glob("*.ndjson")):
@@ -125,7 +125,7 @@ def journal_events(workspace: Path) -> list[str]:
 
 def run_case(case_dir: Path, executor: list[str], keep: bool = False) -> None:
     case = yaml.safe_load((case_dir / "case.yaml").read_text(encoding="utf-8"))
-    workspace = Path(tempfile.mkdtemp(prefix=f"loopconf-{case_dir.name}-"))
+    workspace = Path(tempfile.mkdtemp(prefix=f"monumentum-conf-{case_dir.name}-"))
     try:
         files_dir = case_dir / "files"
         if files_dir.is_dir():
@@ -175,7 +175,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Loop conformance runner")
     parser.add_argument(
         "--executor", required=True,
-        help="executor command, e.g. 'python -m agentloop.cli'",
+        help="executor command, e.g. 'python -m monumentum.cli'",
     )
     parser.add_argument("--cases", type=Path, default=HERE / "cases")
     parser.add_argument("--only", help="run a single case id")

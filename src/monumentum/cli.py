@@ -1,4 +1,4 @@
-"""agentloop CLI: the reference Executor's command surface.
+"""monumentum CLI: the reference Executor's command surface.
 
 Exit codes: 0 success, 1 rejected or failed, 2 queued for review or usage error.
 """
@@ -10,16 +10,16 @@ import json
 import sys
 from pathlib import Path
 
-from agentloop import __version__
-from agentloop.changeset import (
+from monumentum import __version__
+from monumentum.changeset import (
     ChangeSetError,
     attach_evidence,
     create_changeset,
     ingest_changeset,
     load_changeset,
 )
-from agentloop.check import check_schemas
-from agentloop.executor import (
+from monumentum.check import check_schemas
+from monumentum.executor import (
     S_QUEUED,
     ExecutorError,
     Outcome,
@@ -33,16 +33,16 @@ from agentloop.executor import (
     rollback,
     verify,
 )
-from agentloop.policy import PolicyError
-from agentloop.workspace import Workspace, WorkspaceError
+from monumentum.policy import PolicyError
+from monumentum.workspace import Workspace, WorkspaceError
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="agentloop",
-        description="Reference Executor for the Loop standard (spec loop/v0.1).",
+        prog="monumentum",
+        description="Reference Executor for the Monumentum standard (spec monumentum/v0.1).",
     )
-    parser.add_argument("--version", action="version", version=f"agentloop {__version__}")
+    parser.add_argument("--version", action="version", version=f"monumentum {__version__}")
     parser.add_argument(
         "-C", "--workspace", type=Path, default=Path("."), help="workspace root (default: .)"
     )
@@ -52,7 +52,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--golden", type=Path, default=Path("conformance/golden"))
 
     p = sub.add_parser(
-        "init", help="scaffold .loop/ with default policy and a genesis journal entry"
+        "init", help="scaffold .monumentum/ with default policy and a genesis journal entry"
     )
     p.add_argument("--policy", type=Path, help="custom policy.yaml to install instead of default")
 
@@ -109,10 +109,10 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("keygen", help="generate an ed25519 keypair for Team-lite signing")
     p.add_argument("--name", required=True)
     p.add_argument("--out-dir", type=Path, default=None,
-                   help="default: <workspace>/.loop/keys")
+                   help="default: <workspace>/.monumentum/keys")
 
     p = sub.add_parser("sync", help="push promoted ChangeSets, pull peers' (git-remote registry)")
-    p.add_argument("--actor", default="executor/agentloop-sync")
+    p.add_argument("--actor", default="executor/monumentum-sync")
 
     p = sub.add_parser("log", help="print journal entries")
     p.add_argument("--cs", help="filter by changeset id")
@@ -143,8 +143,8 @@ def main(argv: list[str] | None = None) -> int:
         print(f"error: {exc}", file=sys.stderr)
         return 1
     except Exception as exc:
-        from agentloop.registry import RegistryError
-        from agentloop.signing import SigningError
+        from monumentum.registry import RegistryError
+        from monumentum.signing import SigningError
 
         if isinstance(exc, RegistryError | SigningError):
             print(f"error: {exc}", file=sys.stderr)
@@ -162,21 +162,21 @@ def _dispatch(args: argparse.Namespace) -> int:
         policy_text = args.policy.read_text(encoding="utf-8") if args.policy else None
         ws, created = init_workspace(args.workspace, policy_text)
         if not created:
-            print(f".loop already initialized in {ws.root} — nothing changed")
+            print(f".monumentum already initialized in {ws.root} — nothing changed")
             return 0
-        print(f"Initialized .loop/ in {ws.root} (AGENTS.md managed block written)")
+        print(f"Initialized .monumentum/ in {ws.root} (AGENTS.md managed block written)")
         print("Next steps:")
-        print("  1. Review .loop/policy.yaml (context L2, capability L1, architecture L1).")
-        print("  2. Propose a change:  agentloop propose --layer context --target AGENTS.md \\")
+        print("  1. Review .monumentum/policy.yaml (context L2, capability L1, architecture L1).")
+        print("  2. Propose a change:  monumentum propose --layer context --target AGENTS.md \\")
         print("       --patch fix.patch --rationale 'why'")
-        print("  3. Attach evidence:   agentloop evidence <cs-id> --record ev.json --artifact log")
-        print("  4. Gate and apply:    agentloop gate <cs-id> && agentloop apply <cs-id>")
-        print("  5. Claude Code users: agentloop install-skill")
-        print("  6. Verify anytime:    agentloop verify .")
+        print("  3. Attach evidence:   monumentum evidence <cs-id> --record ev.json --artifact log")
+        print("  4. Gate and apply:    monumentum gate <cs-id> && monumentum apply <cs-id>")
+        print("  5. Claude Code users: monumentum install-skill")
+        print("  6. Verify anytime:    monumentum verify .")
         return 0
 
     if args.command == "install-skill":
-        from agentloop.skill_install import install_skill
+        from monumentum.skill_install import install_skill
 
         claude_dir = args.claude_dir or (ws.root / ".claude")
         installed = install_skill(claude_dir)
@@ -238,7 +238,7 @@ def _dispatch(args: argparse.Namespace) -> int:
         return _print_outcome(promote(ws, args.cs_id, args.actor))
 
     if args.command == "keygen":
-        from agentloop.signing import generate_keypair
+        from monumentum.signing import generate_keypair
 
         out_dir = args.out_dir or (ws.loop / "keys")
         key_path, pub_path = generate_keypair(out_dir, args.name)
@@ -247,7 +247,7 @@ def _dispatch(args: argparse.Namespace) -> int:
         return 0
 
     if args.command == "sync":
-        from agentloop.registry import sync as registry_sync
+        from monumentum.registry import sync as registry_sync
 
         report = registry_sync(ws, args.actor)
         for cs_id in report.pushed:

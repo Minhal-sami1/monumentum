@@ -2,14 +2,14 @@
 
 import json
 
-from agentloop.skill_install import GUARD_COMMAND, install_skill
-from agentloop.workspace import ensure_agents_block
+from monumentum.skill_install import GUARD_COMMAND, install_skill
+from monumentum.workspace import ensure_agents_block
 
 
 def test_install_skill_and_hooks(tmp_path):
     claude_dir = tmp_path / ".claude"
     install_skill(claude_dir)
-    assert (claude_dir / "skills" / "loop" / "SKILL.md").is_file()
+    assert (claude_dir / "skills" / "monumentum" / "SKILL.md").is_file()
     assert (claude_dir / "hooks" / "pretooluse_guard.py").is_file()
     assert (claude_dir / "hooks" / "stop_reminder.py").is_file()
     settings = json.loads((claude_dir / "settings.json").read_text(encoding="utf-8"))
@@ -47,7 +47,7 @@ def test_install_preserves_existing_settings(tmp_path):
 def test_agents_block_created_and_idempotent(tmp_path):
     assert ensure_agents_block(tmp_path) is True
     content = (tmp_path / "AGENTS.md").read_text(encoding="utf-8")
-    assert content.count("agentloop:managed:begin") == 1
+    assert content.count("monumentum:managed:begin") == 1
     assert ensure_agents_block(tmp_path) is False
     assert (tmp_path / "AGENTS.md").read_text(encoding="utf-8") == content
 
@@ -57,4 +57,4 @@ def test_agents_block_appends_to_existing(tmp_path):
     ensure_agents_block(tmp_path)
     content = (tmp_path / "AGENTS.md").read_text(encoding="utf-8")
     assert content.startswith("# Existing notes")
-    assert content.count("agentloop:managed:begin") == 1
+    assert content.count("monumentum:managed:begin") == 1

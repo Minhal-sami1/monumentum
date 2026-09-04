@@ -5,12 +5,12 @@ failure, never a reason to skip: the final gate requires zero skipped tests.
 """
 
 import pytest
-from loop import Loop, LoopError
+from monumentum_sdk import Loop, LoopError
 
 PROMPT = "# prompt\n\n## Lessons\n"
 
 POLICY = """\
-spec: loop/v0.1
+spec: monumentum/v0.1
 envelope:
   context:
     level: L2
@@ -24,7 +24,7 @@ envelope:
     level: L1
     gates: [evidence_required, human_review]
     targets_allow: ["agent.yaml"]
-protected: [".loop/**"]
+protected: [".monumentum/**"]
 """
 
 DIFF = """\
@@ -102,7 +102,7 @@ def test_queue_path(lp, tmp_path):
 
 
 def test_sync_without_registry_raises(lp):
-    from agentloop.registry import RegistryError
+    from monumentum.registry import RegistryError
 
     with pytest.raises(RegistryError, match="no registry configured"):
         lp.sync()

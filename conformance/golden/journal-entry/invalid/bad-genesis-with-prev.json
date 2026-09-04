@@ -3,5 +3,5 @@
   "prev": "sha256:f12f4ca1e8e6c6e3605fc3d380966849c0ea48d6fb9e0b8b136069814c73dc32",
   "ts": "2026-08-30T09:00:00Z",
   "event": "genesis",
-  "actor": "executor/agentloop@0.1.0"
+  "actor": "executor/monumentum@0.1.0"
 }

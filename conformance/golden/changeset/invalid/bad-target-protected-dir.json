@@ -1,9 +1,9 @@
 {
-  "_comment": "REQUIRED-FAILURE: targets .loop/policy.yaml — invariant I1, threat T4. _comment itself also violates additionalProperties, and the target pattern rejects .loop/.",
-  "spec": "loop/v0.1",
+  "_comment": "REQUIRED-FAILURE: targets .monumentum/policy.yaml — invariant I1, threat T4. _comment itself also violates additionalProperties, and the target pattern rejects .monumentum/.",
+  "spec": "monumentum/v0.1",
   "id": "cs-20260830-bad1",
   "layer": "architecture",
-  "targets": [".loop/policy.yaml"],
+  "targets": [".monumentum/policy.yaml"],
   "payload": {
     "type": "diff",
     "path": "payload.patch",

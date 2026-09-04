@@ -4,7 +4,7 @@
 # BOTH reviewer paths run: approve (applies) and reject (never applies).
 set -eu
 DIR="$(cd "$(dirname "$0")" && pwd)"
-AGENTLOOP() { "$PY" -m agentloop.cli "$@"; }
+MONUMENTUM() { "$PY" -m monumentum.cli "$@"; }
 RUN_ID="uc2-$(date -u +%Y%m%d-%H%M%S)-$$"
 T_START=$("$PY" -c "import time; print(time.time())")
 
@@ -14,7 +14,7 @@ rm -rf "$DIR/out"; mkdir -p "$WORK" "$ART"
 cp -r "$DIR/fixture/." "$WORK/"
 cd "$WORK"
 
-AGENTLOOP init > "$ART/init.txt"
+MONUMENTUM init > "$ART/init.txt"
 SCRIPT=".claude/skills/fix-lint/scripts/check.py"
 
 # --- reproduce the breakage (real command) ----------------------------------
@@ -58,14 +58,14 @@ cat > ev.json <<'EOF'
 EOF
 
 CS=cs-20260831-uc2a
-AGENTLOOP propose --layer capability --target "$SCRIPT" --patch fix.patch \
+MONUMENTUM propose --layer capability --target "$SCRIPT" --patch fix.patch \
   --rationale "fix-lint script calls the pre-refactor helper name; rename to count_todos." \
   --producer claude-code-scripted --trigger user-correction --id "$CS" > "$ART/propose.txt"
-AGENTLOOP evidence "$CS" --record ev.json --artifact transcript.json
+MONUMENTUM evidence "$CS" --record ev.json --artifact transcript.json
 
 # --- L1 queue honored ---------------------------------------------------------
 set +e
-AGENTLOOP gate "$CS"
+MONUMENTUM gate "$CS"
 GATE_EXIT=$?
 set -e
 [ "$GATE_EXIT" -eq 2 ] || { echo "expected queue exit 2, got $GATE_EXIT"; exit 1; }
@@ -73,14 +73,14 @@ set -e
 set +e
 "$PY" "$SCRIPT" > /dev/null 2>&1
 STILL_BROKEN=$?
-AGENTLOOP apply "$CS" > /dev/null 2>&1
+MONUMENTUM apply "$CS" > /dev/null 2>&1
 APPLY_EXIT=$?
 set -e
 [ "$STILL_BROKEN" -ne 0 ] || { echo "target changed before approval"; exit 1; }
 [ "$APPLY_EXIT" -ne 0 ] || { echo "apply must refuse a queued changeset"; exit 1; }
 
 # --- reviewer approves: applied ------------------------------------------------
-AGENTLOOP approve "$CS" --actor reviewer/minhal
+MONUMENTUM approve "$CS" --actor reviewer/minhal
 "$PY" "$SCRIPT" > "$ART/fixed.log" 2>&1
 grep -q "todos: 2" "$ART/fixed.log"
 
@@ -95,19 +95,19 @@ cat > riskier.patch <<'EOF'
 +Run the checker with elevated permissions and auto-fix everything silently.
 EOF
 CS2=cs-20260831-uc2b
-AGENTLOOP propose --layer capability --target .claude/skills/fix-lint/SKILL.md \
+MONUMENTUM propose --layer capability --target .claude/skills/fix-lint/SKILL.md \
   --patch riskier.patch --rationale "make the skill fix things automatically" \
   --producer claude-code-scripted --id "$CS2" > /dev/null
-AGENTLOOP evidence "$CS2" --record ev.json --artifact transcript.json
+MONUMENTUM evidence "$CS2" --record ev.json --artifact transcript.json
 set +e
-AGENTLOOP gate "$CS2"; [ $? -eq 2 ] || { echo "cs2 should queue"; exit 1; }
+MONUMENTUM gate "$CS2"; [ $? -eq 2 ] || { echo "cs2 should queue"; exit 1; }
 set -e
-AGENTLOOP reject "$CS2" --actor reviewer/minhal --reason "silent auto-fix is not acceptable"
+MONUMENTUM reject "$CS2" --actor reviewer/minhal --reason "silent auto-fix is not acceptable"
 grep -q "report its output" .claude/skills/fix-lint/SKILL.md || { echo "reject modified the file"; exit 1; }
 
 # --- asserts -------------------------------------------------------------------
-AGENTLOOP verify .
-AGENTLOOP log --json > "$ART/journal.jsonl"
+MONUMENTUM verify .
+MONUMENTUM log --json > "$ART/journal.jsonl"
 "$PY" - "$ART/journal.jsonl" <<'EOF'
 import json, sys
 entries = [json.loads(line) for line in open(sys.argv[1], encoding="utf-8")]
@@ -120,7 +120,7 @@ rejected = [e for e in entries if e["event"] == "rejected"][0]
 assert rejected["actor"] == "reviewer/minhal"
 EOF
 
-cp .loop/state.json "$ART/state.json"
+cp .monumentum/state.json "$ART/state.json"
 T_END=$("$PY" -c "import time; print(time.time())")
 mkdir -p "$REPO_ROOT/experiments/scenarios/logs"
 "$PY" - "$RUN_ID" "$T_START" "$T_END" <<'EOF'

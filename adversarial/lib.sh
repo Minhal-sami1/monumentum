@@ -1,5 +1,5 @@
 # Shared helpers for adversarial tests. Source this from each t*.sh.
-AGENTLOOP() { "$PY" -m agentloop.cli "$@"; }
+MONUMENTUM() { "$PY" -m monumentum.cli "$@"; }
 
 # Fresh governed workspace in a scratch dir. Sets $WS (cwd) and $ART.
 setup_ws() {
@@ -13,7 +13,7 @@ setup_ws() {
   mkdir -p "$WS/tools"
   printf "def helper():\n    return 1\n" > "$WS/tools/util.py"
   cd "$WS"
-  AGENTLOOP init > /dev/null
+  MONUMENTUM init > /dev/null
 }
 
 # Assert a command fails (non-zero). Usage: must_fail <msg> -- cmd args...

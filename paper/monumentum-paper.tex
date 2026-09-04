@@ -17,9 +17,9 @@
 \newcommand{\runid}[1]{\footnote{Regenerated from run \texttt{#1}; see
   \texttt{experiments/results/metrics.json}.}}
 
-\title{\vspace{-2em}The Loop: A File-First Standard for Governed,
+\title{\vspace{-2em}Monumentum: A File-First Standard for Governed,
 Portable Agent Self-Improvement}
-\author{Minhal \\ \small (working name: \texttt{agentloop}; final naming pending)}
+\author{Minhal \\ \small (working name: \texttt{monumentum}; final naming pending)}
 \date{2026}
 
 \begin{document}
@@ -29,7 +29,7 @@ Portable Agent Self-Improvement}
 Deployed agents learn during work, but that experience does not compound.
 A lesson either dies with the context or persists ungoverned---an
 unchecked memory write or prompt edit with no evidence, no gate, no audit
-trail, and no path to any other agent. We present \emph{the Loop}, an open
+trail, and no path to any other agent. We present \emph{Monumentum}, an open
 standard that makes one self-modification \emph{proven, gated, recorded,
 reversible, and portable}. The standard defines five objects (ChangeSet,
 Evidence, Policy, Journal, Registry), a six-state lifecycle, four trust
@@ -138,7 +138,7 @@ plain git remote; a pulled ChangeSet never bypasses local gates.
 The normative Core representation is one directory:
 
 \begin{verbatim}
-.loop/
+.monumentum/
   policy.yaml        # the declared envelope
   journal/
     2026-08.ndjson   # append-only, hash-chained
@@ -152,7 +152,7 @@ The normative Core representation is one directory:
   registry.yaml      # Team profile only
 \end{verbatim}
 
-Three rules make this safe. \texttt{.loop/} is never a valid change target.
+Three rules make this safe. \texttt{.monumentum/} is never a valid change target.
 Targets must be under version control, or the executor snapshots them
 before apply. Journal entries reference content hashes, and git commits
 when present.
@@ -200,7 +200,7 @@ touch its own envelope.
 
 \subsection{Invariants}
 Six normative invariants hold the design together: (I1) the loop never
-targets its own \texttt{.loop/} files; (I2) the journal is append-only and
+targets its own \texttt{.monumentum/} files; (I2) the journal is append-only and
 hash-chained; (I3) L2/L3 application requires at least one
 \emph{independent} evidence record; (I4) targets outside the allowlist
 fail validation; (I5) every applied change is reversible with one command;
@@ -212,14 +212,14 @@ grader above L1.
 A skill can \emph{teach} the loop; only deterministic code may
 \emph{enforce} it. The reference executor validates, gates, applies,
 journals, and rolls back; the model cannot rewrite it mid-session, and
-\texttt{.loop/} is protected. The universal backstop is one CI command,
-\texttt{agentloop verify}, which checks that every diff to a managed target
+\texttt{.monumentum/} is protected. The universal backstop is one CI command,
+\texttt{monumentum verify}, which checks that every diff to a managed target
 has a matching valid journal entry and that the hash chain is intact---so
 the guarantee is harness-independent.
 
 \section{Implementation}
 \label{sec:impl}
-The reference executor is a Python~3.11 CLI (\texttt{agentloop}, alias
+The reference executor is a Python~3.11 CLI (\texttt{monumentum}, alias
 \texttt{loop}) and a library the SDK shares, so both adoption doors produce
 identical files. Provenance and signing reuse existing supply-chain
 practice in spirit~\cite{intoto,slsa,sigstore}; the v1 Team-lite profile
@@ -230,7 +230,7 @@ ChangeSet digest, with verification on pull.
 package: a skill that carries the cognition (when you learn a durable
 lesson, propose---never edit managed files directly), a \texttt{PreToolUse}
 hook that denies direct edits to managed targets and points at
-\texttt{agentloop propose}, and a session-end reminder for queued changes.
+\texttt{monumentum propose}, and a session-end reminder for queued changes.
 Codex-class harnesses that lack hooks get an idempotent managed block in
 \texttt{AGENTS.md} plus the CI backstop. The \emph{creator door} is a
 Python SDK exposing five verbs (\texttt{propose}, \texttt{attach\_evidence},
@@ -249,7 +249,7 @@ the proposing producer.
 
 \paragraph{Conformance.} A golden corpus validates the five JSON Schemas,
 including required-failure cases that must be rejected: a ChangeSet
-targeting \texttt{.loop/}, a path traversal, a bad hash format, an unknown
+targeting \texttt{.monumentum/}, a path traversal, a bad hash format, an unknown
 event type, a policy that fails to protect its own directory. An
 executor-level suite then drives \emph{any} executor through a documented
 subprocess contract---known ChangeSets in, expected journal out---and

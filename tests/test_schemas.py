@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from agentloop.schemas import OBJECT_TYPES, get_validator, load_instance, validate_object
+from monumentum.schemas import OBJECT_TYPES, get_validator, load_instance, validate_object
 
 REPO = Path(__file__).resolve().parents[1]
 GOLDEN = REPO / "conformance" / "golden"
@@ -55,18 +55,18 @@ def valid_changeset() -> dict:
 
 def test_changeset_rejects_loop_target(valid_changeset):
     cs = copy.deepcopy(valid_changeset)
-    cs["targets"] = [".loop/journal/2026-08.ndjson"]
+    cs["targets"] = [".monumentum/journal/2026-08.ndjson"]
     assert validate_object("changeset", cs)
 
 
 def test_changeset_rejects_loop_dir_itself(valid_changeset):
     cs = copy.deepcopy(valid_changeset)
-    cs["targets"] = [".loop"]
+    cs["targets"] = [".monumentum"]
     assert validate_object("changeset", cs)
 
 
 def test_changeset_allows_loop_prefix_name(valid_changeset):
-    # ".loopy/x" is NOT inside .loop/ and must stay legal.
+    # ".loopy/x" is NOT inside .monumentum/ and must stay legal.
     cs = copy.deepcopy(valid_changeset)
     cs["targets"] = [".loopy/notes.md"]
     assert validate_object("changeset", cs) == []
@@ -122,7 +122,7 @@ def test_journal_genesis_rules():
         "prev": None,
         "ts": "2026-08-30T09:00:00Z",
         "event": "genesis",
-        "actor": "executor/agentloop@0.1.0",
+        "actor": "executor/monumentum@0.1.0",
     }
     assert validate_object("journal-entry", genesis) == []
     non_genesis_at_zero = dict(genesis, event="applied")

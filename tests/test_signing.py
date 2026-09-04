@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from agentloop.signing import (
+from monumentum.signing import (
     SigningError,
     generate_keypair,
     portable_digest,

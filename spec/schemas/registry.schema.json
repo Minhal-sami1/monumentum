@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://agentloop.invalid/schemas/v0.1/registry.schema.json",
+  "$id": "https://monumentum.invalid/schemas/v0.1/registry.schema.json",
   "title": "Registry",
-  "description": "Registry configuration (.loop/registry.yaml, parsed). Team profile only. Normative for spec loop/v0.1.",
+  "description": "Registry configuration (.monumentum/registry.yaml, parsed). Team profile only. Normative for spec monumentum/v0.1.",
   "type": "object",
   "required": ["spec", "kind", "remote"],
   "additionalProperties": false,
   "properties": {
-    "spec": { "const": "loop/v0.1" },
+    "spec": { "const": "monumentum/v0.1" },
     "kind": {
       "const": "git-remote",
       "description": "v0.1 defines exactly one Distributor kind: a plain git remote. OCI is a specified upgrade path, not implemented in v1."
@@ -29,7 +29,7 @@
         "pubkeys_dir": {
           "type": "string",
           "minLength": 1,
-          "description": "Directory of trusted ed25519 public keys, relative to .loop/."
+          "description": "Directory of trusted ed25519 public keys, relative to .monumentum/."
         }
       },
       "description": "Verification settings for pulled ChangeSets. Team-lite: ed25519 detached signatures."
@@ -42,7 +42,7 @@
         "key_file": {
           "type": "string",
           "minLength": 1,
-          "description": "Path to this workspace's ed25519 private key, relative to .loop/. MUST NOT be pushed to the registry."
+          "description": "Path to this workspace's ed25519 private key, relative to .monumentum/. MUST NOT be pushed to the registry."
         },
         "signer": { "type": "string", "minLength": 1 }
       },

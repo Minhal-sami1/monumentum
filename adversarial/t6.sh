@@ -26,15 +26,15 @@ cat > transcript.json <<'EOF'
 EOF
 
 CS=cs-20260831-t6aa
-AGENTLOOP propose --layer context --target AGENTS.md --patch fix.patch \
+MONUMENTUM propose --layer context --target AGENTS.md --patch fix.patch \
   --rationale "Repo uses pnpm." --producer producer --id "$CS" > /dev/null
-AGENTLOOP evidence "$CS" --record ev.json --artifact transcript.json > /dev/null
-AGENTLOOP gate "$CS" > /dev/null
-AGENTLOOP apply "$CS" > /dev/null
-AGENTLOOP verify . > /dev/null   # clean before tampering
+MONUMENTUM evidence "$CS" --record ev.json --artifact transcript.json > /dev/null
+MONUMENTUM gate "$CS" > /dev/null
+MONUMENTUM apply "$CS" > /dev/null
+MONUMENTUM verify . > /dev/null   # clean before tampering
 
 # tamper with a PAST entry (the applied entry's decision reason)
-JOURNAL=$(ls .loop/journal/*.ndjson | head -1)
+JOURNAL=$(ls .monumentum/journal/*.ndjson | head -1)
 "$PY" - "$JOURNAL" <<'EOF'
 import sys
 p = sys.argv[1]
@@ -45,7 +45,7 @@ open(p, "w", encoding="utf-8", newline="\n").write("\n".join(lines) + "\n")
 EOF
 
 set +e
-AGENTLOOP verify . > "$ART/verify.txt" 2>&1
+MONUMENTUM verify . > "$ART/verify.txt" 2>&1
 RC=$?
 set -e
 [ "$RC" -eq 1 ] || { echo "T6 SECURITY FAIL: tampered journal passed verify (rc=$RC)"; exit 1; }

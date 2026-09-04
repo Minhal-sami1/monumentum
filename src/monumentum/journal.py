@@ -1,7 +1,7 @@
 """Append-only, hash-chained NDJSON journal (spec §8, invariant I2).
 
 Entry seq numbers are consecutive from 0 across all files under
-.loop/journal/. Every entry's `prev` is the sha256 of the exact previous
+.monumentum/journal/. Every entry's `prev` is the sha256 of the exact previous
 serialized line (bytes, without the trailing newline). Entry 0 is genesis.
 """
 
@@ -11,8 +11,8 @@ import datetime as _dt
 from dataclasses import dataclass
 from pathlib import Path
 
-from agentloop.hashing import canonical_json, sha256_bytes
-from agentloop.schemas import validate_object
+from monumentum.hashing import canonical_json, sha256_bytes
+from monumentum.schemas import validate_object
 
 
 class JournalError(Exception):

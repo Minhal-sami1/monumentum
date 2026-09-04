@@ -22,7 +22,7 @@ def main() -> int:
     parser.add_argument("rest", nargs=argparse.REMAINDER)
     args = parser.parse_args()
     ws = args.workspace
-    loop = ws / ".loop"
+    loop = ws / ".monumentum"
 
     def journal(event: str) -> None:
         loop.joinpath("journal").mkdir(parents=True, exist_ok=True)

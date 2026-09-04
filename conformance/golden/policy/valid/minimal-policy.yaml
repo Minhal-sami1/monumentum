@@ -1,5 +1,5 @@
-# Smallest conformant policy: three classes, protected .loop/**, no optional blocks.
-spec: loop/v0.1
+# Smallest conformant policy: three classes, protected .monumentum/**, no optional blocks.
+spec: monumentum/v0.1
 envelope:
   context:
     level: L0
@@ -13,4 +13,4 @@ envelope:
     level: L0
     gates: []
     targets_allow: ["agents.yaml"]
-protected: [".loop/**"]
+protected: [".monumentum/**"]

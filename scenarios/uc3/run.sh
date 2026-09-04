@@ -4,7 +4,7 @@
 # Propagation time is logged. A policy-violating pulled change is refused in B.
 set -eu
 DIR="$(cd "$(dirname "$0")" && pwd)"
-AGENTLOOP() { "$PY" -m agentloop.cli "$@"; }
+MONUMENTUM() { "$PY" -m monumentum.cli "$@"; }
 RUN_ID="uc3-$(date -u +%Y%m%d-%H%M%S)-$$"
 
 WORK="$DIR/out/work"
@@ -21,17 +21,17 @@ A="$WORK/a"; mkdir -p "$A"
 cp "$REPO_ROOT/scenarios/uc1/fixture/AGENTS.md" "$A/AGENTS.md"
 cp "$REPO_ROOT/scenarios/uc1/fixture/install.js" "$A/install.js"
 cd "$A"
-AGENTLOOP init --policy "$DIR/fixture/a-policy.yaml" > /dev/null
-AGENTLOOP keygen --name producer-a > /dev/null
-cat > .loop/registry.yaml <<EOF
-spec: loop/v0.1
+MONUMENTUM init --policy "$DIR/fixture/a-policy.yaml" > /dev/null
+MONUMENTUM keygen --name producer-a > /dev/null
+cat > .monumentum/registry.yaml <<EOF
+spec: monumentum/v0.1
 kind: git-remote
 remote: { url: "$(cd "$REG" && pwd -W 2>/dev/null || pwd)", branch: main }
 verify: { require_signatures: true, pubkeys_dir: pubkeys }
 signing: { key_file: keys/producer-a.key, signer: producer-a }
 EOF
-mkdir -p .loop/pubkeys
-cp .loop/keys/producer-a.pub .loop/pubkeys/
+mkdir -p .monumentum/pubkeys
+cp .monumentum/keys/producer-a.pub .monumentum/pubkeys/
 
 T0=$("$PY" -c "import time; print(time.time())")
 
@@ -58,13 +58,13 @@ cat > ev.json <<'EOF'
 }
 EOF
 CS=cs-20260831-uc3a
-AGENTLOOP propose --layer context --target AGENTS.md --patch fix.patch \
+MONUMENTUM propose --layer context --target AGENTS.md --patch fix.patch \
   --rationale "Repo uses pnpm. npm install fails on postinstall hooks." \
   --producer producer-a --trigger reflection --id "$CS" > /dev/null
-AGENTLOOP evidence "$CS" --record ev.json --artifact transcript.json > /dev/null
-AGENTLOOP gate "$CS" > /dev/null
-AGENTLOOP apply "$CS" > /dev/null
-AGENTLOOP promote "$CS" --actor human/minhal > /dev/null
+MONUMENTUM evidence "$CS" --record ev.json --artifact transcript.json > /dev/null
+MONUMENTUM gate "$CS" > /dev/null
+MONUMENTUM apply "$CS" > /dev/null
+MONUMENTUM promote "$CS" --actor human/minhal > /dev/null
 
 # a second, policy-violating-for-B change: docs/** is allowed in A only
 mkdir -p docs
@@ -86,14 +86,14 @@ cat > transcript2.json <<'EOF'
 }
 EOF
 CS2=cs-20260831-uc3b
-AGENTLOOP propose --layer context --target docs/setup.md --patch docs.patch \
+MONUMENTUM propose --layer context --target docs/setup.md --patch docs.patch \
   --rationale "propagate the pnpm note into docs" --producer producer-a --id "$CS2" > /dev/null
-AGENTLOOP evidence "$CS2" --record ev.json --artifact transcript2.json > /dev/null 2>&1 || true
-AGENTLOOP gate "$CS2" > /dev/null
-AGENTLOOP apply "$CS2" > /dev/null
-AGENTLOOP promote "$CS2" --actor human/minhal > /dev/null
+MONUMENTUM evidence "$CS2" --record ev.json --artifact transcript2.json > /dev/null 2>&1 || true
+MONUMENTUM gate "$CS2" > /dev/null
+MONUMENTUM apply "$CS2" > /dev/null
+MONUMENTUM promote "$CS2" --actor human/minhal > /dev/null
 
-AGENTLOOP sync > "$ART/sync-a.txt"
+MONUMENTUM sync > "$ART/sync-a.txt"
 grep -q "pushed  $CS" "$ART/sync-a.txt"
 grep -q "pushed  $CS2" "$ART/sync-a.txt"
 
@@ -102,20 +102,20 @@ B="$WORK/b"; mkdir -p "$B"
 cp "$REPO_ROOT/scenarios/uc1/fixture/AGENTS.md" "$B/AGENTS.md"
 cp "$REPO_ROOT/scenarios/uc1/fixture/install.js" "$B/install.js"
 cd "$B"
-AGENTLOOP init > /dev/null           # DEFAULT policy: docs/** NOT allowed
-AGENTLOOP keygen --name consumer-b > /dev/null
-cat > .loop/registry.yaml <<EOF
-spec: loop/v0.1
+MONUMENTUM init > /dev/null           # DEFAULT policy: docs/** NOT allowed
+MONUMENTUM keygen --name consumer-b > /dev/null
+cat > .monumentum/registry.yaml <<EOF
+spec: monumentum/v0.1
 kind: git-remote
 remote: { url: "$(cd "$REG" && pwd -W 2>/dev/null || pwd)", branch: main }
 verify: { require_signatures: true, pubkeys_dir: pubkeys }
 signing: { key_file: keys/consumer-b.key, signer: consumer-b }
 EOF
-mkdir -p .loop/pubkeys
-cp "$A/.loop/keys/producer-a.pub" .loop/pubkeys/
+mkdir -p .monumentum/pubkeys
+cp "$A/.monumentum/keys/producer-a.pub" .monumentum/pubkeys/
 
 set +e
-AGENTLOOP sync > "$ART/sync-b.txt" 2>&1
+MONUMENTUM sync > "$ART/sync-b.txt" 2>&1
 SYNC_EXIT=$?
 set -e
 [ "$SYNC_EXIT" -eq 0 ] || { cat "$ART/sync-b.txt"; echo "sync-b failed"; exit 1; }
@@ -125,16 +125,16 @@ grep -q "rejected $CS2" "$ART/sync-b.txt"   # I4: refused by B's local policy
 # pulled but not yet applied: local gates decide
 grep -q "npm install to set up" AGENTS.md
 
-AGENTLOOP gate "$CS" > /dev/null
-AGENTLOOP apply "$CS" > /dev/null
+MONUMENTUM gate "$CS" > /dev/null
+MONUMENTUM apply "$CS" > /dev/null
 T1=$("$PY" -c "import time; print(time.time())")
 
 # --- asserts -------------------------------------------------------------------
 grep -q "pnpm install" AGENTS.md
 [ ! -f docs/setup.md ] || { echo "policy-violating change reached B's files"; exit 1; }
-AGENTLOOP verify .
-cd "$A" && AGENTLOOP verify . && cd "$B"
-AGENTLOOP log --json > "$ART/journal-b.jsonl"
+MONUMENTUM verify .
+cd "$A" && MONUMENTUM verify . && cd "$B"
+MONUMENTUM log --json > "$ART/journal-b.jsonl"
 "$PY" - "$ART/journal-b.jsonl" "$CS" "$CS2" <<'EOF'
 import json, sys
 entries = [json.loads(line) for line in open(sys.argv[1], encoding="utf-8")]
@@ -145,7 +145,7 @@ for e in entries:
 assert by_cs[cs] == ["proposed", "gated", "applied"], by_cs[cs]
 assert by_cs[cs2] == ["proposed", "rejected"], by_cs[cs2]
 EOF
-cp "$A/.loop/journal/"*.ndjson "$ART/journal-a.ndjson"
+cp "$A/.monumentum/journal/"*.ndjson "$ART/journal-a.ndjson"
 
 ELAPSED=$("$PY" -c "print(round($T1 - $T0, 3))")
 mkdir -p "$REPO_ROOT/experiments/scenarios/logs"

@@ -28,7 +28,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
-CLI = [sys.executable, "-m", "agentloop.cli"]
+CLI = [sys.executable, "-m", "monumentum.cli"]
 
 # five fixed tasks: (target file, initial content, old line, new line)
 TASKS = [
@@ -51,9 +51,9 @@ def _run_id(prefix: str) -> str:
 
 
 def _versions() -> dict:
-    import agentloop
+    import monumentum
 
-    return {"agentloop": agentloop.__version__, "python": sys.version.split()[0]}
+    return {"monumentum": monumentum.__version__, "python": sys.version.split()[0]}
 
 
 def _present_check(rel: str, needle: str) -> str:
@@ -133,7 +133,7 @@ def experiment_overhead(logs_dir: Path) -> Path:
             "versions": _versions(),
         })
     # added context size: the skill + the AGENTS.md managed block
-    from agentloop.workspace import AGENTS_BLOCK
+    from monumentum.workspace import AGENTS_BLOCK
 
     skill_chars = (REPO / "skill" / "SKILL.md").read_text(encoding="utf-8").__len__()
     block_chars = len(AGENTS_BLOCK)
@@ -203,7 +203,7 @@ def experiment_evidence(logs_dir: Path) -> Path:
                                 capture_output=True, text=True)
             if ap.returncode == 0:
                 loop_total += 1
-                env = json.loads((ws / ".loop" / "changesets" / cs / "changeset.json")
+                env = json.loads((ws / ".monumentum" / "changesets" / cs / "changeset.json")
                                  .read_text(encoding="utf-8"))
                 if env["evidence"]:
                     loop_with_evidence += 1

@@ -5,7 +5,7 @@
 # reality.
 set -eu
 DIR="$(cd "$(dirname "$0")" && pwd)"
-AGENTLOOP() { "$PY" -m agentloop.cli "$@"; }
+MONUMENTUM() { "$PY" -m monumentum.cli "$@"; }
 RUN_ID="uc5-$(date -u +%Y%m%d-%H%M%S)-$$"
 T_START=$("$PY" -c "import time; print(time.time())")
 
@@ -19,7 +19,7 @@ cp "$REPO_ROOT/scenarios/uc1/fixture/AGENTS.md" "$WORK/AGENTS.md"
 cp "$REPO_ROOT/scenarios/uc1/fixture/install.js" "$WORK/install.js"
 cd "$WORK"
 
-AGENTLOOP init --policy loop-policy.yaml > /dev/null
+MONUMENTUM init --policy monumentum-policy.yaml > /dev/null
 
 make_patch() {
   "$PY" - "$1" "$2" "$3" "$4" <<'EOF'
@@ -57,12 +57,12 @@ cat > transcript1.json <<'EOF'
 }
 EOF
 CS_A=cs-20260831-uc5a
-AGENTLOOP propose --layer context --target AGENTS.md --patch fix.patch \
+MONUMENTUM propose --layer context --target AGENTS.md --patch fix.patch \
   --rationale "Repo uses pnpm. npm install fails on postinstall hooks." \
   --producer claude-code-scripted --trigger reflection --id "$CS_A" > /dev/null
-AGENTLOOP evidence "$CS_A" --record ev.json --artifact transcript1.json > /dev/null
-AGENTLOOP gate "$CS_A" > /dev/null
-AGENTLOOP apply "$CS_A" > /dev/null
+MONUMENTUM evidence "$CS_A" --record ev.json --artifact transcript1.json > /dev/null
+MONUMENTUM gate "$CS_A" > /dev/null
+MONUMENTUM apply "$CS_A" > /dev/null
 
 # --- history 2 (UC4-style): capability change applied then rolled back ----------
 cat > transcript2.json <<EOF
@@ -73,26 +73,26 @@ cat > transcript2.json <<EOF
 EOF
 make_patch tools/textutil.py variant1.py.txt bad.patch tools/textutil.py
 CS_B=cs-20260831-uc5b
-AGENTLOOP propose --layer capability --target tools/textutil.py --patch bad.patch \
+MONUMENTUM propose --layer capability --target tools/textutil.py --patch bad.patch \
   --rationale "Simplify slugify with one regex; micro-benchmark 3x faster." \
   --producer optimizer-bot --id "$CS_B" > /dev/null
-AGENTLOOP evidence "$CS_B" --record ev.json --artifact transcript2.json > /dev/null
-AGENTLOOP gate "$CS_B" > /dev/null
-AGENTLOOP apply "$CS_B" > /dev/null
+MONUMENTUM evidence "$CS_B" --record ev.json --artifact transcript2.json > /dev/null
+MONUMENTUM gate "$CS_B" > /dev/null
+MONUMENTUM apply "$CS_B" > /dev/null
 set +e
 "$PY" -m pytest test_textutil.py -q > "$ART/regression.log" 2>&1
 set -e
-AGENTLOOP rollback "$CS_B" --actor human/operator > /dev/null
+MONUMENTUM rollback "$CS_B" --actor human/operator > /dev/null
 
 # --- history 3 (UC4-style): a good capability change, survives ------------------
 make_patch tools/textutil.py variant3.py.txt good.patch tools/textutil.py
 CS_C=cs-20260831-uc5c
-AGENTLOOP propose --layer capability --target tools/textutil.py --patch good.patch \
+MONUMENTUM propose --layer capability --target tools/textutil.py --patch good.patch \
   --rationale "Treat dots as separators; matches slug policy for filenames." \
   --producer optimizer-bot --id "$CS_C" > /dev/null
-AGENTLOOP evidence "$CS_C" --record ev.json --artifact transcript2.json > /dev/null
-AGENTLOOP gate "$CS_C" > /dev/null
-AGENTLOOP apply "$CS_C" > /dev/null
+MONUMENTUM evidence "$CS_C" --record ev.json --artifact transcript2.json > /dev/null
+MONUMENTUM gate "$CS_C" > /dev/null
+MONUMENTUM apply "$CS_C" > /dev/null
 
 # --- history 4 (UC2-reject-style): out-of-allowlist proposal refused -------------
 cat > sneaky.patch <<'EOF'
@@ -103,7 +103,7 @@ cat > sneaky.patch <<'EOF'
 EOF
 CS_D=cs-20260831-uc5d
 set +e
-AGENTLOOP propose --layer context --target src/secrets.py --patch sneaky.patch \
+MONUMENTUM propose --layer context --target src/secrets.py --patch sneaky.patch \
   --rationale "store the token where every session can see it" \
   --producer claude-code-scripted --id "$CS_D" > /dev/null 2>&1
 [ $? -eq 1 ] || { echo "expected rejection"; exit 1; }
@@ -120,8 +120,8 @@ grep -q "rolled back by human/operator" "$ART/audit-report.txt"
 grep -q "$CS_D" "$ART/audit-report.txt"                   # the refusal is explained
 grep -q "matches no targets_allow" "$ART/audit-report.txt"
 
-AGENTLOOP verify .
-cp .loop/journal/*.ndjson "$ART/journal.ndjson"
+MONUMENTUM verify .
+cp .monumentum/journal/*.ndjson "$ART/journal.ndjson"
 
 T_END=$("$PY" -c "import time; print(time.time())")
 mkdir -p "$REPO_ROOT/experiments/scenarios/logs"

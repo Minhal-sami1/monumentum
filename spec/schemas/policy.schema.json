@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://agentloop.invalid/schemas/v0.1/policy.schema.json",
+  "$id": "https://monumentum.invalid/schemas/v0.1/policy.schema.json",
   "title": "Policy",
-  "description": "The declared change envelope (.loop/policy.yaml, parsed). Normative for spec loop/v0.1.",
+  "description": "The declared change envelope (.monumentum/policy.yaml, parsed). Normative for spec monumentum/v0.1.",
   "type": "object",
   "required": ["spec", "envelope", "protected"],
   "additionalProperties": false,
   "properties": {
-    "spec": { "const": "loop/v0.1" },
+    "spec": { "const": "monumentum/v0.1" },
     "envelope": {
       "type": "object",
       "required": ["context", "capability", "architecture"],
@@ -23,8 +23,8 @@
       "minItems": 1,
       "uniqueItems": true,
       "items": { "type": "string", "minLength": 1 },
-      "contains": { "const": ".loop/**" },
-      "description": "Glob patterns that are never valid change targets. MUST contain \".loop/**\" (invariant I1)."
+      "contains": { "const": ".monumentum/**" },
+      "description": "Glob patterns that are never valid change targets. MUST contain \".monumentum/**\" (invariant I1)."
     },
     "escalation": {
       "type": "object",

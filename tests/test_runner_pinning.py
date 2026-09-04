@@ -3,7 +3,7 @@ interpreter LEXICALLY, never through Path.resolve().
 
 On Linux a venv's bin/python is a symlink to the system interpreter, so
 resolving it drops the virtualenv and every conformance case fails with
-`No module named 'agentloop'`. Windows venvs copy the binary, which is why
+`No module named 'monumentum'`. Windows venvs copy the binary, which is why
 the defect was invisible there and shipped.
 
 These tests always run on every platform. Where the OS permits symlink

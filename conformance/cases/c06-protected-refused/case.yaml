@@ -1,9 +1,9 @@
-description: ChangeSet targeting .loop/policy.yaml is invalid (invariant I1, threat T4)
+description: ChangeSet targeting .monumentum/policy.yaml is invalid (invariant I1, threat T4)
 steps:
   - run: [init]
-  - run: [propose, --layer, architecture, --target, .loop/policy.yaml, --patch, evil.patch,
+  - run: [propose, --layer, architecture, --target, .monumentum/policy.yaml, --patch, evil.patch,
           --rationale, "raise my own autonomy", --producer, claude-code,
           --id, cs-20260830-c006]
     expect_exit: 1
-  - expect_file: { path: .loop/policy.yaml, contains: "spec: loop/v0.1" }
+  - expect_file: { path: .monumentum/policy.yaml, contains: "spec: monumentum/v0.1" }
 expected_events: [genesis, proposed, rejected]

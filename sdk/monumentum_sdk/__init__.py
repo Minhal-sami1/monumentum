@@ -1,8 +1,8 @@
 """Loop SDK: the five verbs for custom agent builders (design §8.2, story B3).
 
-    from loop import Loop
+    from monumentum_sdk import Loop
 
-    lp = Loop(".loop")                     # opens policy + journal
+    lp = Loop(".monumentum")                     # opens policy + journal
     cs = lp.propose(layer="context", targets=["prompts/system.md"],
                     diff=patch_text, rationale="...", origin="run-42")
     cs.attach_evidence(record, artifact="transcript.json")
@@ -23,16 +23,16 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
-from agentloop import executor as _executor
-from agentloop.changeset import (
+from monumentum import executor as _executor
+from monumentum.changeset import (
     attach_evidence as _attach_evidence,
 )
-from agentloop.changeset import (
+from monumentum.changeset import (
     create_changeset,
     ingest_changeset,
     load_changeset,
 )
-from agentloop.workspace import Workspace
+from monumentum.workspace import Workspace
 
 __all__ = ["Loop", "ChangeSetHandle", "Decision", "LoopError"]
 
@@ -80,14 +80,14 @@ class ChangeSetHandle:
 
 
 class Loop:
-    """One governed workspace, addressed by its .loop directory."""
+    """One governed workspace, addressed by its .monumentum directory."""
 
-    def __init__(self, loop_dir: str | Path = ".loop"):
+    def __init__(self, loop_dir: str | Path = ".monumentum"):
         loop_path = Path(loop_dir).resolve()
         self.workspace = Workspace(loop_path.parent)
         if not self.workspace.exists():
             raise LoopError(
-                f"no governed workspace at {loop_path} (run Loop.init or agentloop init)"
+                f"no governed workspace at {loop_path} (run Loop.init or monumentum init)"
             )
 
     # -- lifecycle ---------------------------------------------------------
@@ -95,7 +95,7 @@ class Loop:
     @classmethod
     def init(cls, root: str | Path, policy_text: str | None = None) -> Loop:
         _executor.init_workspace(Path(root), policy_text)
-        return cls(Path(root) / ".loop")
+        return cls(Path(root) / ".monumentum")
 
     def propose(
         self,
@@ -192,7 +192,7 @@ class Loop:
         """Team-lite: push PROMOTED ChangeSets, pull peers' through the
         configured git-remote registry. Pulled ChangeSets are validated
         against local policy; gate and apply them separately."""
-        from agentloop.registry import sync as _sync
+        from monumentum.registry import sync as _sync
 
         return _sync(self.workspace, actor)
 

@@ -1,17 +1,17 @@
-"""Workspace: the .loop/ directory and executor-managed state.json."""
+"""Workspace: the .monumentum/ directory and executor-managed state.json."""
 
 from __future__ import annotations
 
 import json
 from pathlib import Path
 
-from agentloop import __version__
-from agentloop.hashing import sha256_bytes, sha256_file
-from agentloop.journal import Journal
+from monumentum import __version__
+from monumentum.hashing import sha256_bytes, sha256_file
+from monumentum.journal import Journal
 
 DEFAULT_POLICY = """\
-# Default policy written by `agentloop init`. Only humans edit this file (I1).
-spec: loop/v0.1
+# Default policy written by `monumentum init`. Only humans edit this file (I1).
+spec: monumentum/v0.1
 envelope:
   context:
     level: L2
@@ -25,7 +25,7 @@ envelope:
     level: L1
     gates: [evidence_required, human_review]
     targets_allow: ["agents.yaml"]
-protected: [".loop/**"]
+protected: [".monumentum/**"]
 escalation:
   capability: { to: L2, after: { applied: 20, rollbacks_max: 1, window_days: 30 } }
 de_escalation: { on_rollbacks: 2, window_days: 14, drop: 1 }
@@ -33,25 +33,25 @@ audit: { journal: hash-chain, retain_days: 365 }
 """
 
 
-AGENTS_BLOCK_BEGIN = "<!-- agentloop:managed:begin -->"
-AGENTS_BLOCK_END = "<!-- agentloop:managed:end -->"
+AGENTS_BLOCK_BEGIN = "<!-- monumentum:managed:begin -->"
+AGENTS_BLOCK_END = "<!-- monumentum:managed:end -->"
 
 AGENTS_BLOCK = f"""{AGENTS_BLOCK_BEGIN}
-## Governed self-improvement (agentloop)
+## Governed self-improvement (monumentum)
 
-This workspace is governed by the Loop standard. Rules for every agent:
+This workspace is governed by the Monumentum standard. Rules for every agent:
 
 1. Do NOT edit loop-managed files directly (AGENTS.md, CLAUDE.md, memory,
    skills, tools, agent config). Policy lists the exact patterns in
-   `.loop/policy.yaml`.
+   `.monumentum/policy.yaml`.
 2. When you learn a durable lesson, propose it instead:
-   `agentloop propose --layer context --target <file> --patch <diff> --rationale "<why>"`
+   `monumentum propose --layer context --target <file> --patch <diff> --rationale "<why>"`
 3. Attach evidence (fail -> apply -> pass transcript):
-   `agentloop evidence <cs-id> --record <ev.json> --artifact <transcript>`
-4. Gate and apply: `agentloop gate <cs-id>` then `agentloop apply <cs-id>`.
+   `monumentum evidence <cs-id> --record <ev.json> --artifact <transcript>`
+4. Gate and apply: `monumentum gate <cs-id>` then `monumentum apply <cs-id>`.
    Low-risk context changes auto-apply with independent evidence; capability
    and architecture changes queue for human review.
-5. Never touch `.loop/**`. Verify integrity anytime: `agentloop verify .`
+5. Never touch `.monumentum/**`. Verify integrity anytime: `monumentum verify .`
 {AGENTS_BLOCK_END}"""
 
 
@@ -77,15 +77,15 @@ class WorkspaceError(Exception):
 
 
 def executor_actor() -> str:
-    return f"executor/agentloop@{__version__}"
+    return f"executor/monumentum@{__version__}"
 
 
 class Workspace:
-    """A directory governed by one .loop/ folder."""
+    """A directory governed by one .monumentum/ folder."""
 
     def __init__(self, root: Path):
         self.root = root.resolve()
-        self.loop = self.root / ".loop"
+        self.loop = self.root / ".monumentum"
         self.journal = Journal(self.loop / "journal")
 
     @property
@@ -105,7 +105,7 @@ class Workspace:
 
     def require(self) -> None:
         if not self.exists():
-            raise WorkspaceError(f"no .loop workspace at {self.root} (run: agentloop init)")
+            raise WorkspaceError(f"no .monumentum workspace at {self.root} (run: monumentum init)")
 
     # -- state.json --------------------------------------------------------
 

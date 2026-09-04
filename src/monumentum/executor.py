@@ -16,17 +16,17 @@ import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
-from agentloop.changeset import ChangeSet, ChangeSetError, load_changeset
-from agentloop.diffs import DiffError, apply_patch_set, parse_unified_diff
-from agentloop.hashing import sha256_canonical, sha256_file
-from agentloop.policy import (
+from monumentum.changeset import ChangeSet, ChangeSetError, load_changeset
+from monumentum.diffs import DiffError, apply_patch_set, parse_unified_diff
+from monumentum.hashing import sha256_canonical, sha256_file
+from monumentum.policy import (
     LoadedPolicy,
     drop_level,
     glob_match,
     load_policy,
     target_allowed,
 )
-from agentloop.workspace import (
+from monumentum.workspace import (
     DEFAULT_POLICY,
     Workspace,
     WorkspaceError,
@@ -62,7 +62,7 @@ class Outcome:
 
 
 def init_workspace(root: Path, policy_text: str | None = None) -> tuple[Workspace, bool]:
-    """Scaffold .loop/ (story A1) and the AGENTS.md managed block (story B2).
+    """Scaffold .monumentum/ (story A1) and the AGENTS.md managed block (story B2).
     Idempotent: a second init changes nothing and returns created=False."""
     ws = Workspace(root)
     if ws.exists():
@@ -86,7 +86,7 @@ def init_workspace(root: Path, policy_text: str | None = None) -> tuple[Workspac
         sig=None,
     )
     state = {
-        "spec": "loop/v0.1",
+        "spec": "monumentum/v0.1",
         "effective_levels": {
             layer: policy.declared_level(layer)
             for layer in ("context", "capability", "architecture")
@@ -121,7 +121,7 @@ def _baseline_heads(ws: Workspace, policy: LoadedPolicy) -> dict[str, str]:
         if not path.is_file():
             continue
         rel = path.relative_to(ws.root).as_posix()
-        if rel.startswith((".loop/", ".git/")):
+        if rel.startswith((".monumentum/", ".git/")):
             continue
         if any(glob_match(rel, pat) for pat in patterns):
             heads[rel] = sha256_file(path)
@@ -135,7 +135,7 @@ def _baseline_heads(ws: Workspace, policy: LoadedPolicy) -> dict[str, str]:
 
 def propose(ws: Workspace, cs: ChangeSet) -> Outcome:
     """Journal the proposal, then validate. The ChangeSet folder must already
-    live under .loop/changesets/ (created or ingested by the CLI layer)."""
+    live under .monumentum/changesets/ (created or ingested by the CLI layer)."""
     ws.require()
     policy = load_policy(ws.policy_path)
     producer = "producer/unknown"
@@ -377,7 +377,7 @@ def apply_changeset(ws: Workspace, cs_id: str) -> Outcome:
             return _reject_at_apply(ws, state, cs, policy, f"reproducible_check: {problem}")
 
     after = {t: ws.target_hash(t) for t in cs.targets}
-    commit = _git_commit(ws, cs.targets, f"agentloop: apply {cs_id}")
+    commit = _git_commit(ws, cs.targets, f"monumentum: apply {cs_id}")
     ws.journal.append(
         "applied",
         actor=executor_actor(),
@@ -558,7 +558,7 @@ def _git_commit(ws: Workspace, targets: list[str], message: str) -> str | None:
     if not (ws.root / ".git").exists():
         return None
     try:
-        paths = [t for t in targets] + [".loop"]
+        paths = [t for t in targets] + [".monumentum"]
         subprocess.run(
             ["git", "-C", str(ws.root), "add", "--", *paths],
             check=True, capture_output=True, text=True,
@@ -617,7 +617,7 @@ def rollback(ws: Workspace, cs_id: str, actor: str) -> Outcome:
         raise ExecutorError(f"snapshot missing for {cs_id}; cannot roll back")
     applied_after = {t: ws.target_hash(t) for t in cs.targets}
     restored = _restore(ws, cs.targets, snapshot_dir)
-    commit = _git_commit(ws, cs.targets, f"agentloop: rollback {cs_id}")
+    commit = _git_commit(ws, cs.targets, f"monumentum: rollback {cs_id}")
     ws.journal.append(
         "rolled_back",
         actor=actor,
@@ -690,14 +690,14 @@ def verify(ws: Workspace) -> list[str]:
     """Returns a list of problems; empty means the workspace verifies."""
     problems: list[str] = []
     if not ws.exists():
-        return [f"no .loop workspace at {ws.root}"]
+        return [f"no .monumentum workspace at {ws.root}"]
     break_ = ws.journal.verify_chain()
     if break_ is not None:
         problems.append(f"journal: {break_.reason} (seq {break_.seq})")
     state = ws.read_state()
     if state:
         last = ws.journal.last_line()
-        from agentloop.hashing import sha256_bytes
+        from monumentum.hashing import sha256_bytes
 
         head = sha256_bytes(last) if last else None
         if state.get("journal_head") != head:
@@ -741,5 +741,5 @@ def _status_of(state: dict, cs_id: str) -> str:
 def workspace_for(path: Path) -> Workspace:
     ws = Workspace(path)
     if not ws.exists():
-        raise WorkspaceError(f"no .loop workspace at {ws.root}")
+        raise WorkspaceError(f"no .monumentum workspace at {ws.root}")
     return ws

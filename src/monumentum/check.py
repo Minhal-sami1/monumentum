@@ -11,7 +11,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-from agentloop.schemas import OBJECT_TYPES, get_validator, load_instance, validate_object
+from monumentum.schemas import OBJECT_TYPES, get_validator, load_instance, validate_object
 
 GOLDEN_SUBDIRS = ("valid", "invalid")
 

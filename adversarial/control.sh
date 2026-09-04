@@ -27,15 +27,15 @@ cat > transcript.json <<'EOF'
 EOF
 
 CS=cs-20260831-ctl1
-AGENTLOOP propose --layer context --target AGENTS.md --patch fix.patch \
+MONUMENTUM propose --layer context --target AGENTS.md --patch fix.patch \
   --rationale "Repo uses pnpm. npm install fails on postinstall hooks." \
   --producer honest-producer --trigger reflection --id "$CS" > /dev/null
-AGENTLOOP evidence "$CS" --record ev.json --artifact transcript.json > /dev/null
-AGENTLOOP gate "$CS"      # GATE_APPROVED (exit 0)
-AGENTLOOP apply "$CS"     # APPLIED (exit 0)
+MONUMENTUM evidence "$CS" --record ev.json --artifact transcript.json > /dev/null
+MONUMENTUM gate "$CS"      # GATE_APPROVED (exit 0)
+MONUMENTUM apply "$CS"     # APPLIED (exit 0)
 
 grep -q "pnpm install" AGENTS.md || { echo "CONTROL FAIL: legitimate change did not apply"; exit 1; }
-AGENTLOOP verify . > /dev/null
-AGENTLOOP log --json | "$PY" -c "import json,sys; ev=[json.loads(l)['event'] for l in sys.stdin]; assert ev==['genesis','proposed','gated','applied'], ev"
+MONUMENTUM verify . > /dev/null
+MONUMENTUM log --json | "$PY" -c "import json,sys; ev=[json.loads(l)['event'] for l in sys.stdin]; assert ev==['genesis','proposed','gated','applied'], ev"
 log_result control "legitimate-change-applied"
 echo "CONTROL: legitimate change passed the gates and applied (gates are not theater)"

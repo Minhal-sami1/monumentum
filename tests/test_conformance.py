@@ -17,7 +17,7 @@ def _run(executor: str) -> subprocess.CompletedProcess:
 
 def test_reference_cli_passes_conformance():
     py = Path(sys.executable).as_posix()
-    proc = _run(f'"{py}" -m agentloop.cli')
+    proc = _run(f'"{py}" -m monumentum.cli')
     assert proc.returncode == 0, f"stdout:\n{proc.stdout}\nstderr:\n{proc.stderr}"
 
 

@@ -1,4 +1,4 @@
-# agentloop build entry points. Every milestone gate is a target here.
+# monumentum build entry points. Every milestone gate is a target here.
 # Cross-platform: venv layout differs between POSIX and Windows.
 
 VENV := .venv
@@ -19,10 +19,10 @@ setup:
 	$(PYTHON) -m pip install -e ".[dev]" -e ./sdk
 
 check-schemas:
-	$(PYTHON) -m agentloop.cli check-schemas --golden conformance/golden
+	$(PYTHON) -m monumentum.cli check-schemas --golden conformance/golden
 
 conformance:
-	$(PYTHON) conformance/runner.py --executor "$(PYTHON) -m agentloop.cli"
+	$(PYTHON) conformance/runner.py --executor "$(PYTHON) -m monumentum.cli"
 
 demo:
 	$(PYTHON) demo/run_demo.py
@@ -47,7 +47,7 @@ quickstart-test:
 	bash docs/quickstart_test.sh "$(PYTHON)"
 
 verify-self:
-	$(PYTHON) -m agentloop.cli verify .
+	$(PYTHON) -m monumentum.cli verify .
 
 test:
 	$(PYTHON) -m pytest

@@ -13,6 +13,6 @@
     "after": "sha256:0966428a1d83cbecd97934479318caeb7281b3b917333673c92b3b73839958c9",
     "commit": "abc1234"
   },
-  "actor": "executor/agentloop@0.1.0",
+  "actor": "executor/monumentum@0.1.0",
   "sig": null
 }

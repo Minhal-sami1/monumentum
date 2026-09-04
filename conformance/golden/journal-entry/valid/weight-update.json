@@ -4,7 +4,7 @@
   "ts": "2026-08-30T11:00:00Z",
   "event": "weight_update",
   "cs": "cs-20260830-e5f6",
-  "actor": "executor/agentloop@0.1.0",
+  "actor": "executor/monumentum@0.1.0",
   "ext": {
     "weight_update": {
       "from": "support-agent/7.3.0",

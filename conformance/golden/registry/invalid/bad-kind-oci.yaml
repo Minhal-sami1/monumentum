@@ -1,5 +1,5 @@
 # REQUIRED-FAILURE: OCI is a specified upgrade path, not a v0.1 registry kind.
-spec: loop/v0.1
+spec: monumentum/v0.1
 kind: oci
 remote:
   url: oci://registry.example.internal/acme/loop

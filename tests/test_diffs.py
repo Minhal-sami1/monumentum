@@ -2,7 +2,7 @@
 
 import pytest
 
-from agentloop.diffs import DiffError, apply_patch_set, parse_unified_diff
+from monumentum.diffs import DiffError, apply_patch_set, parse_unified_diff
 
 MODIFY = """\
 --- a/AGENTS.md

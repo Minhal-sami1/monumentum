@@ -1,5 +1,5 @@
 # REQUIRED-FAILURE: "vibes_check" is not a Core gate.
-spec: loop/v0.1
+spec: monumentum/v0.1
 envelope:
   context:
     level: L2
@@ -13,4 +13,4 @@ envelope:
     level: L1
     gates: [evidence_required, human_review]
     targets_allow: ["agents.yaml"]
-protected: [".loop/**"]
+protected: [".monumentum/**"]

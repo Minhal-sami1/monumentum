@@ -2,11 +2,11 @@
 """UC5 audit reconstruction: answer "why does this workspace behave the way
 it behaves today?" from the journal ALONE.
 
-Sources: .loop/journal/*.ndjson - nothing else. No git log, no source
-diffs, no agentloop import (the auditor is independent of the executor).
+Sources: .monumentum/journal/*.ndjson - nothing else. No git log, no source
+diffs, no monumentum import (the auditor is independent of the executor).
 The reconstruction is then CHECKED against reality: current file hashes
 must match the journal's recorded target states, and the replayed
-effective levels must match .loop/state.json (reality cross-check only).
+effective levels must match .monumentum/state.json (reality cross-check only).
 
 Exit 0: journal intact, reconstruction printed, reality matches.
 Exit 1: any mismatch, named.
@@ -64,7 +64,7 @@ def read_journal(journal_dir: Path) -> list[dict]:
 
 def main() -> int:
     root = Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()
-    entries = read_journal(root / ".loop" / "journal")
+    entries = read_journal(root / ".monumentum" / "journal")
 
     changesets: dict[str, dict] = {}
     levels: dict[str, str] = dict(entries[0].get("ext", {}).get("effective_levels", {}))
@@ -153,7 +153,7 @@ def main() -> int:
             problems.append(
                 f"{cs_id}: current files do not match journal {kind} target_state.after"
             )
-    state_path = root / ".loop" / "state.json"
+    state_path = root / ".monumentum" / "state.json"
     if state_path.is_file():
         state_levels = json.loads(state_path.read_text(encoding="utf-8")).get(
             "effective_levels", {}

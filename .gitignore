@@ -12,5 +12,5 @@ dist/
 scenarios/*/out/
 adversarial/out/
 experiments/*/logs/
-.loop/cache/
+.monumentum/cache/
 paper/build/

@@ -3,12 +3,12 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "loop-sdk"
+name = "monumentum-sdk"
 version = "0.1.0"
-description = "Python SDK for the Loop standard: embed governed self-improvement in a custom agent"
+description = "Python SDK for the Monumentum standard: embed governed self-improvement in a custom agent"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
-dependencies = ["agentloop"]
+dependencies = ["monumentum"]
 
 [tool.setuptools]
-packages = ["loop"]
+packages = ["monumentum_sdk"]

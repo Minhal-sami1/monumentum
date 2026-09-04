@@ -1,15 +1,15 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://agentloop.invalid/schemas/v0.1/changeset.schema.json",
+  "$id": "https://monumentum.invalid/schemas/v0.1/changeset.schema.json",
   "title": "ChangeSet",
-  "description": "The unit of improvement. A typed, portable record of one self-modification. Normative for spec loop/v0.1.",
+  "description": "The unit of improvement. A typed, portable record of one self-modification. Normative for spec monumentum/v0.1.",
   "type": "object",
   "required": ["spec", "id", "layer", "targets", "payload", "origin", "rationale", "evidence", "created"],
   "additionalProperties": false,
   "properties": {
     "spec": {
-      "const": "loop/v0.1",
-      "description": "Spec version tag. MUST be loop/v0.1 for this schema."
+      "const": "monumentum/v0.1",
+      "description": "Spec version tag. MUST be monumentum/v0.1 for this schema."
     },
     "id": {
       "type": "string",
@@ -108,9 +108,9 @@
     "target_path": {
       "type": "string",
       "minLength": 1,
-      "description": "Workspace-relative POSIX path. MUST NOT be absolute, contain '..', use backslashes, or point into .loop/ (invariant I1).",
+      "description": "Workspace-relative POSIX path. MUST NOT be absolute, contain '..', use backslashes, or point into .monumentum/ (invariant I1).",
       "allOf": [
-        { "not": { "pattern": "^\\.loop(/|$)" } },
+        { "not": { "pattern": "^\\.monumentum(/|$)" } },
         { "not": { "pattern": "(^|/)\\.\\.(/|$)" } },
         { "not": { "pattern": "^/" } },
         { "not": { "pattern": "^[A-Za-z]:" } },

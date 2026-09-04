@@ -20,7 +20,7 @@ SUSPECT = re.compile(r"(?<![\\A-Za-z0-9])\d+\.\d+|\d+\s*\\%|\d+\s*(seconds|token
 # lines that legitimately contain numbers (allow-list of contexts)
 ALLOWED_LINE = re.compile(
     r"RFC\s*\d+|Article\s*\d+|ISO/IEC\s*\d+|AI Act|2119|6962|42001|1689|"
-    r"loop/v0\.1|Python~?\s*3\.\d+|ed25519|SHA-?256|draft 2020-12|Apache-2\.0|"
+    r"monumentum/v0\.1|Python~?\s*3\.\d+|ed25519|SHA-?256|draft 2020-12|Apache-2\.0|"
     r"\\newcommand|\\input|\\cite|\\ref|\\label|\\section|\\subsection|"
     r"v0\.1|20\d\d|19\d\d"
 )

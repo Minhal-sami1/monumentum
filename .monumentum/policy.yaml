@@ -1,14 +1,15 @@
-# Workspace A policy: also allows docs/** context changes (B does not).
+# monumentum's own loop (dogfood). Managed surfaces of THIS repository.
+# Only humans edit this file (I1). Minhal is the only L1 approver.
 spec: monumentum/v0.1
 envelope:
   context:
     level: L2
     gates: [evidence_required, reproducible_check]
-    targets_allow: ["AGENTS.md", "CLAUDE.md", ".claude/memory/**", "docs/**"]
+    targets_allow: ["AGENTS.md", "CLAUDE.md"]
   capability:
     level: L1
     gates: [evidence_required, human_review]
-    targets_allow: [".claude/skills/**", "tools/**"]
+    targets_allow: ["skill/**"]
   architecture:
     level: L1
     gates: [evidence_required, human_review]

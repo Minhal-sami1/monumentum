@@ -16,7 +16,7 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import (
     Ed25519PublicKey,
 )
 
-from agentloop.hashing import sha256_canonical, sha256_file
+from monumentum.hashing import sha256_canonical, sha256_file
 
 SIG_FILENAME = "changeset.sig"
 # runtime-local folders excluded from the portable digest
@@ -61,7 +61,7 @@ def sign_changeset(cs_folder: Path, key_file: Path, signer: str) -> Path:
     digest = portable_digest(cs_folder)
     signature = private.sign(digest.encode("utf-8"))
     sig = {
-        "spec": "loop/v0.1",
+        "spec": "monumentum/v0.1",
         "algo": "ed25519",
         "signer": signer,
         "digest": digest,

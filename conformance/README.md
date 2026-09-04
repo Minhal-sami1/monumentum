@@ -1,6 +1,6 @@
 # Conformance suite
 
-This directory is the conformance suite for spec `loop/v0.1`.
+This directory is the conformance suite for spec `monumentum/v0.1`.
 
 ## Layout
 
@@ -20,7 +20,7 @@ conformance/
 
 ## Schema-level check (m1)
 
-`make check-schemas` runs `agentloop check-schemas --golden conformance/golden`. It:
+`make check-schemas` runs `monumentum check-schemas --golden conformance/golden`. It:
 
 1. Compiles the five normative schemas in `spec/schemas/`.
 2. Validates every file under `*/valid/`. One failure fails the run.

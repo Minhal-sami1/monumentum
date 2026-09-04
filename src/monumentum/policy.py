@@ -8,8 +8,8 @@ from pathlib import Path
 
 import yaml
 
-from agentloop.hashing import sha256_file
-from agentloop.schemas import validate_object
+from monumentum.hashing import sha256_file
+from monumentum.schemas import validate_object
 
 LEVELS = ["L0", "L1", "L2", "L3"]
 

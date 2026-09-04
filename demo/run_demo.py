@@ -2,7 +2,7 @@
 """One lesson, two runtimes (story B4; design §8.4). The existence proof.
 
 Runtime A (the consumer door): a scripted producer session drives the
-real agentloop CLI in fixture repo A. It learns the pnpm lesson, proposes
+real monumentum CLI in fixture repo A. It learns the pnpm lesson, proposes
 a ChangeSet with a command transcript, and the L2 gate applies it.
 
 Runtime B (the creator door): the toy SDK agent in workspace B receives
@@ -54,9 +54,9 @@ def sh(cmd: list[str], cwd: Path, expect: int = 0) -> subprocess.CompletedProces
 
 def main() -> int:
     py = sys.executable
-    cli = [py, "-m", "agentloop.cli"]
+    cli = [py, "-m", "monumentum.cli"]
     run_id = f"demo-{dt.datetime.now(dt.UTC):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:6]}"
-    root = Path(tempfile.mkdtemp(prefix="loop-demo-"))
+    root = Path(tempfile.mkdtemp(prefix="monumentum-demo-"))
     ws_a = root / "runtime-a"
     ws_b = root / "runtime-b"
     ws_a.mkdir(parents=True)
@@ -94,7 +94,7 @@ def main() -> int:
 
     print("=== Handoff (Core profile: the ChangeSet folder travels) ===")
     handoff = root / "handoff" / cs_a
-    shutil.copytree(ws_a / ".loop" / "changesets" / cs_a, handoff)
+    shutil.copytree(ws_a / ".monumentum" / "changesets" / cs_a, handoff)
     # the snapshot is runtime-A state, not part of the portable ChangeSet
     shutil.rmtree(handoff / "snapshot", ignore_errors=True)
 
@@ -120,7 +120,7 @@ def main() -> int:
 
     def events(ws: Path) -> list[dict]:
         out = []
-        for f in sorted((ws / ".loop" / "journal").glob("*.ndjson")):
+        for f in sorted((ws / ".monumentum" / "journal").glob("*.ndjson")):
             for line in f.read_text(encoding="utf-8").splitlines():
                 if line.strip():
                     out.append(json.loads(line))
@@ -148,7 +148,7 @@ def main() -> int:
         "t1_second_runtime_applied": t1_wall,
         "lesson_to_second_runtime_seconds": round(elapsed, 3),
         "changeset": cs_a,
-        "runtime_a": "agentloop-cli",
+        "runtime_a": "monumentum-cli",
         "runtime_b": "toy-sdk-agent",
         "python": sys.version.split()[0],
         "ok": not failures,

@@ -28,20 +28,20 @@ cat > transcript.json <<'EOF'
 EOF
 
 CS=cs-20260831-t1aa
-AGENTLOOP propose --layer context --target AGENTS.md --patch fix.patch \
+MONUMENTUM propose --layer context --target AGENTS.md --patch fix.patch \
   --rationale "trust me, this works" --producer attacker --id "$CS" > /dev/null
-AGENTLOOP evidence "$CS" --record ev-self.json --artifact transcript.json > /dev/null
+MONUMENTUM evidence "$CS" --record ev-self.json --artifact transcript.json > /dev/null
 
 # the attack: try to gate at L2 with self-only evidence
 set +e
-AGENTLOOP gate "$CS" > "$ART/gate.txt" 2>&1
+MONUMENTUM gate "$CS" > "$ART/gate.txt" 2>&1
 RC=$?
 set -e
 [ "$RC" -eq 1 ] || { echo "T1 SECURITY FAIL: self-graded change was not refused (rc=$RC)"; exit 1; }
 grep -q "I3" "$ART/gate.txt" || { echo "T1: refusal not attributed to I3"; exit 1; }
 assert_absent AGENTS.md "pnpm"
-AGENTLOOP verify . > /dev/null
+MONUMENTUM verify . > /dev/null
 # the refusal is journaled
-AGENTLOOP log --json | "$PY" -c "import json,sys; ev=[json.loads(l)['event'] for l in sys.stdin]; assert ev[-1]=='rejected', ev"
+MONUMENTUM log --json | "$PY" -c "import json,sys; ev=[json.loads(l)['event'] for l in sys.stdin]; assert ev[-1]=='rejected', ev"
 log_result t1 "refused-by-I3"
 echo "T1: self-graded promotion refused by I3"

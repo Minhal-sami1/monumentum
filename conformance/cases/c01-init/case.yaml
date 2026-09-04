@@ -1,6 +1,6 @@
-description: init scaffolds .loop with default policy and a genesis journal entry (A1)
+description: init scaffolds .monumentum with default policy and a genesis journal entry (A1)
 steps:
   - run: [init]
-  - expect_file: { path: .loop/policy.yaml, contains: "level: L2" }
-  - expect_file: { path: .loop/state.json, contains: '"context": "L2"' }
+  - expect_file: { path: .monumentum/policy.yaml, contains: "level: L2" }
+  - expect_file: { path: .monumentum/state.json, contains: '"context": "L2"' }
 expected_events: [genesis]

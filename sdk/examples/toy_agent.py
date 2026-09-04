@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""A toy custom agent built on the Loop SDK (story B3, door two).
+"""A toy custom agent built on Monumentum SDK (story B3, door two).
 
 It owns one prompt file (prompts/system.md). It never edits that file
 directly: every self-modification goes propose -> evidence -> gate ->
@@ -26,7 +26,7 @@ import json
 import sys
 from pathlib import Path
 
-from loop import Loop
+from monumentum_sdk import Loop
 
 PROMPT_REL = "prompts/system.md"
 
@@ -39,7 +39,7 @@ You are a tiny deterministic agent. Follow the lessons below.
 """
 
 POLICY = """\
-spec: loop/v0.1
+spec: monumentum/v0.1
 envelope:
   context:
     level: L2
@@ -53,7 +53,7 @@ envelope:
     level: L1
     gates: [evidence_required, human_review]
     targets_allow: ["agent.yaml"]
-protected: [".loop/**"]
+protected: [".monumentum/**"]
 de_escalation: { on_rollbacks: 2, window_days: 14, drop: 1 }
 audit: { journal: hash-chain, retain_days: 365 }
 """
@@ -93,7 +93,7 @@ def cmd_ingest(workspace: Path, changeset_dir: Path) -> int:
     foreign_id = foreign["id"]
     lesson = foreign["rationale"].strip()
 
-    lp = Loop(workspace / ".loop")
+    lp = Loop(workspace / ".monumentum")
     prompt_path = workspace / PROMPT_REL
     old = prompt_path.read_text(encoding="utf-8")
     lesson_line = f"- [{foreign_id}] {lesson}\n"

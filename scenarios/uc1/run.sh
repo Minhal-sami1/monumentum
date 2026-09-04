@@ -4,7 +4,7 @@
 # transcript, and the L2 gate auto-applies it with independent evidence.
 set -eu
 DIR="$(cd "$(dirname "$0")" && pwd)"
-AGENTLOOP() { "$PY" -m agentloop.cli "$@"; }
+MONUMENTUM() { "$PY" -m monumentum.cli "$@"; }
 RUN_ID="uc1-$(date -u +%Y%m%d-%H%M%S)-$$"
 T_START=$("$PY" -c "import time; print(time.time())")
 
@@ -14,7 +14,7 @@ rm -rf "$DIR/out"; mkdir -p "$WORK" "$ART"
 cp -r "$DIR/fixture/." "$WORK/"
 cd "$WORK"
 
-AGENTLOOP init > "$ART/init.txt"
+MONUMENTUM init > "$ART/init.txt"
 
 # --- the producer hits the failure (real command, real exit code) ---------
 set +e
@@ -54,17 +54,17 @@ cat > ev.json <<'EOF'
 EOF
 
 CS=cs-20260831-uc1a
-AGENTLOOP propose --layer context --target AGENTS.md --patch fix.patch \
+MONUMENTUM propose --layer context --target AGENTS.md --patch fix.patch \
   --rationale "Repo uses pnpm. npm install fails on postinstall hooks." \
   --producer claude-code-scripted --trigger reflection --id "$CS" > "$ART/propose.txt"
-AGENTLOOP evidence "$CS" --record ev.json --artifact transcript.json
-AGENTLOOP gate "$CS"
-AGENTLOOP apply "$CS"
+MONUMENTUM evidence "$CS" --record ev.json --artifact transcript.json
+MONUMENTUM gate "$CS"
+MONUMENTUM apply "$CS"
 
 # --- asserts ----------------------------------------------------------------
 grep -q "pnpm install" AGENTS.md || { echo "lesson missing from AGENTS.md"; exit 1; }
-AGENTLOOP verify .
-AGENTLOOP log --json > "$ART/journal.jsonl"
+MONUMENTUM verify .
+MONUMENTUM log --json > "$ART/journal.jsonl"
 "$PY" - "$ART/journal.jsonl" <<'EOF'
 import json, sys
 events = [json.loads(l)["event"] for l in open(sys.argv[1], encoding="utf-8")]
@@ -77,7 +77,7 @@ NEXT_CMD=$(grep -o "pnpm install" AGENTS.md | head -1)
 [ "$NEXT_CMD" = "pnpm install" ]
 node install.js pnpm > "$ART/next-session.log" 2>&1
 
-cp .loop/state.json "$ART/state.json"
+cp .monumentum/state.json "$ART/state.json"
 T_END=$("$PY" -c "import time; print(time.time())")
 mkdir -p "$REPO_ROOT/experiments/scenarios/logs"
 "$PY" - "$RUN_ID" "$T_START" "$T_END" <<'EOF'

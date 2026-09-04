@@ -5,7 +5,7 @@ import json
 import shutil
 from pathlib import Path
 
-from agentloop.check import check_schemas
+from monumentum.check import check_schemas
 
 REPO = Path(__file__).resolve().parents[1]
 GOLDEN = REPO / "conformance" / "golden"

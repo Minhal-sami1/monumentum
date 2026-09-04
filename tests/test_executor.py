@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from agentloop.changeset import attach_evidence, create_changeset, load_changeset
-from agentloop.executor import (
+from monumentum.changeset import attach_evidence, create_changeset, load_changeset
+from monumentum.executor import (
     ExecutorError,
     apply_changeset,
     approve,
@@ -19,7 +19,7 @@ from agentloop.executor import (
     rollback,
     verify,
 )
-from agentloop.workspace import Workspace
+from monumentum.workspace import Workspace
 
 AGENTS_BEFORE = "# Agent notes\n\nUse npm install to set up.\n"
 AGENTS_AFTER = "# Agent notes\n\nUse pnpm install to set up.\n"
@@ -116,7 +116,7 @@ def test_double_init_idempotent_one_block(ws):
     assert not created
     agents_after = (ws.root / "AGENTS.md").read_text(encoding="utf-8")
     assert agents_after == agents_before
-    assert agents_after.count("<!-- agentloop:managed:begin -->") == 1
+    assert agents_after.count("<!-- monumentum:managed:begin -->") == 1
     assert verify(ws) == []
 
 

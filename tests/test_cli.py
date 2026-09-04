@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from agentloop.cli import main
+from monumentum.cli import main
 
 REPO = Path(__file__).resolve().parents[1]
 

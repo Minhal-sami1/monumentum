@@ -4,7 +4,7 @@
 # hashes, and automatic de-escalation - the ratchet also turns down.
 set -eu
 DIR="$(cd "$(dirname "$0")" && pwd)"
-AGENTLOOP() { "$PY" -m agentloop.cli "$@"; }
+MONUMENTUM() { "$PY" -m monumentum.cli "$@"; }
 RUN_ID="uc4-$(date -u +%Y%m%d-%H%M%S)-$$"
 T_START=$("$PY" -c "import time; print(time.time())")
 
@@ -14,13 +14,13 @@ rm -rf "$DIR/out"; mkdir -p "$WORK" "$ART"
 cp -r "$DIR/fixture/." "$WORK/"
 cd "$WORK"
 
-AGENTLOOP init --policy loop-policy.yaml > /dev/null
+MONUMENTUM init --policy monumentum-policy.yaml > /dev/null
 
 # the real test suite passes at the start
 "$PY" -m pytest test_textutil.py -q > "$ART/tests-baseline.log" 2>&1
 
 HASH0=$("$PY" -c "
-from agentloop.hashing import sha256_file
+from monumentum.hashing import sha256_file
 print(sha256_file(__import__('pathlib').Path('tools/textutil.py')))")
 
 make_patch() { # old new out
@@ -51,11 +51,11 @@ EOF
 apply_bad_change() { # cs-id variant-file rationale
   local CS="$1" VARIANT="$2" WHY="$3"
   make_patch tools/textutil.py "$VARIANT" change.patch
-  AGENTLOOP propose --layer capability --target tools/textutil.py --patch change.patch \
+  MONUMENTUM propose --layer capability --target tools/textutil.py --patch change.patch \
     --rationale "$WHY" --producer optimizer-bot --trigger optimization --id "$CS" > /dev/null
-  AGENTLOOP evidence "$CS" --record ev.json --artifact transcript.json > /dev/null
-  AGENTLOOP gate "$CS" > /dev/null      # L2 auto: evidence verified, I3 satisfied
-  AGENTLOOP apply "$CS" > /dev/null
+  MONUMENTUM evidence "$CS" --record ev.json --artifact transcript.json > /dev/null
+  MONUMENTUM gate "$CS" > /dev/null      # L2 auto: evidence verified, I3 satisfied
+  MONUMENTUM apply "$CS" > /dev/null
 }
 
 detect_and_rollback() { # cs-id logfile
@@ -65,10 +65,10 @@ detect_and_rollback() { # cs-id logfile
   local TEST_EXIT=$?
   set -e
   [ "$TEST_EXIT" -ne 0 ] || { echo "expected the real test suite to catch the regression"; exit 1; }
-  AGENTLOOP rollback "$CS" --actor human/operator > /dev/null
+  MONUMENTUM rollback "$CS" --actor human/operator > /dev/null
   local NOW
   NOW=$("$PY" -c "
-from agentloop.hashing import sha256_file
+from monumentum.hashing import sha256_file
 print(sha256_file(__import__('pathlib').Path('tools/textutil.py')))")
   [ "$NOW" = "$HASH0" ] || { echo "rollback did not restore exact prior hash"; exit 1; }
   "$PY" -m pytest test_textutil.py -q >> "$LOG" 2>&1   # green again after rollback
@@ -85,23 +85,23 @@ apply_bad_change cs-20260831-uc4b "$WORK/variant2.py.txt" \
 detect_and_rollback cs-20260831-uc4b "$ART/regression2.log"
 
 # --- the ratchet turned down: capability is now L1 ------------------------------
-grep -q '"capability": "L1"' .loop/state.json || { echo "de-escalation missing"; exit 1; }
+grep -q '"capability": "L1"' .monumentum/state.json || { echo "de-escalation missing"; exit 1; }
 
 # a third change now QUEUES instead of auto-applying
 make_patch tools/textutil.py "$WORK/variant3.py.txt" change3.patch
 CS3=cs-20260831-uc4c
-AGENTLOOP propose --layer capability --target tools/textutil.py --patch change3.patch \
+MONUMENTUM propose --layer capability --target tools/textutil.py --patch change3.patch \
   --rationale "Treat dots as separators too." --producer optimizer-bot --id "$CS3" > /dev/null
-AGENTLOOP evidence "$CS3" --record ev.json --artifact transcript.json > /dev/null
+MONUMENTUM evidence "$CS3" --record ev.json --artifact transcript.json > /dev/null
 set +e
-AGENTLOOP gate "$CS3" > /dev/null
+MONUMENTUM gate "$CS3" > /dev/null
 GATE_EXIT=$?
 set -e
 [ "$GATE_EXIT" -eq 2 ] || { echo "expected QUEUED after de-escalation, got $GATE_EXIT"; exit 1; }
 
 # --- asserts ---------------------------------------------------------------------
-AGENTLOOP verify .
-AGENTLOOP log --json > "$ART/journal.jsonl"
+MONUMENTUM verify .
+MONUMENTUM log --json > "$ART/journal.jsonl"
 "$PY" - "$ART/journal.jsonl" <<'EOF'
 import json, sys
 entries = [json.loads(line) for line in open(sys.argv[1], encoding="utf-8")]
@@ -115,7 +115,7 @@ assert "L2 -> L1" in pc["decision"]["reason"], pc
 assert pc["decision"]["gate"] == "de_escalation"
 EOF
 
-cp .loop/state.json "$ART/state.json"
+cp .monumentum/state.json "$ART/state.json"
 T_END=$("$PY" -c "import time; print(time.time())")
 mkdir -p "$REPO_ROOT/experiments/scenarios/logs"
 "$PY" - "$RUN_ID" "$T_START" "$T_END" <<'EOF'

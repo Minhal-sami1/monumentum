@@ -1,7 +1,7 @@
-# The Loop Standard — Specification v0.1
+# Monumentum Standard — Specification v0.1
 
 **Status:** Draft v0.1
-**Spec tag:** `loop/v0.1`
+**Spec tag:** `monumentum/v0.1`
 **License:** Community Specification License 1.0 (see `LICENSE-SPEC.md`)
 **Normative schemas:** `spec/schemas/` (Section 13)
 
@@ -29,7 +29,7 @@ Model weights are out of scope for v0.1. A weight update is recordable only as a
 
 The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, MAY, and OPTIONAL in this document are to be interpreted as described in RFC 2119.
 
-- **Workspace.** A directory tree that contains agent-steering files and one `.loop/` directory.
+- **Workspace.** A directory tree that contains agent-steering files and one `.monumentum/` directory.
 - **ChangeSet.** The unit of improvement: a typed, portable record of one self-modification (Section 5).
 - **Evidence.** A record that supports one ChangeSet (Section 6).
 - **Policy.** The declared change envelope of a workspace (Section 7).
@@ -72,7 +72,7 @@ Any conformant Producer works with any conformant Executor. That sentence is the
 The Core representation is a directory of plain files. No server. No daemon.
 
 ```
-.loop/
+.monumentum/
   policy.yaml            # the declared change envelope (Section 7)
   journal/
     <YYYY-MM>.ndjson     # append-only, hash-chained entries (Section 8)
@@ -90,7 +90,7 @@ The Core representation is a directory of plain files. No server. No daemon.
 
 Rules:
 
-1. `.loop/**` MUST NOT be a valid change target (invariant I1).
+1. `.monumentum/**` MUST NOT be a valid change target (invariant I1).
 2. Targets MUST live under version control, or the Executor MUST snapshot them before apply.
 3. Journal entries MUST reference content hashes. They SHOULD reference git commits when present.
 4. All paths inside ChangeSets MUST be POSIX-style relative paths. Absolute paths, `..` segments, backslashes, and drive letters are invalid.
@@ -99,9 +99,9 @@ Rules:
 
 The unit of improvement. Normative schema: `spec/schemas/changeset.schema.json`.
 
-A ChangeSet is one JSON object in `changeset.json` inside its own folder under `.loop/changesets/`. Required fields: `spec`, `id`, `layer`, `targets`, `payload`, `origin`, `rationale`, `evidence`, `created`.
+A ChangeSet is one JSON object in `changeset.json` inside its own folder under `.monumentum/changesets/`. Required fields: `spec`, `id`, `layer`, `targets`, `payload`, `origin`, `rationale`, `evidence`, `created`.
 
-- `spec` MUST equal `loop/v0.1`.
+- `spec` MUST equal `monumentum/v0.1`.
 - `id` MUST match `cs-<YYYYMMDD>-<suffix>` per the schema pattern. Ids MUST be unique within a workspace.
 - `layer` MUST be one of `context`, `capability`, `architecture`.
 - `targets` MUST list at least one workspace-relative path. Every target MUST satisfy the path rules of Section 4.
@@ -140,13 +140,13 @@ Evidence rules:
 
 ## 7. Policy and trust levels
 
-Normative schema: `spec/schemas/policy.schema.json`. The Policy lives at `.loop/policy.yaml`.
+Normative schema: `spec/schemas/policy.schema.json`. The Policy lives at `.monumentum/policy.yaml`.
 
 ### 7.1 Structure
 
 The Policy declares, per change class: a trust `level`, a list of `gates`, and a `targets_allow` list of glob patterns. It also declares `protected` patterns, optional `escalation` and `de_escalation` rules, and `audit` settings.
 
-- `protected` MUST contain `.loop/**` (invariant I1).
+- `protected` MUST contain `.monumentum/**` (invariant I1).
 - **Invariant I4:** a ChangeSet whose target matches no `targets_allow` pattern of its class, or matches any `protected` pattern, MUST fail validation.
 - Only a human MAY change `policy.yaml`. A policy change is an architecture-class, L1 event, and the Executor MUST journal it as `policy_changed`.
 
@@ -183,7 +183,7 @@ Normative schema (one entry): `spec/schemas/journal-entry.schema.json`.
 
 ### 8.1 Format
 
-The Journal is NDJSON: one JSON object per line, UTF-8, `\n` line separator. Files live under `.loop/journal/` named `<YYYY-MM>.ndjson` by entry timestamp. The Journal is append-only.
+The Journal is NDJSON: one JSON object per line, UTF-8, `\n` line separator. Files live under `.monumentum/journal/` named `<YYYY-MM>.ndjson` by entry timestamp. The Journal is append-only.
 
 ### 8.2 Hash chain
 
@@ -226,7 +226,7 @@ State transitions MUST be journaled in order. An Executor MUST NOT apply a Chang
 
 ## 10. Registry and distribution (Team profile)
 
-Normative schema: `spec/schemas/registry.schema.json`. Configuration lives at `.loop/registry.yaml`.
+Normative schema: `spec/schemas/registry.schema.json`. Configuration lives at `.monumentum/registry.yaml`.
 
 ### 10.1 Model
 
@@ -248,7 +248,7 @@ The v0.1 Distributor is a plain git remote that holds `changesets/` and the shar
 
 ### 11.1 Invariants (normative)
 
-- **I1 — No self-hosting.** `.loop/**` is never a valid target. Policy changes are human-only, architecture-class, journaled.
+- **I1 — No self-hosting.** `.monumentum/**` is never a valid target. Policy changes are human-only, architecture-class, journaled.
 - **I2 — Append-only journal.** Entries are hash-chained; deletion or edit breaks verification.
 - **I3 — No self-graded promotion.** L2/L3 application requires at least one `independent` evidence record.
 - **I4 — Allowlisted targets.** A ChangeSet touching a path outside `targets_allow` fails validation.
@@ -304,9 +304,9 @@ The conformance suite lives in `conformance/`:
 
 ## Appendix A: harness integration notes (informative)
 
-**Claude Code.** The drop-in package is a skill plus hooks plus the CLI. The skill carries the cognition: when you learn a durable lesson, propose — never edit managed targets directly. A `PreToolUse` hook denies direct edits to policy-managed targets and points to `agentloop propose`. The CLI carries the enforcement. Hook and skill mechanics are verified against current documentation during implementation (see `docs/DECISIONS.md`).
+**Claude Code.** The drop-in package is a skill plus hooks plus the CLI. The skill carries the cognition: when you learn a durable lesson, propose — never edit managed targets directly. A `PreToolUse` hook denies direct edits to policy-managed targets and points to `monumentum propose`. The CLI carries the enforcement. Hook and skill mechanics are verified against current documentation during implementation (see `docs/DECISIONS.md`).
 
-**AGENTS.md harnesses (Codex-class).** `agentloop init` appends a managed contract block to `AGENTS.md`, idempotently. These harnesses may lack hooks; enforcement rests on the CLI plus `verify` in CI.
+**AGENTS.md harnesses (Codex-class).** `monumentum init` appends a managed contract block to `AGENTS.md`, idempotently. These harnesses may lack hooks; enforcement rests on the CLI plus `verify` in CI.
 
 ## Appendix B: producer adapter guide (informative)
 

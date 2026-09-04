@@ -38,14 +38,14 @@
     "skill/hooks/pretooluse_guard.py": "sha256:b59b2a675d6b87847328998fabf1f520bf6eb1c25d194183bcf039276a344744",
     "skill/hooks/stop_reminder.py": "sha256:2b3b091bf9f08bba31bb77879c265d83fc96030fda44e060eb2c98df381b4217"
   },
-  "journal_head": "sha256:ae72f5b60b7d9864e0199fb528b18e707c7f6fc893797b04e2390f8f5ba4f89e",
+  "journal_head": "sha256:ce5fe0d2e512d7b2a5f888a1df0c4e3213f7363ecf06d3639a184f0193c33848",
   "managed_patterns": [
-    ".loop/**",
+    ".monumentum/**",
     "AGENTS.md",
     "CLAUDE.md",
     "agents.yaml",
     "skill/**"
   ],
   "queue": [],
-  "spec": "loop/v0.1"
+  "spec": "monumentum/v0.1"
 }

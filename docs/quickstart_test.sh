@@ -8,7 +8,7 @@ case "$PY_ARG" in
   /*|[A-Za-z]:*) PY="$PY_ARG" ;;
   *) PY="$(pwd)/$PY_ARG" ;;
 esac
-AGENTLOOP() { "$PY" -m agentloop.cli "$@"; }
+MONUMENTUM() { "$PY" -m monumentum.cli "$@"; }
 
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
@@ -18,10 +18,10 @@ cd "$WORK"
 printf '# Agent notes\n\nUse npm install to set up.\n' > AGENTS.md
 
 # step 1: govern
-AGENTLOOP init > init.txt
-grep -q "Initialized .loop/" init.txt
-test -f .loop/policy.yaml
-grep -q "agentloop:managed:begin" AGENTS.md   # step B2: managed block appended
+MONUMENTUM init > init.txt
+grep -q "Initialized .monumentum/" init.txt
+test -f .monumentum/policy.yaml
+grep -q "monumentum:managed:begin" AGENTS.md   # step B2: managed block appended
 
 # step 2: the diff (exactly as in QUICKSTART.md)
 cat > lesson.patch <<'EOF'
@@ -35,7 +35,7 @@ cat > lesson.patch <<'EOF'
 EOF
 
 # step 3: propose
-OUT=$(AGENTLOOP propose --layer context --target AGENTS.md --patch lesson.patch \
+OUT=$(MONUMENTUM propose --layer context --target AGENTS.md --patch lesson.patch \
   --rationale "Repo uses pnpm. npm install fails on postinstall hooks." --producer me)
 CS=$(printf '%s' "$OUT" | grep -o 'cs-[0-9]\{8\}-[a-z0-9]*' | head -1)
 test -n "$CS"
@@ -50,24 +50,24 @@ cat > ev.json <<'EOF'
   "format": "command-transcript",
   "summary": { "metric": "task_pass", "before": 0, "after": 1, "n": 1 } }
 EOF
-AGENTLOOP evidence "$CS" --record ev.json --artifact transcript.json > /dev/null
+MONUMENTUM evidence "$CS" --record ev.json --artifact transcript.json > /dev/null
 
 # step 5: gate + apply
-AGENTLOOP gate "$CS" | grep -q GATE_APPROVED
-AGENTLOOP apply "$CS" | grep -q APPLIED
+MONUMENTUM gate "$CS" | grep -q GATE_APPROVED
+MONUMENTUM apply "$CS" | grep -q APPLIED
 grep -q "pnpm install" AGENTS.md
 
 # step 6: audit + undo
-AGENTLOOP log | grep -q applied
-AGENTLOOP verify . | grep -q "verify OK"
-AGENTLOOP rollback "$CS" > /dev/null
+MONUMENTUM log | grep -q applied
+MONUMENTUM verify . | grep -q "verify OK"
+MONUMENTUM rollback "$CS" > /dev/null
 grep -q "Use npm install to set up." AGENTS.md
 ! grep -q "pnpm install" AGENTS.md
-AGENTLOOP verify . | grep -q "verify OK"
+MONUMENTUM verify . | grep -q "verify OK"
 
 # step 7: install-skill
-AGENTLOOP install-skill > /dev/null
-test -f .claude/skills/loop/SKILL.md
+MONUMENTUM install-skill > /dev/null
+test -f .claude/skills/monumentum/SKILL.md
 test -f .claude/hooks/pretooluse_guard.py
 
 echo "quickstart-test: OK"

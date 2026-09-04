@@ -18,11 +18,11 @@ from pathlib import Path
 
 import yaml
 
-from agentloop.changeset import load_changeset
-from agentloop.executor import propose
-from agentloop.schemas import validate_object
-from agentloop.signing import SigningError, sign_changeset, verify_changeset
-from agentloop.workspace import Workspace
+from monumentum.changeset import load_changeset
+from monumentum.executor import propose
+from monumentum.schemas import validate_object
+from monumentum.signing import SigningError, sign_changeset, verify_changeset
+from monumentum.workspace import Workspace
 
 CACHE_DIRNAME = "cache"
 
@@ -64,7 +64,7 @@ def _git(args: list[str], cwd: Path) -> subprocess.CompletedProcess:
 
 
 def _ensure_cache(ws: Workspace, config: dict) -> Path:
-    """Clone or update the registry remote into .loop/cache/registry."""
+    """Clone or update the registry remote into .monumentum/cache/registry."""
     cache = ws.loop / CACHE_DIRNAME / "registry"
     url = config["remote"]["url"]
     branch = config["remote"].get("branch", "main")
@@ -126,7 +126,7 @@ def sync(ws: Workspace, actor: str) -> SyncReport:
             )
         _copy_portable(src, dest)
         _git(["add", "--", f"changesets/{cs_id}"], cwd=cache)
-        _git(["-c", "user.name=agentloop", "-c", "user.email=agentloop@local",
+        _git(["-c", "user.name=monumentum", "-c", "user.email=monumentum@local",
               "commit", "-m", f"share {cs_id}"], cwd=cache)
         report.pushed.append(cs_id)
         ws.journal.append("shared", actor=actor, cs=cs_id)

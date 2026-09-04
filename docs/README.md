@@ -1,10 +1,10 @@
-# agentloop
+# monumentum
 
-Reference implementation of **the Loop standard**: governed agent self-improvement.
+Reference implementation of **the Monumentum standard**: governed agent self-improvement.
 
 Agent experience does not compound. A lesson either dies with the context or
 persists ungoverned — an unchecked memory write or prompt edit with no
-evidence, no gate, no audit trail, and no way to reach another agent. The Loop
+evidence, no gate, no audit trail, and no way to reach another agent. Monumentum
 standard makes one self-modification **proven, gated, recorded, reversible,
 and portable**: a ChangeSet carries the change, Evidence proves it, Policy
 gates it, a hash-chained Journal records it, and a Registry moves it across a
@@ -19,15 +19,15 @@ See [QUICKSTART.md](QUICKSTART.md) — doc-tested by `make quickstart-test`.
 
 ```
 pip install -e .
-agentloop init                      # scaffold .loop/, write the AGENTS.md block
-agentloop propose --layer context --target AGENTS.md --patch lesson.patch \
+monumentum init                      # scaffold .monumentum/, write the AGENTS.md block
+monumentum propose --layer context --target AGENTS.md --patch lesson.patch \
   --rationale "Repo uses pnpm. npm install fails on postinstall hooks."
-agentloop evidence <cs-id> --record ev.json --artifact transcript.json
-agentloop gate <cs-id> && agentloop apply <cs-id>
-agentloop verify .                  # journal chain + managed files
+monumentum evidence <cs-id> --record ev.json --artifact transcript.json
+monumentum gate <cs-id> && monumentum apply <cs-id>
+monumentum verify .                  # journal chain + managed files
 ```
 
-Claude Code users also run `agentloop install-skill` to get the skill and a
+Claude Code users also run `monumentum install-skill` to get the skill and a
 `PreToolUse` hook that denies direct edits to managed files.
 
 ## What is here
@@ -35,7 +35,7 @@ Claude Code users also run `agentloop install-skill` to get the skill and a
 | Path | What |
 |---|---|
 | `spec/` | Normative spec v0.1 (14 sections) + the five JSON Schemas |
-| `src/agentloop/` | Reference Executor: CLI + library |
+| `src/monumentum/` | Reference Executor: CLI + library |
 | `sdk/` | Python SDK (five verbs) + a toy custom agent |
 | `skill/` | Drop-in Claude Code skill + hooks |
 | `conformance/` | Golden corpus + executor-level suite for ANY executor |
@@ -44,7 +44,7 @@ Claude Code users also run `agentloop install-skill` to get the skill and a
 | `experiments/` | Runners, JSONL logs, metric aggregation |
 | `paper/` | LaTeX source; every number generated from logs |
 | `demo/` | "One lesson, two runtimes" |
-| `.loop/` | This repo's own loop (dogfood) |
+| `.monumentum/` | This repo's own loop (dogfood) |
 
 ## Commands
 

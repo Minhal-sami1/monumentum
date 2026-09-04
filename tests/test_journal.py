@@ -2,7 +2,7 @@
 
 import pytest
 
-from agentloop.journal import Journal, JournalError
+from monumentum.journal import Journal, JournalError
 
 
 @pytest.fixture
@@ -11,11 +11,11 @@ def journal(tmp_path):
 
 
 def _seed(journal: Journal) -> None:
-    journal.append("genesis", actor="executor/agentloop@0.1.0")
+    journal.append("genesis", actor="executor/monumentum@0.1.0")
     journal.append("proposed", actor="producer/test", cs="cs-20260830-a1b2")
     journal.append(
         "gated",
-        actor="executor/agentloop@0.1.0",
+        actor="executor/monumentum@0.1.0",
         cs="cs-20260830-a1b2",
         decision={"gate": "L2-auto"},
     )
@@ -62,9 +62,9 @@ def test_deleted_line_detected(journal):
 
 
 def test_invalid_entry_refused(journal):
-    journal.append("genesis", actor="executor/agentloop@0.1.0")
+    journal.append("genesis", actor="executor/monumentum@0.1.0")
     with pytest.raises(JournalError, match="invalid entry"):
-        journal.append("not-an-event", actor="executor/agentloop@0.1.0")
+        journal.append("not-an-event", actor="executor/monumentum@0.1.0")
 
 
 def test_noncanonical_line_detected(journal):

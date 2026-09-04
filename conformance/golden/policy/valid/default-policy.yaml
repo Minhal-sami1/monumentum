@@ -1,5 +1,5 @@
-# The default policy that `agentloop init` writes. Matches design-doc §5.3.
-spec: loop/v0.1
+# The default policy that `monumentum init` writes. Matches design-doc §5.3.
+spec: monumentum/v0.1
 envelope:
   context:
     level: L2
@@ -13,7 +13,7 @@ envelope:
     level: L1
     gates: [evidence_required, human_review]
     targets_allow: ["agents.yaml"]
-protected: [".loop/**"]
+protected: [".monumentum/**"]
 escalation:
   capability: { to: L2, after: { applied: 20, rollbacks_max: 1, window_days: 30 } }
 de_escalation: { on_rollbacks: 2, window_days: 14, drop: 1 }

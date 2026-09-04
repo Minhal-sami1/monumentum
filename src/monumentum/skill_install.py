@@ -1,6 +1,6 @@
 """Install the drop-in Claude Code skill and hooks (design §8.1, story B1).
 
-Copies skill/SKILL.md into .claude/skills/loop/, the hook scripts into
+Copies skill/SKILL.md into .claude/skills/monumentum/, the hook scripts into
 .claude/hooks/, and merges the hook wiring into .claude/settings.json
 idempotently.
 """
@@ -29,7 +29,7 @@ def install_skill(claude_dir: Path, skill_src: Path | None = None) -> list[str]:
         raise SkillInstallError(f"skill source not found at {src}")
     out: list[str] = []
 
-    skill_dest = claude_dir / "skills" / "loop"
+    skill_dest = claude_dir / "skills" / "monumentum"
     skill_dest.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(src / "SKILL.md", skill_dest / "SKILL.md")
     out.append(f"skill installed: {skill_dest / 'SKILL.md'}")

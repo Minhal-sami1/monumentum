@@ -1,5 +1,5 @@
 # REQUIRED-FAILURE: remote requires url.
-spec: loop/v0.1
+spec: monumentum/v0.1
 kind: git-remote
 remote:
   branch: main

@@ -3,9 +3,9 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "agentloop"
+name = "monumentum"
 version = "0.1.0"
-description = "Reference Executor for the Loop standard: governed agent self-improvement"
+description = "Reference Executor for the Monumentum standard: governed agent self-improvement"
 readme = "docs/README.md"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
@@ -25,8 +25,8 @@ dev = [
 ]
 
 [project.scripts]
-agentloop = "agentloop.cli:main"
-loop = "agentloop.cli:main"
+monumentum = "monumentum.cli:main"
+loop = "monumentum.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

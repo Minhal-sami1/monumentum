@@ -15,9 +15,9 @@ Every deviation from `design-doc.md` normative semantics is recorded here with e
 - **Evidence:** `$defs.hash` in all five schemas; golden corpus.
 
 ### DEC-003: path hygiene and I1 enforced at schema level too
-- **What:** The ChangeSet schema itself rejects targets that are absolute, contain `..`, use backslashes or drive letters, or point into `.loop/`.
+- **What:** The ChangeSet schema itself rejects targets that are absolute, contain `..`, use backslashes or drive letters, or point into `.monumentum/`.
 - **Why:** design-doc places allowlist/protected checks in the Executor (VALIDATED). Schema-level rejection is defense in depth: a conformant validator refuses T4-style ChangeSets even before executor logic runs. Executor still enforces I1/I4 (allowlists are policy-dependent; schema cannot know `targets_allow`).
-- **Evidence:** `changeset.schema.json` `$defs.target_path`; `golden/changeset/invalid/bad-target-loop.json`, `bad-traversal-target.json`; tests.
+- **Evidence:** `changeset.schema.json` `$defs.target_path`; `golden/changeset/invalid/bad-target-protected-dir.json`, `bad-traversal-target.json`; tests.
 
 ### DEC-004: closed roots + `ext` extension container
 - **What:** All five object roots set `additionalProperties: false`. Non-standard fields MUST go in an `ext` object.
@@ -72,8 +72,8 @@ Every deviation from `design-doc.md` normative semantics is recorded here with e
 - **Evidence:** `conformance/runner.py`, all 15 cases, broken-stub negative test.
 
 ### DEC-014: approve applies immediately
-- **What:** `agentloop approve <id> --actor reviewer/x` journals `approved` and then runs apply in the same command.
-- **Why:** GOAL A4: "`agentloop approve <id>` as reviewer → applied". A separate apply step after approval adds a state with no reviewer value.
+- **What:** `monumentum approve <id> --actor reviewer/x` journals `approved` and then runs apply in the same command.
+- **Why:** GOAL A4: "`monumentum approve <id>` as reviewer → applied". A separate apply step after approval adds a state with no reviewer value.
 - **Evidence:** `executor.approve`; conformance c07.
 
 ### DEC-015: journal tail protected via state.json head hash
@@ -95,7 +95,7 @@ Every deviation from `design-doc.md` normative semantics is recorded here with e
 - **Evidence:** fetched pages 2026-08-30; hook stdin/exit-code contract exercised by `tests/test_hook.py`.
 
 ### DEC-018: PreToolUse guard reads managed patterns from state.json
-- **What:** The hook script (`skill/hooks/pretooluse_guard.py`, stdlib-only) denies Edit/Write on paths matching the policy's `targets_allow` + `protected` patterns. It reads `.loop/state.json` (`managed_patterns`, written by the executor at init and policy load) and falls back to parsing policy.yaml only if PyYAML is importable.
+- **What:** The hook script (`skill/hooks/pretooluse_guard.py`, stdlib-only) denies Edit/Write on paths matching the policy's `targets_allow` + `protected` patterns. It reads `.monumentum/state.json` (`managed_patterns`, written by the executor at init and policy load) and falls back to parsing policy.yaml only if PyYAML is importable.
 - **Why:** The hook must run under any system Python with zero dependencies; policy.yaml needs a YAML parser. state.json is executor-owned JSON and already the effective-state carrier (DEC-009).
 - **Evidence:** `skill/hooks/pretooluse_guard.py`; `tests/test_hook.py`.
 
@@ -127,19 +127,19 @@ Every deviation from `design-doc.md` normative semantics is recorded here with e
 - **Evidence:** `registry.sync`; `tests/test_registry.py`; scenario UC3 (policy-violating pulled change refused in B, journaled).
 
 ### DEC-024: registry cache pins core.autocrlf=false
-- **What:** The registry clone under `.loop/cache/registry` is created with `core.autocrlf=false, core.eol=lf`.
+- **What:** The registry clone under `.monumentum/cache/registry` is created with `core.autocrlf=false, core.eol=lf`.
 - **Why:** Detached signatures cover exact bytes. A host git config that rewrites line endings on checkout would break every digest cross-platform (observed on Windows during development).
 - **Evidence:** `registry._ensure_cache`; `tests/test_registry.py::test_push_and_pull_with_local_gating` passes on Windows.
 
 ### DEC-025: signing config lives in registry.yaml; keys never travel
-- **What:** `registry.yaml` gained an optional `signing: {key_file, signer}` block (schema updated + golden cases). Private keys live under `.loop/keys/` and are never copied by sync; only `*.pub` files are distributed to peers' `pubkeys_dir`.
+- **What:** `registry.yaml` gained an optional `signing: {key_file, signer}` block (schema updated + golden cases). Private keys live under `.monumentum/keys/` and are never copied by sync; only `*.pub` files are distributed to peers' `pubkeys_dir`.
 - **Why:** Team-lite (F4) needs a place to say "sign pushes with this key". The registry schema is the natural carrier; minisign-style raw-hex ed25519 keys keep it dependency-light (`cryptography` runtime only).
 - **Evidence:** `spec/schemas/registry.schema.json`; `signing.py`; golden `registry/valid/git-remote.yaml`, `invalid/bad-signing-no-signer.yaml`.
 
 ### DEC-026: dogfood policy scope for this repository
-- **What:** This repo's own `.loop/policy.yaml` governs: context = AGENTS.md, CLAUDE.md (L2); capability = `skill/**` (L1, Minhal-only approval); architecture = `agents.yaml` (L1, a reserved path — this repository has no architecture-layer file today). `docs/**`, source, tests, spec are NOT loop-managed.
+- **What:** This repo's own `.monumentum/policy.yaml` governs: context = AGENTS.md, CLAUDE.md (L2); capability = `skill/**` (L1, Minhal-only approval); architecture = `agents.yaml` (L1, a reserved path — this repository has no architecture-layer file today). `docs/**`, source, tests, spec are NOT loop-managed.
 - **Why:** The managed surface is what steers agents (design principle 3). STATUS/DECISIONS are project logs the goal REQUIRES updating continuously; making them loop-managed would gate documentation behind review and stall the milestones. The skill package is the repo's real capability layer.
-- **Evidence:** `.loop/policy.yaml`; `agentloop verify .` green in `make verify` and CI.
+- **Evidence:** `.monumentum/policy.yaml`; `monumentum verify .` green in `make verify` and CI.
 
 ## m5
 
@@ -161,8 +161,8 @@ Every deviation from `design-doc.md` normative semantics is recorded here with e
 ## m6
 
 ### DEC-030: T4 policy self-edit is caught at the schema layer (still I1)
-- **What:** T4a proposes a ChangeSet targeting `.loop/policy.yaml`. It is refused with a schema-level message (the `target_path` pattern rejects `.loop/`, DEC-003), before the executor's protected-list I1 message runs.
-- **Why:** Defense in depth: I1 is enforced at BOTH the schema and the executor. The schema fires first, so the visible reason cites the `.loop` pattern rather than the literal string "I1". The security property — the loop cannot edit its own policy — holds. The test accepts either attribution.
+- **What:** T4a proposes a ChangeSet targeting `.monumentum/policy.yaml`. It is refused with a schema-level message (the `target_path` pattern rejects `.monumentum/`, DEC-003), before the executor's protected-list I1 message runs.
+- **Why:** Defense in depth: I1 is enforced at BOTH the schema and the executor. The schema fires first, so the visible reason cites the `.monumentum` pattern rather than the literal string "I1". The security property — the loop cannot edit its own policy — holds. The test accepts either attribution.
 - **Evidence:** `adversarial/t4.sh`; `docs/DECISIONS.md` DEC-003.
 
 ### DEC-031: adversarial tests assert on real file-plane + journal outcomes, never on mocks
@@ -183,7 +183,7 @@ Every deviation from `design-doc.md` normative semantics is recorded here with e
 - **Evidence:** `Makefile`; `.github/workflows/ci.yml`; `experiments/reproduce.sh`.
 
 ### DEC-034: headless trigger runs need a pre-trusted, pre-allowlisted fixture
-- **What:** `run_trigger.py` writes `hasTrustDialogAccepted` for the temp fixture in `~/.claude.json` and pre-allows `Bash(agentloop:*)` in the fixture's `.claude/settings.json`.
+- **What:** `run_trigger.py` writes `hasTrustDialogAccepted` for the temp fixture in `~/.claude.json` and pre-allows `Bash(monumentum:*)` in the fixture's `.claude/settings.json`.
 - **Why:** Measured behaviour during development: without trust, Claude Code ignores the workspace's `permissions.allow` entries; without the allowlist, a headless session cannot answer approval prompts, so it describes the loop steps instead of running them. Both are environment artifacts of headless mode, not properties of the skill — leaving them in place would have measured the sandbox, not the trigger. The PreToolUse guard still fires, so managed-file protection is unchanged.
 - **Evidence:** `experiments/trigger/run_trigger.py`; captured stderr from the failing runs ("this workspace has not been trusted"); `docs/REPRODUCE.md`.
 
@@ -203,9 +203,9 @@ Every deviation from `design-doc.md` normative semantics is recorded here with e
 - **Evidence:** `paper/CITATIONS.md`; `paper/figures/references.tex`.
 
 ### DEC-038: `supersedes` exposed on the CLI and SDK
-- **What:** `agentloop propose --supersedes <cs-id>` (and the SDK's `supersedes=` argument) now set the envelope field.
+- **What:** `monumentum propose --supersedes <cs-id>` (and the SDK's `supersedes=` argument) now set the envelope field.
 - **Why:** The ChangeSet schema has carried `supersedes` since m1, but nothing could set it — found while dogfooding, when a rolled-back lesson was replaced by a corrected one and the replacement could not record what it replaced. A spec field with no way to populate it is a dead field.
-- **Evidence:** `src/agentloop/cli.py`, `src/agentloop/changeset.py`, `sdk/loop/__init__.py`; `tests/test_executor.py::test_propose_records_supersedes`.
+- **Evidence:** `src/monumentum/cli.py`, `src/monumentum/changeset.py`, `sdk/loop/__init__.py`; `tests/test_executor.py::test_propose_records_supersedes`.
 
 ### DEC-042: timing experiments repeat by default; every mean carries its n
 - **What:** `make reproduce` runs the interop demo and UC3 `TIMING_REPEATS` times (default 3, `--timing-repeats N`). The metrics table renders timing rows as "mean, n=N", and the paper prints n inline.
@@ -214,7 +214,7 @@ Every deviation from `design-doc.md` normative semantics is recorded here with e
 - **Evidence:** `experiments/reproduce.sh`; `experiments/metrics.py` (`n` in every timing row); paper §Interoperability and §Battle-test scenarios.
 
 ### DEC-041: FINDING — `Path.resolve()` broke the conformance gate on Linux
-- **What:** `conformance/runner.py` pinned a relative interpreter with `Path.resolve()`. `resolve()` follows symlinks; a Linux venv's `bin/python` is a symlink to the system interpreter, so the pinned path became `/usr/local/bin/python3.11` and every conformance case ran outside the virtualenv, failing with `No module named 'agentloop'`. `make verify` exited 2 with conformance 0/15 on stock Linux while passing on Windows, where `venv` copies `python.exe` instead of symlinking.
+- **What:** `conformance/runner.py` pinned a relative interpreter with `Path.resolve()`. `resolve()` follows symlinks; a Linux venv's `bin/python` is a symlink to the system interpreter, so the pinned path became `/usr/local/bin/python3.11` and every conformance case ran outside the virtualenv, failing with `No module named 'monumentum'`. `make verify` exited 2 with conformance 0/15 on stock Linux while passing on Windows, where `venv` copies `python.exe` instead of symlinking.
 - **Why it escaped:** every gate run during development was on Windows. A cross-platform claim was made from single-platform evidence — the same class of error as grading your own homework, which is what this project exists to prevent. It was found by an independent reviewer, not by us.
 - **Fix:** `os.path.normpath(candidate)` — normalize lexically, never resolve symlinks. Verified by reproducing the failure in a clean `python:3.11-slim` container, applying the fix, and re-running the full documented gate there (exit 0, conformance 15/15).
 - **Audit:** the remaining `resolve()` calls were reviewed. Those in `workspace.py` resolve workspace roots and target paths for a containment check, where following symlinks is the *correct* behaviour (a symlinked target pointing outside the workspace must be caught). The shell runners build interpreter paths by string concatenation and were never affected.
@@ -222,9 +222,9 @@ Every deviation from `design-doc.md` normative semantics is recorded here with e
 
 ### DEC-040: FINDING — a misattributed actor in this repo's own journal, left in place
 - **What:** Journal entry 4 of this repository's own loop records `rolled_back` with `actor=human/minhal`. That rollback was performed by the agent (Claude), not by Minhal. The `--actor` flag defaults to a human-shaped identity and was passed uncritically.
-- **Why it was not "fixed":** The journal is append-only and hash-chained (I2). Editing entry 4 to correct the actor is precisely the T6 attack this project builds defenses against, and `agentloop verify` would fail — as it should. The wrong claim therefore stays in the record, visible, forever. Correcting it by rewriting history would be worse than the original error.
+- **Why it was not "fixed":** The journal is append-only and hash-chained (I2). Editing entry 4 to correct the actor is precisely the T6 attack this project builds defenses against, and `monumentum verify` would fail — as it should. The wrong claim therefore stays in the record, visible, forever. Correcting it by rewriting history would be worse than the original error.
 - **What this exposes:** two real gaps. (1) The executor accepts any `--actor` string: it enforces that a reviewer is not the producer, but it cannot authenticate that a `human/` identity is a human. Actor identity is asserted, not proven — Governed-profile signed entries are the answer, and they are not implemented in v1. (2) An append-only journal with no errata mechanism means a wrong entry can only be annotated by a later entry, and v0.1 defines no annotation event. Both belong in the spec's future work.
-- **Evidence:** `agentloop log` on this repository, entry 4; `agentloop verify .` passes, which is the point — the record is intact and the error is legible.
+- **Evidence:** `monumentum log` on this repository, entry 4; `monumentum verify .` passes, which is the point — the record is intact and the error is legible.
 
 ### DEC-039: no conditional skips in the test suite
 - **What:** `tests/test_sdk.py` previously used `pytest.importorskip("loop")`; it now imports directly.

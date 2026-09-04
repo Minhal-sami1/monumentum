@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://agentloop.invalid/schemas/v0.1/evidence.schema.json",
+  "$id": "https://monumentum.invalid/schemas/v0.1/evidence.schema.json",
   "title": "Evidence",
-  "description": "One evidence record attached to a ChangeSet. Normative for spec loop/v0.1.",
+  "description": "One evidence record attached to a ChangeSet. Normative for spec monumentum/v0.1.",
   "type": "object",
   "required": ["id", "kind", "grader", "format", "summary"],
   "additionalProperties": false,

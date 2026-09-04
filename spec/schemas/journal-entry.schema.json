@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://agentloop.invalid/schemas/v0.1/journal-entry.schema.json",
+  "$id": "https://monumentum.invalid/schemas/v0.1/journal-entry.schema.json",
   "title": "JournalEntry",
-  "description": "One entry of the append-only, hash-chained journal (NDJSON line, parsed). Normative for spec loop/v0.1.",
+  "description": "One entry of the append-only, hash-chained journal (NDJSON line, parsed). Normative for spec monumentum/v0.1.",
   "type": "object",
   "required": ["seq", "prev", "ts", "event", "actor"],
   "additionalProperties": false,

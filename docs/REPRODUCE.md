@@ -10,7 +10,7 @@ fails the build if a metric-shaped literal appears in the paper prose.
 ```
 make setup
 make reproduce      # re-runs every experiment, regenerates metrics + figures
-make paper          # builds paper/build/loop-paper.pdf from the generated tables
+make paper          # builds paper/build/monumentum-paper.pdf from the generated tables
 ```
 
 `make reproduce` clears `experiments/*/logs/` first, so results always come

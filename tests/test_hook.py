@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from agentloop.executor import init_workspace
+from monumentum.executor import init_workspace
 
 REPO = Path(__file__).resolve().parents[1]
 GUARD = REPO / "skill" / "hooks" / "pretooluse_guard.py"
@@ -41,16 +41,16 @@ def test_guard_denies_edit_on_managed_file(ws_root):
     proc = _run_guard(ws_root, "Edit", "AGENTS.md")
     assert proc.returncode == 2
     assert "loop-managed" in proc.stderr
-    assert "agentloop propose" in proc.stderr
+    assert "monumentum propose" in proc.stderr
 
 
 def test_guard_denies_write_on_loop_dir(ws_root):
-    proc = _run_guard(ws_root, "Write", ".loop/policy.yaml")
+    proc = _run_guard(ws_root, "Write", ".monumentum/policy.yaml")
     assert proc.returncode == 2
 
 
 def test_guard_denies_skills_pattern(ws_root):
-    proc = _run_guard(ws_root, "Write", ".claude/skills/loop/SKILL.md")
+    proc = _run_guard(ws_root, "Write", ".claude/skills/monumentum/SKILL.md")
     assert proc.returncode == 2
 
 
@@ -94,7 +94,7 @@ def test_reminder_quiet_when_queue_empty(ws_root):
 
 
 def test_reminder_reports_queued_changesets(ws_root):
-    state_path = ws_root / ".loop" / "state.json"
+    state_path = ws_root / ".monumentum" / "state.json"
     state = json.loads(state_path.read_text(encoding="utf-8"))
     state["queue"] = ["cs-20260830-q001"]
     state_path.write_text(json.dumps(state), encoding="utf-8")

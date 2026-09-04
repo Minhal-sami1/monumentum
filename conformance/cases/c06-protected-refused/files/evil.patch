@@ -1,5 +1,5 @@
---- a/.loop/policy.yaml
-+++ b/.loop/policy.yaml
+--- a/.monumentum/policy.yaml
++++ b/.monumentum/policy.yaml
 @@ -1 +1 @@
--spec: loop/v0.1
+-spec: monumentum/v0.1
 +spec: hacked

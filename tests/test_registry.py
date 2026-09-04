@@ -7,11 +7,11 @@ from pathlib import Path
 
 import pytest
 
-from agentloop.changeset import attach_evidence, create_changeset, load_changeset
-from agentloop.executor import apply_changeset, gate, init_workspace, promote, propose
-from agentloop.registry import sync
-from agentloop.signing import generate_keypair
-from agentloop.workspace import Workspace
+from monumentum.changeset import attach_evidence, create_changeset, load_changeset
+from monumentum.executor import apply_changeset, gate, init_workspace, promote, propose
+from monumentum.registry import sync
+from monumentum.signing import generate_keypair
+from monumentum.workspace import Workspace
 
 AGENTS = "# notes\n\nUse npm install.\n"
 PATCH = """\
@@ -47,7 +47,7 @@ def _make_ws(root: Path, bare: Path, name: str, trusted_pubs: list[Path]) -> Wor
     for pub in trusted_pubs:
         (pubkeys / pub.name).write_bytes(pub.read_bytes())
     (ws.loop / "registry.yaml").write_text(
-        "spec: loop/v0.1\n"
+        "spec: monumentum/v0.1\n"
         "kind: git-remote\n"
         f"remote: {{ url: {bare.as_posix()}, branch: main }}\n"
         "verify: { require_signatures: true, pubkeys_dir: pubkeys }\n"

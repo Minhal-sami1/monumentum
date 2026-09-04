@@ -9,8 +9,8 @@ import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
-from agentloop.hashing import sha256_file, sha256_folder
-from agentloop.schemas import validate_object
+from monumentum.hashing import sha256_file, sha256_folder
+from monumentum.schemas import validate_object
 
 
 class ChangeSetError(Exception):
@@ -163,7 +163,7 @@ def create_changeset(
         payload = {"type": "opaque", "ref": opaque_ref}
 
     envelope = {
-        "spec": "loop/v0.1",
+        "spec": "monumentum/v0.1",
         "id": cs_id,
         "layer": layer,
         "targets": targets,

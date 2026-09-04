@@ -98,13 +98,13 @@ def build_fixture(dst: Path) -> None:
     subprocess.run(["git", "init", "-q"], cwd=dst, capture_output=True, text=True)
     # Pre-allow the CLI and scratch writes so a HEADLESS agent can run the
     # loop without approval prompts it cannot answer. This mirrors the
-    # install flow's advice ("allowlist agentloop in permissions"). The
+    # install flow's advice ("allowlist monumentum in permissions"). The
     # PreToolUse guard hook still denies direct edits to managed files.
     settings_path = dst / ".claude" / "settings.json"
     settings = json.loads(settings_path.read_text(encoding="utf-8"))
     settings["permissions"] = {
         "allow": [
-            "Bash(agentloop:*)", "Bash(python:*)", "Bash(git:*)",
+            "Bash(monumentum:*)", "Bash(python:*)", "Bash(git:*)",
             "Bash(grep:*)", "Bash(cat:*)", "Bash(ls:*)", "Bash(node:*)",
             "Write", "Read", "Edit",
         ]
@@ -114,12 +114,12 @@ def build_fixture(dst: Path) -> None:
 
 
 def _cli() -> list[str]:
-    return [sys.executable, "-m", "agentloop.cli"]
+    return [sys.executable, "-m", "monumentum.cli"]
 
 
 def _env() -> dict:
     env = dict(os.environ)
-    # make `agentloop` resolvable for the nested agent
+    # make `monumentum` resolvable for the nested agent
     env["PATH"] = str(VENV_SCRIPTS) + os.pathsep + env.get("PATH", "")
     return env
 
@@ -134,8 +134,8 @@ def run_one(seed: int, lesson: str, model: str | None) -> dict:
 
     prompt = (
         f"{lesson}\n\n"
-        "This repository is governed by the Loop standard (there is a .loop/ "
-        "directory and a 'loop' skill; the `agentloop` CLI is on PATH). Make "
+        "This repository is governed by the Monumentum standard (there is a .monumentum/ "
+        "directory and a 'loop' skill; the `monumentum` CLI is on PATH). Make "
         "this lesson durable for future sessions. Execute the necessary "
         "commands yourself now with the Bash tool — do not just describe the "
         "steps. Do not stop until the change is proposed (and applied if the "
@@ -174,7 +174,7 @@ def run_one(seed: int, lesson: str, model: str | None) -> dict:
     # detection: a ChangeSet was proposed through the CLI
     triggered = False
     proposed_via_cli = False
-    journal_dir = fixture / ".loop" / "journal"
+    journal_dir = fixture / ".monumentum" / "journal"
     if journal_dir.is_dir():
         events = []
         for f in journal_dir.glob("*.ndjson"):
@@ -183,7 +183,7 @@ def run_one(seed: int, lesson: str, model: str | None) -> dict:
                     events.append(json.loads(line)["event"])
         proposed_via_cli = "proposed" in events
         record["journal_events"] = events
-    cs_dir = fixture / ".loop" / "changesets"
+    cs_dir = fixture / ".monumentum" / "changesets"
     made_changeset = cs_dir.is_dir() and any(cs_dir.iterdir())
     triggered = proposed_via_cli or made_changeset
     record["made_changeset"] = made_changeset
