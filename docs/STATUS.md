@@ -173,11 +173,11 @@ The honest reading of the earlier report: "fresh-clone gate green" was true on t
 
 ### CI has never executed
 
-There is no git remote, so `.github/workflows/ci.yml` has never run. Its presence means the gate is *wired*, not that it has passed. Had it run on the Linux runner it configures, it would have caught the defect above — that it did not is a direct consequence of never having been executed. DoD item 1's "CI green" therefore remains **unverified**, and becomes verifiable only on the first push (a human step, below).
+There is no git remote, so `.github/workflows/ci.yml` has never run. Its presence means the gate is *wired*, not that it has passed. Had it run on the Linux runner it configures, it would have caught the defect above — that it did not is a direct consequence of never having been executed. DoD item 1's "CI green" was therefore **unverified until the first push on 2026-09-05** — see "CI executed" in the Publication log below.
 
 Two things to watch on that first run, neither testable from here:
 
-- **Action versions.** `actions/setup-python@v5` runs on the Node 20 action runtime, which is being deprecated; the current major is v7. It is left pinned at v5 rather than bumped blind, because an untested version change is exactly the kind of unverified edit that produced DEC-041. Bump it if the first run warns.
+- **Action versions.** Left at `checkout@v4`, `setup-python@v5`, `setup-node@v4` until a real run could validate a change. The first run warned (Node 20 deprecation, forced onto Node 24) and passed; the pins were then bumped to the latest majors, `v7` of all three (each `node24`, verified from the actions' own releases), and validated by the second CI run.
 - **Platform coverage.** Linux is now covered by CI *and* by a documented container run; Windows by developer runs. A `windows-latest` matrix job is deliberately deferred: the tools are all present on that image, but its `make` is MinGW `mingw32-make` (not POSIX make, and it may run recipes through `cmd.exe`) and the venv layout differs (`.venv/Scripts` vs `.venv/bin`). Both need validating on a real runner before the job is committed; shipping a red check is worse than an honest gap. The reasoning is recorded in the workflow file itself.
 
 ## Metrics (all generated; run IDs in `experiments/results/metrics.json`)
@@ -279,3 +279,13 @@ The owner approved `cs-20260905-rnm2` (journal seq 14, actor `human/minhal`; app
 Pre-push checks: working tree clean; dogfood audit exact — the five commits that touched managed files since `m4` are the five commit hashes recorded in the journal's `applied`/`rolled_back` entries (`8cab061`, `9fad68b`, `5b1803a`, `5a56987`, `43a248d`); tracked files contain no key material, tokens, local paths, or account handles — the only personal datum is the author email in `pyproject.toml`, which is the owner's own; `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md` added; the root README references both `LICENSE` and `LICENSE-SPEC.md`.
 
 Tag `v0.1.0` marks the publication candidate. It sits one docs-only commit (this STATUS entry) past the container-verified `52a2e05`; the first CI run on push is the fresh-clone gate on the tagged commit itself (STEP 5).
+
+#### 2026-09-05 — CI executed: DoD item 1 verified
+
+The first push created the repository and triggered `.github/workflows/ci.yml` on the tagged commit `6a6c143` (`v0.1.0`). It ran the full offline gate on `ubuntu-latest` and passed on the first attempt:
+
+- Run: https://github.com/Minhal-sami1/monumentum/actions/runs/33932283919 — `verify` job, all steps green, 1m24s.
+
+"CI wired" is now "CI green". Global Definition of Done item 1 (fresh-clone CI gate green) is **verified**, on the default branch, with no overrides.
+
+The run carried one annotation — the Node 20 deprecation for the pinned actions — which triggered the action bump recorded above; the bump commit is validated by the following run.
