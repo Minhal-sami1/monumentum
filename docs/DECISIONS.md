@@ -241,3 +241,18 @@ Every deviation from `design-doc.md` normative semantics is recorded here with e
 - **Spec insight (carried to v0.2 with DEC-040):** the `actor` field cannot express "an agent acting under a named human's explicit direction". It was recorded in `ext`; the spec should define a delegated-actor form.
 - **Deferred to the owner before push:** the SDK import is `monumentum_sdk`. Folding it into the main package as `monumentum.sdk` would read better and is cheap now, expensive after publication; it is a structural change beyond a rename, so it is flagged rather than done.
 - **Evidence:** commits `5202a14` (rename), `5a56987` (executor: apply rnm1), `7b94f5f` (queue rnm2), `32a30a9` (ev-002); journal seq 8–13; `monumentum verify .` green at each step; gate exit codes in `docs/STATUS.md`.
+
+### DEC-044: git history rewritten to remove a co-author trailer; journal commit references remapped
+- **What:** At the owner's direction (2026-09-05), every commit message was rewritten to drop the `Co-Authored-By: Claude` trailer that GitHub renders as a contributor. Author and committer were already the owner on all commits; nothing else in any commit changed — the tree at HEAD is byte-identical (tree hash compared against the pre-rewrite backup). All tags were re-pointed by the rewrite; `main` and the tags were force-pushed and the `v0.1.0` release re-created on the new tag.
+- **Consequence for the journal:** the journal is append-only (I2) and was not touched. Its five `target_state.commit` values are short hashes of the *pre-rewrite* commits and no longer resolve in the rewritten history. This table is the authoritative map:
+
+| seq | event | ChangeSet | pre-rewrite | post-rewrite |
+|---|---|---|---|---|
+| 3 | `applied` | `cs-20260831-dog1` | `8cab061` | `4999c87` |
+| 4 | `rolled_back` | `cs-20260831-dog1` | `9fad68b` | `278e9e6` |
+| 7 | `applied` | `cs-20260831-dog2` | `5b1803a` | `db9ab01` |
+| 11 | `applied` | `cs-20260905-rnm1` | `5a56987` | `8d0593d` |
+| 15 | `applied` | `cs-20260905-rnm2` | `43a248d` | `7862439` |
+
+- **Spec insight (v0.2):** a journal that references git commits is only as stable as the history it points into. A history rewrite MUST be recorded outside the chain (as here), or the spec should reference tree hashes, which survive message rewrites, instead of commit hashes.
+- **Evidence:** `.git/filter-repo/commit-map` at rewrite time (not tracked); the pre-rewrite history is retained privately by the owner as a git bundle; this entry.
