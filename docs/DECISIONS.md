@@ -256,3 +256,17 @@ Every deviation from `design-doc.md` normative semantics is recorded here with e
 
 - **Spec insight (v0.2):** a journal that references git commits is only as stable as the history it points into. A history rewrite MUST be recorded outside the chain (as here), or the spec should reference tree hashes, which survive message rewrites, instead of commit hashes.
 - **Evidence:** `.git/filter-repo/commit-map` at rewrite time (not tracked); the pre-rewrite history is retained privately by the owner as a git bundle; this entry.
+
+### DEC-045: author and committer email rewritten to the owner's account email
+- **What:** At the owner's direction (2026-09-05), every commit's author and committer email was rewritten from the address registered to a different GitHub account to `romeomino415@gmail.com`, the address of the repository owner `Minhal-sami1`, so GitHub attributes the work to the owner. Nothing else changed: the tree at HEAD is byte-identical (tree hash compared before and after). Tags re-pointed; `main` and tags force-pushed; the `v0.1.0` release re-created. The repository-local git identity is set to the same address for future commits.
+- **Journal map, updated:** the journal's five commit references now resolve through two rewrites. The table supersedes the one in DEC-044:
+
+| seq | event | ChangeSet | as journaled | after DEC-044 | current |
+|---|---|---|---|---|---|
+| 3 | `applied` | `cs-20260831-dog1` | `8cab061` | `4999c87` | `0ac80bf` |
+| 4 | `rolled_back` | `cs-20260831-dog1` | `9fad68b` | `278e9e6` | `b792f05` |
+| 7 | `applied` | `cs-20260831-dog2` | `5b1803a` | `db9ab01` | `468ab1b` |
+| 11 | `applied` | `cs-20260905-rnm1` | `5a56987` | `8d0593d` | `36dcd7e` |
+| 15 | `applied` | `cs-20260905-rnm2` | `43a248d` | `7862439` | `c07b54b` |
+
+- **Evidence:** `.git/filter-repo/commit-map` at rewrite time (not tracked); pre-rewrite history retained privately by the owner as a git bundle; this entry.
